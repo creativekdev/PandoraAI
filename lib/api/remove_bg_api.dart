@@ -10,7 +10,7 @@ import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:image/image.dart' as imgLib;
@@ -117,7 +117,7 @@ class RemoveBgApi extends RetryAbleRequester {
     var originalImage = await getLibImage(image);
     var maskImage = await getLibImage(await getImage(File(maskPath)));
     imgLib.Image resImg = await new Executor().execute(arg1: originalImage, arg2: maskImage, fun2: removeTask);
-    await File(filePath).writeAsBytes(await new Executor().execute(arg1: resImg, fun1: encodePng));
+    await File(filePath).writeAsBytes(await new Executor().execute(arg1: resImg, fun1: encodePngThread));
     return filePath;
   }
 }
@@ -132,6 +132,9 @@ Future<imgLib.Image> removeTask(imgLib.Image originalImage, imgLib.Image maskIma
       int r = imgLib.getRed(orPixel);
       int g = imgLib.getGreen(orPixel);
       int b = imgLib.getBlue(orPixel);
+      if(a != 0) {
+        a = 255;
+      }
       int newPixel = imgLib.Color.fromRgba(r, g, b, a);
       originalImage.setPixel(x, y, newPixel);
     }

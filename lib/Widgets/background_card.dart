@@ -4,8 +4,16 @@ import 'dart:math' as math;
 class BackgroundCard extends StatelessWidget {
   final Color? bgColor;
   final Widget child;
+  final double w;
+  final double h;
 
-  const BackgroundCard({Key? key, required this.bgColor, required this.child}) : super(key: key);
+  const BackgroundCard({
+    Key? key,
+    required this.bgColor,
+    required this.child,
+    this.w = 10,
+    this.h = 10,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +23,8 @@ class BackgroundCard extends StatelessWidget {
     return CustomPaint(
       painter: BackgroundPainter(
         bgColor: bgColor!,
-        w: 10,
-        h: 10,
+        w: w,
+        h: h,
       ),
       child: child,
     );

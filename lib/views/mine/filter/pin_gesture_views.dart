@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../../Common/importFile.dart';
 
@@ -172,7 +173,7 @@ class _PinGestureViewState extends State<PinGestureView> {
   void initState() {
     super.initState();
     onResetEventListener = EventBusHelper().eventBus.on<OnResetScaleEvent>().listen((event) {
-      setState(() {
+      safeSetState(() {
         dx = 0;
         dy = 0;
         scale = 1;

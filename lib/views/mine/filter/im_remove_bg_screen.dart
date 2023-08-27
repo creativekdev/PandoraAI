@@ -17,7 +17,6 @@ import '../../../app/user/user_manager.dart';
 import '../../../models/enums/account_limit_type.dart';
 import '../../../network/dio_node.dart';
 import '../../../utils/utils.dart';
-import '../../ai/anotherme/another_me_controller.dart';
 
 typedef OnGetRemoveBgImage = Future Function(String removeBgUrl);
 

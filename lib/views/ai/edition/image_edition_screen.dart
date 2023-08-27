@@ -18,9 +18,6 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
-import 'package:cartoonizer/views/ai/edition/controller/adjust_holder.dart';
-import 'package:cartoonizer/views/ai/edition/controller/adjust_operator.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
@@ -31,7 +28,6 @@ import 'package:cartoonizer/views/ai/edition/widget/remove_bg_options.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
-import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -78,7 +74,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   late ImageEditionController controller;
   Rx<bool> titleShow = false.obs;
   late StreamSubscription onRightTitleSwitchEvent;
-  late StreamSubscription onCropedImageEvent;
 
   late TimerUtil timer;
   String? title;
@@ -98,7 +93,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       photoType: widget.photoType,
       source: widget.source,
       recentItemList: widget.recentEffectItems,
-      showImageSize: imageSize,
+      imageContainerSize: imageSize,
     )..state = this);
     controller.bottomHeight = $(140) + ScreenUtil.getBottomPadding(Get.context!);
     timer = TimerUtil()
@@ -117,32 +112,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       titleShow.value = true;
       timer.startTimer();
     });
-    onCropedImageEvent = EventBusHelper().eventBus.on<OnCropedImageEvent>().listen((event) async {
-      CropImageResult imageResult = event.data!.$2;
-      // showWidth = imageResult.uiImage.width.toDouble();
-      // showHeight = imageResult.uiImage.height.toDouble();
-      // setState(() {
-      //
-      // });
-      // controller.shownImage = await getLibImage(imageResult.uiImage);
-      delay(() {
-        Rect bgRect = Rect.zero;
-        if (controller.shownImage != null) {
-          bgRect = ImageUtils.getTargetCoverRect(
-            imageSize,
-            Size(controller.shownImage!.width.toDouble(), controller.shownImage!.height.toDouble()),
-          );
-        }
-        showWidth = bgRect.width;
-        showHeight = bgRect.height;
-        setState(() {});
-      });
-      // print("127.0.0.1 === OnCropedImageEvent");
-    });
   }
-
-  double showWidth = 0;
-  double showHeight = 0;
 
   @override
   onBlankTap() {
@@ -161,15 +131,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           hideLoading();
         } else {
           var recentController = Get.find<RecentController>();
-          var filterHolder = controller.items.pick((t) => t.function == ImageEditionFunction.filter)?.holder as FilterHolder?;
-          var adjustHolder = controller.items.pick((t) => t.function == ImageEditionFunction.adjust)?.holder as AdjustHolder?;
-          // var effectHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
-          // var stickerHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
+          var filtersHolder = controller.filtersHolder;
           recentController.onImageEditionUsed(
             controller.originFile.path,
             value,
-            filterHolder?.currentFunction ?? FilterEnum.NOR,
-            adjustHolder?.dataList
+            filtersHolder.filterOperator.currentFilter,
+            filtersHolder.adjustOperator.adjustList
                     .map((e) => RecentAdjustData()
                       ..mAdjustFunction = e.function
                       ..value = e.value)
@@ -389,29 +356,14 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   Widget buildContent(BuildContext context, ImageEditionController controller) {
-    delay(() {
-      if (showWidth > 0) {
-        return;
-      }
-      Rect bgRect = Rect.zero;
-      if (controller.shownImage != null) {
-        bgRect = ImageUtils.getTargetCoverRect(
-          imageSize,
-          Size(controller.shownImage!.width.toDouble(), controller.shownImage!.height.toDouble()),
-        );
-      }
-      showWidth = bgRect.width;
-      showHeight = bgRect.height;
-      setState(() {});
-    });
     return Stack(
       fit: StackFit.expand,
       children: [
         BackgroundCard(
             bgColor: Colors.transparent,
             child: SizedBox(
-              width: showWidth,
-              height: showHeight,
+              width: controller.backgroundCardSize.width,
+              height: controller.backgroundCardSize.height,
             )).intoCenter(),
         getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView).intoCenter(),
         Align(
@@ -428,23 +380,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           ),
         )
       ],
-    ).listenSizeChanged(onSizeChanged: (size) {
-      setState(() {
-        imageSize = size;
-        // delay(() {
-        Rect bgRect = Rect.zero;
-        if (controller.shownImage != null) {
-          bgRect = ImageUtils.getTargetCoverRect(
-            imageSize,
-            Size(controller.shownImage!.width.toDouble(), controller.shownImage!.height.toDouble()),
-          );
-        }
-        showWidth = bgRect.width;
-        showHeight = bgRect.height;
-        // setState(() {});
-        // });
-      });
-    });
+    );
   }
 
   Widget getImageWidget(BuildContext context, ImageEditionController controller) {
@@ -475,7 +411,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           ? Image.file(controller.originFile)
           : removeBgHolder.removedImage == null
               ? Image.file(removeBgHolder.originFile!)
-              : removeBgHolder.buildShownImage(imageSize, Size(showWidth, showHeight));
+              : removeBgHolder.buildShownImage(imageSize, controller.backgroundCardSize.size);
     } else {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
       return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage(imageSize);

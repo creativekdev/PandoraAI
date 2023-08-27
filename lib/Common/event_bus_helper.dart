@@ -190,7 +190,3 @@ class OnHomeScrollEvent extends BaseEvent<bool> {
 class OnEditionRightTabSwitchEvent extends BaseEvent<String> {
   OnEditionRightTabSwitchEvent({required super.data});
 }
-
-class OnCropedImageEvent extends BaseEvent<(CropAspectRatio, CropImageResult)> {
-  OnCropedImageEvent({super.data});
-}

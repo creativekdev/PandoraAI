@@ -24,6 +24,9 @@ class CustomImageAspectRatioToolbar extends StatelessWidget {
 
     final imageSize = controller.data.imageSize;
 
+    if (width > 20) {
+      return 'ORIGINAL';
+    }
     if ((width == imageSize.width && height == imageSize.height) || (width == imageSize.height && height == imageSize.width) || (width == -1 && height == -1)) {
       return 'ORIGINAL';
     }

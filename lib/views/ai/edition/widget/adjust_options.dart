@@ -4,11 +4,11 @@ import 'dart:ui' as ui;
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filter_adjust_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
 
 class AdjustOptions extends StatelessWidget {
-  late FilterAdjustHolder controller;
+  late FiltersHolder controller;
 
   AdjustOptions({
     super.key,
@@ -20,14 +20,14 @@ class AdjustOptions extends StatelessWidget {
     var tWidth = (ScreenUtil.getCurrentWidgetSize(context).width);
     var itemW = (tWidth / 7);
     var paddingH = (tWidth - itemW) / 2;
-    controller.itemWidth = itemW;
-    var currentDataIndex = min(controller.adjIndex, controller.adjustList.length - 1);
+    controller.adjustOperator.itemWidth = itemW;
+    var currentDataIndex = min(controller.adjustOperator.adjIndex, controller.adjustOperator.adjustList.length - 1);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Listener(
           onPointerUp: (details) {
-            delay(() => controller.autoCompleteScroll(), milliseconds: 32);
+            delay(() => controller.adjustOperator.autoCompleteScroll(), milliseconds: 32);
           },
           child: ShaderMask(
             shaderCallback: (Rect bounds) {
@@ -45,13 +45,13 @@ class AdjustOptions extends StatelessWidget {
               ).createShader(bounds);
             },
             child: ListView.builder(
-              controller: controller.scrollController,
+              controller: controller.adjustOperator.scrollController,
               physics: ClampingScrollPhysics(),
               padding: EdgeInsets.symmetric(horizontal: paddingH),
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                var data = controller.adjustList[index];
-                bool checked = index == controller.adjIndex;
+                var data = controller.adjustOperator.adjustList[index];
+                bool checked = index == controller.adjustOperator.adjIndex;
                 return Stack(
                   children: [
                     AppCircleProgressBar(
@@ -89,7 +89,7 @@ class AdjustOptions extends StatelessWidget {
                           ),
                   ],
                 ).intoGestureDetector(onTap: () {
-                  if (controller.adjIndex == index) {
+                  if (controller.adjustOperator.adjIndex == index) {
                     if (data.value == data.initValue) {
                       data.value = data.previousValue;
                     } else {
@@ -99,11 +99,11 @@ class AdjustOptions extends StatelessWidget {
                     // controller.update();
                     controller.buildImage();
                   } else {
-                    controller.adjIndex = index;
+                    controller.adjustOperator.adjIndex = index;
                   }
                 }).intoContainer(width: itemW, alignment: Alignment.center);
               },
-              itemCount: controller.adjustList.length,
+              itemCount: controller.adjustOperator.adjustList.length,
             ).intoContainer(height: $(44)),
           ),
         ),
@@ -124,11 +124,11 @@ class AdjustOptions extends StatelessWidget {
             ).createShader(bounds);
           },
           child: GridSlider(
-              minVal: controller.adjustList[currentDataIndex].start.toInt(),
-              maxVal: controller.adjustList[currentDataIndex].end.toInt(),
-              currentPos: controller.adjustList[currentDataIndex].value,
+              minVal: controller.adjustOperator.adjustList[currentDataIndex].start.toInt(),
+              maxVal: controller.adjustOperator.adjustList[currentDataIndex].end.toInt(),
+              currentPos: controller.adjustOperator.adjustList[currentDataIndex].value,
               onChanged: (newValue) {
-                controller.adjustList[currentDataIndex].value = newValue;
+                controller.adjustOperator.adjustList[currentDataIndex].value = newValue;
                 controller.update();
                 if (DateTime.now().millisecondsSinceEpoch - lastBuildTime > 300) {
                   lastBuildTime = DateTime.now().millisecondsSinceEpoch;
@@ -142,7 +142,7 @@ class AdjustOptions extends StatelessWidget {
               }),
         ),
         SizedBox(height: 10),
-        TitleTextWidget(controller.adjustList[currentDataIndex].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(12)),
+        TitleTextWidget(controller.adjustOperator.adjustList[currentDataIndex].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(12)),
       ],
     );
   }

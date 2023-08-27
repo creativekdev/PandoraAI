@@ -188,6 +188,17 @@ class CroppableImageData extends Equatable {
         imageTransform.storage,
         currentImageTransform.storage,
       ];
+
+  @override
+  String toString() {
+    return 'CroppableImageData{'
+        'imageSize: ${imageSize.toString()}, '
+        'cropRect: ${cropRect.toString()}, '
+        'cropShape: ${cropShape.toString()}, '
+        'baseTransformations: ${baseTransformations.toString()}, '
+        'imageTransform: ${imageTransform.toString()}, '
+        'currentImageTransform: ${currentImageTransform.toString()}';
+  }
 }
 
 /// A tween that interpolates between two [CroppableImageData]s.

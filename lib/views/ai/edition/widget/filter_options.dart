@@ -1,13 +1,14 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filter_adjust_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:skeletons/skeletons.dart';
 
 class FilterOptions extends StatelessWidget {
   AppState parentState;
-  FilterAdjustHolder controller;
+  FiltersHolder controller;
 
   FilterOptions({
     super.key,
@@ -45,7 +46,7 @@ class FilterOptions extends StatelessWidget {
           ],
         ).intoContainer(height: itemWidth + (12), width: ScreenUtil.screenSize.width),
         Text(
-          controller.currentFilter.title(),
+          controller.filterOperator.currentFilter.title(),
           style: TextStyle(
             color: Colors.white,
             fontSize: $(13),
@@ -59,7 +60,7 @@ class FilterOptions extends StatelessWidget {
   }
 
   Widget buildItem(context, index, double itemWidth) {
-    var function = controller.filters[index];
+    var function = controller.filterOperator.filters[index];
     var item = Container(
         width: itemWidth,
         height: itemWidth,
@@ -70,13 +71,18 @@ class FilterOptions extends StatelessWidget {
                 width: itemWidth,
                 height: itemWidth,
               ))
-            : Image.memory(
-                controller.thumbnails[function]!,
-                fit: BoxFit.cover,
+            : BackgroundCard(
+                bgColor: Colors.transparent,
+                w: 4,
+                h: 4,
+                child: Image.memory(
+                  controller.thumbnails[function]!,
+                  fit: BoxFit.cover,
+                ),
               ));
     return GestureDetector(
         onTap: () {
-          controller.currentFilter = function;
+          controller.filterOperator.currentFilter = function;
           EventBusHelper().eventBus.fire(OnEditionRightTabSwitchEvent(data: function.title()));
           parentState.showLoading().whenComplete(() {
             controller.buildImage().then((value) {
@@ -88,7 +94,7 @@ class FilterOptions extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: $(2)),
-            controller.currentFilter == function
+            controller.filterOperator.currentFilter == function
                 ? item.intoContainer(
                     // padding: EdgeInsets.all($(1)),
                     decoration: BoxDecoration(

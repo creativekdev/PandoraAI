@@ -76,6 +76,12 @@ class BackgroundData {
     }
     return result;
   }
+
+  BackgroundData copy() {
+    return BackgroundData()
+      ..color = color
+      ..filePath = filePath;
+  }
 }
 
 class BackgroundPickerBar extends StatefulWidget {
@@ -181,7 +187,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
             var d;
             await BackgroundPicker.pickBackground(context, imageRatio: imageRatio, onPick: (data, isPopMerge) {
               if (isPopMerge) {
-                d = data;
+                d = data.copy();
                 if (d != null) {
                   dataList.insert(0, d);
                 }
@@ -193,7 +199,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
                 widget.onPick.call(data, isPopMerge);
               }
             }, onColorChange: (data) {
-              d = data;
+              d = data.copy();
               widget.onColorChange.call(data);
               setState(() {});
             }, preBackgroundData: widget.preBackgroundData);
@@ -213,7 +219,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
                     setState(() {
                       canReset = false;
                     });
-                    widget.onPick.call(e, false);
+                    widget.onPick.call(e.copy(), false);
                   }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
                 ),
               )).intoGestureDetector(onLongPress: () {

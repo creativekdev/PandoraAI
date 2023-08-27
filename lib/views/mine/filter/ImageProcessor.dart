@@ -42,6 +42,9 @@ class ImageProcessor {
         valr = valb = valg = 0;
         for (int c = 0; c < 9; c++) {
           int pixel = image.getPixel(i + di[c], j + dj[c]);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           valr = valr + getR(pixel) * kernel[c];
           valg = valg + getG(pixel) * kernel[c];
           valb = valb + getB(pixel) * kernel[c];

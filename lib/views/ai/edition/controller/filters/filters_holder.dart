@@ -1,67 +1,49 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/task_executor.dart';
+import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filters/base_filter_operator.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
 
-class FilterAdjustHolder extends ImageEditionBaseHolder {
+import 'adjust_operator.dart';
+import 'crop_operator.dart';
+import 'filter_operator.dart';
+
+class FiltersHolder extends ImageEditionBaseHolder {
   Executor executor = new Executor();
   TaskExecutor taskExecutor = TaskExecutor();
+
+  late FilterOperator filterOperator;
+  late AdjustOperator adjustOperator;
+  late CropOperator cropOperator;
 
   imgLib.Image? _originImageData;
 
   Map<FilterEnum, Uint8List> thumbnails = {};
 
-  FilterAdjustHolder({required super.parent});
-
-  late List<FilterEnum> filters;
-
-  late FilterEnum _currentFilter;
-
-  FilterEnum get currentFilter => _currentFilter;
-
-  set currentFilter(FilterEnum filterEnum) {
-    _currentFilter = filterEnum;
-    update();
-  }
-
-  List<AdjustData> adjustList = [];
-
-  int _adjIndex = 0;
-
-  int get adjIndex => _adjIndex;
-
-  set adjIndex(int i) {
-    if (_adjIndex == i) {
-      return;
-    }
-    _adjIndex = i;
-    isClick = true;
-    delay(() => isClick = false, milliseconds: 200);
-    if (!scrollController.positions.isEmpty) {
-      scrollController.animateTo(adjIndex * itemWidth, duration: Duration(milliseconds: 200), curve: Curves.bounceOut);
-    }
-    update();
-    onSwitchNewAdj();
-  }
-
-  ScrollController scrollController = ScrollController();
-
-  double padding = 0;
-  double itemWidth = 0;
-  bool isClick = false;
+  FiltersHolder({required super.parent});
 
   @override
   onInit() {
-    filters = FilterAdjustUtils.createFilters();
-    adjustList = FilterAdjustUtils.createAdjusts();
-    _currentFilter = FilterEnum.NOR;
+    filterOperator = FilterOperator(parent: this)..onInit();
+    adjustOperator = AdjustOperator(parent: this)..onInit();
+    cropOperator = CropOperator(parent: this)..onInit();
+  }
+
+  @override
+  dispose() {
+    filterOperator.dispose();
+    adjustOperator.dispose();
+    cropOperator.dispose();
   }
 
   @override
@@ -70,6 +52,11 @@ class FilterAdjustHolder extends ImageEditionBaseHolder {
     _originImageData = shownImage;
     buildThumbnails();
     await buildImage();
+  }
+
+  @override
+  onResetClick() {
+    return super.onResetClick();
   }
 
   Future buildThumbnails() async {
@@ -82,44 +69,22 @@ class FilterAdjustHolder extends ImageEditionBaseHolder {
     imgLib.Image cropedImage =
         imgLib.copyCrop(shownImage!, targetCoverRect.left.toInt(), targetCoverRect.top.toInt(), targetCoverRect.width.toInt(), targetCoverRect.height.toInt());
     imgLib.Image resizedImage = imgLib.copyResize(cropedImage, width: 60, height: 60);
-    for (var value in filters) {
-      thumbnails[value] = Uint8List.fromList(imgLib.encodePng(await executor.execute(arg1: value, arg2: adjustList, arg3: resizedImage, fun3: _imFilter)));
+    for (var value in filterOperator.filters) {
+      thumbnails[value] = Uint8List.fromList(
+        imgLib.encodePng(await executor.execute(arg1: value, arg2: adjustOperator.adjustList, arg3: resizedImage, arg4: Rect.zero, fun4: _buildImage)),
+      );
       update();
     }
-  }
-
-  autoCompleteScroll() {
-    if (isClick) {
-      return;
-    }
-    var pixels = scrollController.position.pixels + 0.000005; //修正误差
-    var pos = pixels ~/ itemWidth;
-    var d = pixels % itemWidth;
-    if (d > 0.5 * itemWidth) {
-      pos++;
-    }
-    if (pos != _adjIndex) {
-      _adjIndex = pos;
-      update();
-    }
-    scrollController.animateTo(pos * itemWidth, duration: Duration(milliseconds: 100), curve: Curves.bounceOut);
-  }
-
-  @override
-  Future onSwitchImage(imgLib.Image image) async {
-    shownImage = image;
-    _originImageData = image;
-    buildThumbnails();
-    await buildImage();
-  }
-
-  @override
-  onResetClick() {
-    return super.onResetClick();
   }
 
   Future buildImage() async {
-    var cancelable = executor.execute(arg1: currentFilter, arg2: adjustList, arg3: _originImageData, fun3: _imFilter);
+    var shownRect = cropOperator.getShownRect(scale);
+    if (shownRect.isEmpty) {
+      parent.backgroundCardSize = Rect.fromLTWH(0, 0, parent.showImageSize.width, parent.showImageSize.height);
+    } else {
+      parent.backgroundCardSize = ImageUtils.getTargetCoverRect(parent.showImageSize, shownRect.size);
+    }
+    var cancelable = executor.execute(arg1: filterOperator.currentFilter, arg2: adjustOperator.adjustList, arg3: _originImageData, arg4: shownRect, fun4: _buildImage);
     var time = taskExecutor.insert(cancelable);
     var start = DateTime.now().millisecondsSinceEpoch;
     cancelable.then((value) {
@@ -129,12 +94,55 @@ class FilterAdjustHolder extends ImageEditionBaseHolder {
     });
   }
 
-  onSwitchNewAdj() async {
-    buildImage();
+  String resultFilePath = '';
+
+  Future<String> _buildFinalImage(String path) async {
+    var originImage = await getLibImage(await getImage(originFile!));
+    var result =
+        await executor.execute(arg1: filterOperator.currentFilter, arg2: adjustOperator.adjustList, arg3: originImage, arg4: cropOperator.getFinalRect(), fun4: _buildImage);
+    var list = await new Executor().execute(arg1: result, fun1: encodePngThread);
+    var uint8list = Uint8List.fromList(list);
+    await File(path).writeAsBytes(uint8list);
+    return path;
+  }
+
+  @override
+  Future<String> saveToResult() async {
+    String waitToDelete = resultFilePath;
+    var key = EncryptUtil.encodeMd5(getConfigKey());
+    var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';
+    if (newPath == waitToDelete) {
+      return newPath;
+    } else {
+      await _buildFinalImage(newPath);
+      resultFilePath = newPath;
+      if (!TextUtil.isEmpty(waitToDelete)) {
+        File(waitToDelete).exists().then((value) {
+          if (value) {
+            File(waitToDelete).delete();
+          }
+        });
+      }
+      return resultFilePath;
+    }
+  }
+
+  String getConfigKey() {
+    return originFilePath! +
+        adjustOperator.adjustList.map((e) => e.getProgress().toStringAsFixed(1)).toList().join(',') +
+        filterOperator.currentFilter.name +
+        (cropOperator.cropData?.transformationsData.toString() ?? '');
   }
 }
 
-Future<imgLib.Image> _imFilter(FilterEnum filter, List<AdjustData> datas, imgLib.Image _image, TypeSendPort port) async {
+List<int> encodePngThread(imgLib.Image imageBytes, TypeSendPort port) {
+  return imgLib.encodePng(imageBytes);
+}
+
+Future<imgLib.Image> _buildImage(FilterEnum filter, List<AdjustData> datas, imgLib.Image _image, Rect cropRect, TypeSendPort port) async {
+  if (!cropRect.isEmpty) {
+    _image = imgLib.copyCrop(_image, cropRect.left.toInt(), cropRect.top.toInt(), cropRect.width.toInt(), cropRect.height.toInt());
+  }
   var filterResult = await _dimFilter(filter, _image);
   return await _imAdjust(datas, filterResult);
 }
@@ -151,6 +159,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -174,6 +185,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -189,6 +203,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -209,6 +226,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -225,6 +245,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -240,6 +263,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -255,6 +281,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -271,7 +300,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
         for (int y = 0; y < res_image.height; y++) {
 // Get the pixel color at (x, y)
           int pixel = res_image.getPixel(x, y);
-
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
 // Extract the red, green, and blue channels from the pixel
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
@@ -303,7 +334,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
         for (int y = 0; y < res_image.height; y++) {
 // Get the pixel color at (x, y)
           int pixel = res_image.getPixel(x, y);
-
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
 // Extract the red, green, and blue channels from the pixel
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
@@ -323,7 +356,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
         for (int y = 0; y < res_image.height; y++) {
 // Get the pixel color at (x, y)
           int pixel = res_image.getPixel(x, y);
-
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
 // Extract the red, green, and blue channels from the pixel
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
@@ -347,6 +382,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
 
 // Modify the pixel values to create the dramatic warm effect
           final red = imgLib.getRed(pixel);
@@ -363,6 +401,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
 
 // Modify the pixel values to create the dramatic cool effect
           final red = imgLib.getRed(pixel);
@@ -377,6 +418,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
 
 // Convert the pixel to grayscale
           final luminance = imgLib.getLuminance(pixel);
@@ -391,6 +435,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
 
 // Modify the pixel values to create the Silverstone effect
           final red = imgLib.getRed(pixel);
@@ -411,6 +458,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
 
 // Convert the pixel to grayscale
           final luminance = imgLib.getLuminance(pixel);
@@ -428,6 +478,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           final red = imgLib.getRed(pixel);
           final green = imgLib.getGreen(pixel);
           final blue = imgLib.getBlue(pixel);
@@ -459,6 +512,9 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final int pixel = res_image.getPixel(x, y);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           int mink = 0;
           for (int k = 0; k < group.length; k++) {
             final r1 = imgLib.getRed(pixel);
@@ -513,6 +569,9 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
       for (var y = 0; y < image.height; ++y) {
         for (var x = 0; x < image.width; ++x) {
           final pixel = image.getPixel(x, y);
+          if (imgLib.getAlpha(pixel) < 255) {
+            continue;
+          }
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
           int blue = imgLib.getBlue(pixel);
@@ -554,10 +613,13 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
       for (var y = 0; y < image.height; ++y) {
         for (var x = 0; x < image.width; ++x) {
           final pixel = image.getPixel(x, y);
+          int alpha = imgLib.getAlpha(pixel);
+          if (alpha < 255) {
+            continue;
+          }
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
           int blue = imgLib.getBlue(pixel);
-          int alpha = imgLib.getAlpha(pixel);
           HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
           hsv = hsv.withHue((hsv.hue + data.value * data.multiple) % 360);
           Color color = hsv.toColor();
