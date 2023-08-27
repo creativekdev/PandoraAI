@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
@@ -61,7 +63,9 @@ abstract class ImageEditionBaseHolder {
 
   Future initData() async {
     var libImage = await getLibImage(await getImage(originFile!));
-    shownImage = libImage;
+    var targetCoverRect = ImageUtils.getTargetCoverRect(parent.showImageSize, Size(libImage.width.toDouble(), libImage.height.toDouble()));
+    imgLib.Image resizedImage = imgLib.copyResize(libImage, width: (targetCoverRect.width * 1.2).toInt(), height: (targetCoverRect.height * 1.2).toInt());
+    shownImage = resizedImage;
   }
 
   update() {
@@ -71,6 +75,8 @@ abstract class ImageEditionBaseHolder {
   dispose() {}
 
   onResetClick() {}
+
+  Future onSwitchImage(imgLib.Image image);
 
   Future saveToResult() async {
     String? waitToDelete = resultFilePath;
@@ -87,7 +93,11 @@ abstract class ImageEditionBaseHolder {
         await File(newPath).writeAsBytes(uint8list);
         resultFilePath = newPath;
         if (!TextUtil.isEmpty(waitToDelete)) {
-          File(waitToDelete!).delete();
+          File(waitToDelete!).exists().then((value) {
+            if (value) {
+              File(waitToDelete).delete();
+            }
+          });
         }
       }
     }

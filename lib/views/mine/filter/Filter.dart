@@ -1,10 +1,79 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
-import 'package:flutter_image_filters/flutter_image_filters.dart';
 
 import 'package:image/image.dart' as imgLib;
 
 enum FilterEnum { NOR, VID, VIW, VIC, DRA, DRW, DRC, MNO, SLS, CTN, INV, EDG, SHR, OLD, BLK, RMV, FUS, FRZ, CMC }
+
+class AdjustData {
+  AdjustFunction function;
+  double value;
+  final double initValue;
+  double previousValue;
+  double start;
+  double end;
+  bool active = false;
+  double multiple;
+
+  AdjustData({
+    required this.function,
+    required this.value,
+    required this.previousValue,
+    required this.start,
+    required this.end,
+    required this.initValue,
+    required this.multiple,
+  });
+
+  double getProgress() {
+    return (value - start) / getTotal();
+  }
+
+  double getTotal() {
+    return end - start;
+  }
+
+  @override
+  String toString() {
+    return 'AdjustData{function: $function, value: $value, initValue: $initValue, previousValue: $previousValue, start: $start, end: $end}';
+  }
+}
+
+class FilterAdjustUtils {
+  static List<FilterEnum> createFilters() {
+    return [
+      FilterEnum.NOR,
+      FilterEnum.VID,
+      FilterEnum.VIW,
+      FilterEnum.VIC,
+      FilterEnum.DRA,
+      FilterEnum.DRW,
+      FilterEnum.DRC,
+      FilterEnum.MNO,
+      FilterEnum.SLS,
+      FilterEnum.CTN,
+      FilterEnum.SHR,
+      FilterEnum.OLD,
+      FilterEnum.BLK,
+      FilterEnum.RMV,
+      FilterEnum.CMC,
+    ];
+  }
+
+  static List<AdjustData> createAdjusts() {
+    return [
+      AdjustData(function: AdjustFunction.brightness, initValue: 0, value: 0, previousValue: 0, start: -20, end: 20, multiple: 5),
+      AdjustData(function: AdjustFunction.contrast, initValue: 0, value: 0, previousValue: 0, start: -40, end: 40, multiple: 2.5),
+      AdjustData(function: AdjustFunction.saturation, initValue: 0, value: 0, previousValue: 0, start: -40, end: 40, multiple: 2.5),
+      AdjustData(function: AdjustFunction.noise, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 0.25),
+      AdjustData(function: AdjustFunction.pixelate, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 0.5),
+      AdjustData(function: AdjustFunction.blur, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 3 / 4),
+      AdjustData(function: AdjustFunction.sharpen, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 2.5),
+      AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -20, end: 20, multiple: 5),
+    ];
+  }
+}
 
 extension FilterEnumEx on FilterEnum {
   String title() {
@@ -49,129 +118,10 @@ extension FilterEnumEx on FilterEnum {
         return 'Comic';
     }
   }
-
-  ShaderConfiguration buildConfigure() {
-    // return BulgeDistortionShaderConfiguration();
-    return PixelationShaderConfiguration();
-    switch(this) {
-      case FilterEnum.NOR:
-        break;
-      case FilterEnum.VID:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.VIW:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.VIC:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.DRA:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.DRW:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.DRC:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.MNO:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.SLS:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.CTN:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.INV:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.EDG:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.SHR:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.OLD:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.BLK:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.RMV:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.FUS:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.FRZ:
-        // TODO: Handle this case.
-        break;
-      case FilterEnum.CMC:
-        // TODO: Handle this case.
-        break;
-    }
-  }
 }
 
+@deprecated
 class Filter {
-  int selectedID = 0;
-  static List<String> filters = [
-    "NOR",
-    "VID",
-    "VIW",
-    "VIC",
-    "DRA",
-    "DRW",
-    "DRC",
-    "MNO",
-    "SLS",
-    "CTN",
-    // "INV",
-    // "EDG",
-    "SHR",
-    "OLD",
-    "BLK",
-    "RMV",
-    // "FUS",
-    // "FRZ",
-    "CMC",
-  ];
-
-  void setSelectedID(int id) {
-    selectedID = id;
-  }
-
-  int getSelectedID() {
-    return selectedID;
-  }
-
-  List<Uint8List> avatars = [];
-
-  Future<bool> calcAvatars(imgLib.Image _image) async {
-    int _width, _height;
-    int st_width, st_height;
-    if (_image.height > _image.width) {
-      st_width = 0;
-      st_height = (_image.height - _image.width) ~/ 2;
-      _height = _image.width;
-      _width = _image.width;
-    } else {
-      _width = _image.height;
-      _height = _image.height;
-      st_width = (_image.width - _image.height) ~/ 2;
-      ;
-      st_height = 0;
-    }
-    imgLib.Image cropedImage = imgLib.copyCrop(_image, st_width, st_height, _width, _height);
-    imgLib.Image resizedImage = imgLib.copyResize(cropedImage, width: $(60).toInt(), height: $(60).toInt());
-    avatars.clear();
-    for (String filter in filters) {
-      avatars.add(Uint8List.fromList(imgLib.encodeJpg(await ImFilter(filter, resizedImage))));
-    }
-    return true;
-  }
-
   static Future<imgLib.Image> ImFilter(String filter, imgLib.Image _image) async {
     //uncomment when image_picker is installed
     imgLib.Image res_image;
@@ -317,10 +267,13 @@ class Filter {
             // Convert the HSL color back to RGB
 
             // Set the new color for the pixel
-            res_image.setPixelRgba(x, y,
+            res_image.setPixelRgba(
+              x,
+              y,
               color.red.clamp(0, 255),
               color.green.clamp(0, 255),
-              color.blue.clamp(0, 255),);
+              color.blue.clamp(0, 255),
+            );
           }
         }
 

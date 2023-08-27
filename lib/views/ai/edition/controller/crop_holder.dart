@@ -53,6 +53,18 @@ class CropHolder extends ImageEditionBaseHolder {
     await initData();
     canReset = false;
   }
+
+  @override
+  Future onSwitchImage(imgLib.Image image) async {
+    shownImage = image;
+    currentItem = items.first;
+    originalRatio = shownImage!.width / shownImage!.height;
+    originWidth = shownImage!.width;
+    originHeight = shownImage!.height;
+    imgLib.JpegEncoder jpegEncoder = imgLib.JpegEncoder();
+    originData = jpegEncoder.encodeImage(shownImage!);
+    update();
+  }
 }
 
 class CropConfig {

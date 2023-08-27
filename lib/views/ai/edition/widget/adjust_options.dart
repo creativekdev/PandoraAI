@@ -4,12 +4,11 @@ import 'dart:ui' as ui;
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
-import 'package:cartoonizer/views/ai/edition/controller/adjust_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filter_adjust_holder.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
-import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class AdjustOptions extends StatelessWidget {
-  late AdjustHolder controller;
+  late FilterAdjustHolder controller;
 
   AdjustOptions({
     super.key,
@@ -22,7 +21,7 @@ class AdjustOptions extends StatelessWidget {
     var itemW = (tWidth / 7);
     var paddingH = (tWidth - itemW) / 2;
     controller.itemWidth = itemW;
-    var currentDataIndex = min(controller.index, controller.dataList.length - 1);
+    var currentDataIndex = min(controller.adjIndex, controller.adjustList.length - 1);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -51,8 +50,8 @@ class AdjustOptions extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: paddingH),
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                var data = controller.dataList[index];
-                bool checked = index == controller.index;
+                var data = controller.adjustList[index];
+                bool checked = index == controller.adjIndex;
                 return Stack(
                   children: [
                     AppCircleProgressBar(
@@ -90,20 +89,21 @@ class AdjustOptions extends StatelessWidget {
                           ),
                   ],
                 ).intoGestureDetector(onTap: () {
-                  if (controller.index == index) {
+                  if (controller.adjIndex == index) {
                     if (data.value == data.initValue) {
                       data.value = data.previousValue;
                     } else {
                       data.previousValue = data.value;
                       data.value = data.initValue;
                     }
-                    controller.buildResult();
+                    // controller.update();
+                    controller.buildImage();
                   } else {
-                    controller.index = index;
+                    controller.adjIndex = index;
                   }
                 }).intoContainer(width: itemW, alignment: Alignment.center);
               },
-              itemCount: controller.dataList.length,
+              itemCount: controller.adjustList.length,
             ).intoContainer(height: $(44)),
           ),
         ),
@@ -124,23 +124,25 @@ class AdjustOptions extends StatelessWidget {
             ).createShader(bounds);
           },
           child: GridSlider(
-              minVal: controller.dataList[currentDataIndex].start.toInt(),
-              maxVal: controller.dataList[currentDataIndex].end.toInt(),
-              currentPos: controller.dataList[currentDataIndex].value,
+              minVal: controller.adjustList[currentDataIndex].start.toInt(),
+              maxVal: controller.adjustList[currentDataIndex].end.toInt(),
+              currentPos: controller.adjustList[currentDataIndex].value,
               onChanged: (newValue) {
-                controller.dataList[currentDataIndex].value = newValue;
+                controller.adjustList[currentDataIndex].value = newValue;
                 controller.update();
-                if (DateTime.now().millisecondsSinceEpoch - lastBuildTime > 150) {
+                if (DateTime.now().millisecondsSinceEpoch - lastBuildTime > 300) {
                   lastBuildTime = DateTime.now().millisecondsSinceEpoch;
-                  controller.buildResult();
+                  // controller.update();
+                  controller.buildImage();
                 }
               },
               onEnd: () async {
-                delay(() => controller.buildResult(), milliseconds: 150);
+                // delay(() => controller.update(), milliseconds: 150);
+                delay(() => controller.buildImage(), milliseconds: 300);
               }),
         ),
         SizedBox(height: 10),
-        TitleTextWidget(controller.dataList[currentDataIndex].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(12)),
+        TitleTextWidget(controller.adjustList[currentDataIndex].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(12)),
       ],
     );
   }

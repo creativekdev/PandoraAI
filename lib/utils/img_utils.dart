@@ -48,11 +48,14 @@ class ImageUtils {
       Completer<String> callback = Completer();
       Navigator.of(Get.context!).push(NoAnimRouter(_Loading(action: () async {
         var source = File(tempFilePath);
+        if (tempFilePath.toUpperCase().contains('.HEIC')) {
+          source = (await heicFileToImage(source))!;
+        }
         var fileName = await md5File(source);
         if (compress) {
           fileName = '$size' + fileName;
         }
-        var fileType = getFileType(tempFilePath);
+        var fileType = getFileType(source.path);
         var path = targetPath + fileName + '.' + fileType;
         if (!File(path).existsSync()) {
           if (compress) {
@@ -67,11 +70,14 @@ class ImageUtils {
       return callback.future;
     } else {
       var source = File(tempFilePath);
+      if (tempFilePath.toUpperCase().contains('.HEIC')) {
+        source = (await heicFileToImage(source))!;
+      }
       var fileName = await md5File(source);
       if (compress) {
         fileName = '$size' + fileName;
       }
-      var fileType = getFileType(tempFilePath);
+      var fileType = getFileType(source.path);
       var path = targetPath + fileName + '.' + fileType;
       if (!File(path).existsSync()) {
         if (compress) {

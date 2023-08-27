@@ -17,6 +17,7 @@ import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/edition/controller/adjust_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/adjust_operator.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
@@ -83,7 +84,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'image_edition_screen');
-    imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
+    imageSize = Size(ScreenUtil.screenSize.width,
+        ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140) + ScreenUtil.getBottomPadding(Get.context!)));
     controller = Get.put(ImageEditionController(
       originPath: widget.filePath,
       effectStyle: widget.style,
@@ -92,13 +94,13 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       photoType: widget.photoType,
       source: widget.source,
       recentItemList: widget.recentEffectItems,
-    )
-      ..state = this);
+      showImageSize: imageSize,
+    )..state = this);
     controller.bottomHeight = $(140) + ScreenUtil.getBottomPadding(Get.context!);
     timer = TimerUtil()
       ..setInterval(2000)
       ..setOnTimerTickCallback(
-            (millisUntilFinished) {
+        (millisUntilFinished) {
           if (millisUntilFinished > 0) {
             titleShow.value = false;
             timer.cancel();
@@ -120,7 +122,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
 
   saveToAlbum() async {
     await showLoading();
-    if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
+    if (controller.currentItem.function == ImageEditionFunction.effect) {
       TransferBaseController effectHolder = controller.currentItem.holder;
       await GallerySaver.saveImage((effectHolder.resultFile ?? effectHolder.originFile).path, albumName: saveAlbumName);
     } else {
@@ -129,12 +131,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           hideLoading();
         } else {
           var recentController = Get.find<RecentController>();
-          var filterHolder = controller.items
-              .pick((t) => t.function == ImageEditionFunction.filter)
-              ?.holder as FilterHolder?;
-          var adjustHolder = controller.items
-              .pick((t) => t.function == ImageEditionFunction.adjust)
-              ?.holder as AdjustHolder?;
+          var filterHolder = controller.items.pick((t) => t.function == ImageEditionFunction.filter)?.holder as FilterHolder?;
+          var adjustHolder = controller.items.pick((t) => t.function == ImageEditionFunction.adjust)?.holder as AdjustHolder?;
           // var effectHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
           // var stickerHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
           recentController.onImageEditionUsed(
@@ -142,11 +140,10 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
             value,
             filterHolder?.currentFunction ?? FilterEnum.NOR,
             adjustHolder?.dataList
-                .map((e) =>
-            RecentAdjustData()
-              ..mAdjustFunction = e.function
-              ..value = e.value)
-                .toList() ??
+                    .map((e) => RecentAdjustData()
+                      ..mAdjustFunction = e.function
+                      ..value = e.value)
+                    .toList() ??
                 [],
             [],
           );
@@ -181,9 +178,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       return;
     }
     UploadImageController uploadImageController = Get.find();
-    String? imageUrl = uploadImageController
-        .imageUrl(controller.originFile)
-        .value;
+    String? imageUrl = uploadImageController.imageUrl(controller.originFile).value;
     if (TextUtil.isEmpty(imageUrl)) {
       await showLoading();
       imageUrl = await uploadImageController.upload(file: controller.originFile);
@@ -224,21 +219,18 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   shareOut() async {
-    AppDelegate.instance
-        .getManager<ThirdpartManager>()
-        .adsHolder
-        .ignore = true;
+    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
     var userManager = AppDelegate().getManager<UserManager>();
     var uint8list;
-    if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
+    if (controller.currentItem.function == ImageEditionFunction.effect) {
       TransferBaseController effectHolder = controller.currentItem.holder;
       if (effectHolder.resultFile != null) {
-        if (effectHolder.getCategory() == 'cartoonize' || effectHolder.getCategory() == 'sticker') {
+        if (effectHolder.getCategory() == 'cartoonize') {
           uint8list =
-          await ImageUtils.printCartoonizeDrawData(effectHolder.originFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+              await ImageUtils.printCartoonizeDrawData(effectHolder.originFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
         } else if (effectHolder.getCategory() == 'stylemorph') {
           uint8list =
-          await ImageUtils.printStyleMorphDrawData(effectHolder.originFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+              await ImageUtils.printStyleMorphDrawData(effectHolder.originFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
         } else {
           throw Exception('未定义的effectStyle');
         }
@@ -247,28 +239,17 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
     } else {
       if (controller.shownImage == null) {
-        AppDelegate.instance
-            .getManager<ThirdpartManager>()
-            .adsHolder
-            .ignore = false;
+        AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
         return;
       }
       var byteData = await controller.shownImage!.toByteData(format: ImageByteFormat.png);
       uint8list = byteData!.buffer.asUint8List();
     }
-    ShareScreen.startShare(context, backgroundColor: Color(0x77000000),
-        style: "image_edition",
-        image: base64Encode(uint8list),
-        isVideo: false,
-        originalUrl: null,
-        effectKey: "",
+    ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "image_edition", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
         onShareSuccess: (platform) {
-          Events.styleFilterCompleteShare(source: widget.source, platform: platform, type: 'image');
-        });
-    AppDelegate.instance
-        .getManager<ThirdpartManager>()
-        .adsHolder
-        .ignore = false;
+      Events.styleFilterCompleteShare(source: widget.source, platform: platform, type: 'image');
+    });
+    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
   }
 
   @override
@@ -295,15 +276,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         LiPopMenu.showLinePop(
           context,
           listData: [
-            ListPopItem(text: S
-                .of(context)
-                .share_to_discovery, icon: Images.ic_share_discovery, onTap: () => shareToDiscovery()),
-            ListPopItem(text: S
-                .of(context)
-                .share_out, icon: Images.ic_share, onTap: () => shareOut()),
-            ListPopItem(text: S
-                .of(context)
-                .print, icon: Images.ic_share_print, onTap: () => gotoPrint()),
+            ListPopItem(text: S.of(context).share_to_discovery, icon: Images.ic_share_discovery, onTap: () => shareToDiscovery()),
+            ListPopItem(text: S.of(context).share_out, icon: Images.ic_share, onTap: () => shareOut()),
+            ListPopItem(text: S.of(context).print, icon: Images.ic_share_print, onTap: () => gotoPrint()),
           ],
         );
       }),
@@ -336,57 +311,45 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     showModalBottomSheet<bool>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (BuildContext context) =>
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: $(20)),
-              TitleTextWidget(S
-                  .of(context)
-                  .exit_msg, ColorConstant.White, FontWeight.w600, 18),
-              SizedBox(height: $(15)),
-              TitleTextWidget(S
-                  .of(context)
-                  .exit_msg1, ColorConstant.HintColor, FontWeight.w400, 14),
-              SizedBox(height: $(15)),
-              TitleTextWidget(
-                S
-                    .of(context)
-                    .exit_editing,
-                ColorConstant.White,
-                FontWeight.w600,
-                16,
-              )
-                  .intoContainer(
-                margin: EdgeInsets.symmetric(horizontal: $(25)),
-                padding: EdgeInsets.symmetric(vertical: $(10)),
-                width: double.maxFinite,
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: ColorConstant.BlueColor),
-              )
-                  .intoGestureDetector(onTap: () {
-                Navigator.pop(context, true);
-              }),
-              TitleTextWidget(
-                S
-                    .of(context)
-                    .cancel,
-                ColorConstant.White,
-                FontWeight.w400,
-                16,
-              ).intoPadding(padding: EdgeInsets.only(top: $(15), bottom: $(25))).intoGestureDetector(onTap: () {
-                Navigator.pop(context);
-              }),
-            ],
-          ).intoContainer(
-            padding: EdgeInsets.only(bottom: MediaQuery
-                .of(context)
-                .padding
-                .bottom),
-            decoration: BoxDecoration(
-              color: ColorConstant.EffectFunctionGrey,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular($(32)), topRight: Radius.circular($(32))),
-            ),
-          ),
+      builder: (BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: $(20)),
+          TitleTextWidget(S.of(context).exit_msg, ColorConstant.White, FontWeight.w600, 18),
+          SizedBox(height: $(15)),
+          TitleTextWidget(S.of(context).exit_msg1, ColorConstant.HintColor, FontWeight.w400, 14),
+          SizedBox(height: $(15)),
+          TitleTextWidget(
+            S.of(context).exit_editing,
+            ColorConstant.White,
+            FontWeight.w600,
+            16,
+          )
+              .intoContainer(
+            margin: EdgeInsets.symmetric(horizontal: $(25)),
+            padding: EdgeInsets.symmetric(vertical: $(10)),
+            width: double.maxFinite,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: ColorConstant.BlueColor),
+          )
+              .intoGestureDetector(onTap: () {
+            Navigator.pop(context, true);
+          }),
+          TitleTextWidget(
+            S.of(context).cancel,
+            ColorConstant.White,
+            FontWeight.w400,
+            16,
+          ).intoPadding(padding: EdgeInsets.only(top: $(15), bottom: $(25))).intoGestureDetector(onTap: () {
+            Navigator.pop(context);
+          }),
+        ],
+      ).intoContainer(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        decoration: BoxDecoration(
+          color: ColorConstant.EffectFunctionGrey,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular($(32)), topRight: Radius.circular($(32))),
+        ),
+      ),
     ).then((value) {
       if (value ?? false) {
         Navigator.pop(context);
@@ -407,11 +370,10 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         Align(
           alignment: Alignment.center,
           child: Obx(
-                () =>
-                Text(
-                  title ?? '',
-                  style: TextStyle(color: Color(0xfff9f9f9), fontSize: $(18), fontWeight: FontWeight.bold),
-                ).visibility(visible: titleShow.value),
+            () => Text(
+              title ?? '',
+              style: TextStyle(color: Color(0xfff9f9f9), fontSize: $(18), fontWeight: FontWeight.bold),
+            ).visibility(visible: titleShow.value),
           ),
         )
       ],
@@ -444,20 +406,32 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       } else {
         return image;
       }
-    } else if (controller.currentItem.function == ImageEditionFunction.sticker) {
-      var effectController = controller.currentItem.holder as StickerController;
-      return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
     } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
       var removeBgHolder = controller.currentItem.holder as RemoveBgHolder;
       return controller.showOrigin
           ? Image.file(controller.originFile)
           : removeBgHolder.removedImage == null
-          ? Image.file(removeBgHolder.originFile!)
-          : removeBgHolder.buildShownImage(imageSize);
+              ? Image.file(removeBgHolder.originFile!)
+              : removeBgHolder.buildShownImage(imageSize);
     } else {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
       return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage(imageSize);
     }
+
+    // File originFile;
+    // if (controller.currentItem.holder is ImageEditionBaseHolder) {
+    //   var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
+    //   originFile = baseHolder.originFile!;
+    // } else {
+    //   var holder2 = (controller.currentItem.holder as AdjustOperator).lastFun!.holder;
+    //   if (holder2 is ImageEditionBaseHolder) {
+    //     originFile = holder2.originFile!;
+    //   } else {
+    //     originFile = (holder2 as TransferBaseController).originFile;
+    //   }
+    // }
+    // // var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
+    // return controller.showOrigin ? Image.file(originFile) : controller.buildShownImage(imageSize);
   }
 
   Widget generateAgainBtn(BuildContext context) {
@@ -466,26 +440,24 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       children: [
         Image.asset(Images.ic_edition_generate, color: Colors.white, width: $(20)),
         SizedBox(width: $(4)),
-        TitleTextWidget(S
-            .of(context)
-            .generate_again, ColorConstant.White, FontWeight.w500, $(13)),
+        TitleTextWidget(S.of(context).generate_again, ColorConstant.White, FontWeight.w500, $(13)),
       ],
     )
         .intoContainer(
-      padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(10)),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular($(32)),
-          gradient: LinearGradient(colors: [
-            Color(0xff243CFF),
-            Color(0xffB477FC),
-          ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-    )
+          padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(10)),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular($(32)),
+              gradient: LinearGradient(colors: [
+                Color(0xff243CFF),
+                Color(0xffB477FC),
+              ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
+        )
         .intoContainer(
-        padding: EdgeInsets.all($(2)),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular($(32)),
-          color: Color(0x33000000),
-        ))
+            padding: EdgeInsets.all($(2)),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular($(32)),
+              color: Color(0x33000000),
+            ))
         .intoGestureDetector(onTap: () {
       controller.generate(context, controller.currentItem.holder);
     }).intoContainer(
@@ -497,10 +469,14 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
 
   Widget buildMenus(BuildContext context, ImageEditionController controller) {
     bool canReset = false;
-    if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
+    if (controller.currentItem.function == ImageEditionFunction.effect) {
       canReset = false;
     } else {
-      canReset = (controller.currentItem.holder as ImageEditionBaseHolder).canReset;
+      if (controller.currentItem.function == ImageEditionFunction.adjust) {
+        canReset = false;
+      } else {
+        canReset = (controller.currentItem.holder as ImageEditionBaseHolder).canReset;
+      }
     }
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -511,12 +487,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           children: controller.items.map((e) {
             return Image.asset(e.function.icon(), width: $(24), height: $(24))
                 .intoContainer(
-                padding: EdgeInsets.all($(8)),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular($(32)),
-                  border: Border.all(color: controller.currentItem == e ? Color(0xffa3a3a3) : Colors.transparent, width: 1.4),
-                  color: controller.currentItem == e ? Color(0x5e000000) : Colors.transparent,
-                ))
+                    padding: EdgeInsets.all($(8)),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular($(32)),
+                      border: Border.all(color: controller.currentItem == e ? Color(0xffa3a3a3) : Colors.transparent, width: 1.4),
+                      color: controller.currentItem == e ? Color(0x5e000000) : Colors.transparent,
+                    ))
                 .intoGestureDetector(onTap: () => controller.onRightTabClick(context, e))
                 .intoContainer(margin: EdgeInsets.symmetric(vertical: $(0.5)));
           }).toList(),
@@ -529,9 +505,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           children: [
             Image.asset(Images.ic_edition_reset, width: $(24), height: $(24))
                 .intoContainer(
-              padding: EdgeInsets.all($(12)),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0xff555555).withOpacity(0.4)),
-            )
+                  padding: EdgeInsets.all($(12)),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0xff555555).withOpacity(0.4)),
+                )
                 .intoGestureDetector(onTap: () => onResetClick(context, controller))
                 .visibility(visible: canReset),
             Expanded(child: Container()),
@@ -567,10 +543,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         return EffectOptions(
           controller: controller.currentItem.holder,
         );
-      case ImageEditionFunction.sticker:
-        return StickerOptions(
-          controller: controller.currentItem.holder,
-        );
       case ImageEditionFunction.filter:
         return FilterOptions(
           controller: controller.currentItem.holder,
@@ -594,7 +566,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   onResetClick(BuildContext context, ImageEditionController controller) {
-    if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
+    if (controller.currentItem.function == ImageEditionFunction.effect) {
       // nothing
     } else {
       (controller.currentItem.holder as ImageEditionBaseHolder).onResetClick();

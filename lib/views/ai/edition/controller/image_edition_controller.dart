@@ -15,13 +15,11 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
-import 'package:cartoonizer/views/ai/edition/controller/adjust_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filter_adjust_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
-import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
@@ -37,7 +35,7 @@ class ImageEditionController extends GetxController {
   final ImageEditionFunction initFunction;
   late String _originPath;
   late AppState state;
-
+  late Size showImageSize;
   double bottomHeight = 0;
   double switchButtonBottomToScreen = 0;
 
@@ -97,6 +95,7 @@ class ImageEditionController extends GetxController {
     required this.source,
     required this.photoType,
     required this.recentItemList,
+    required this.showImageSize,
   }) {
     _originPath = originPath;
   }
@@ -107,35 +106,28 @@ class ImageEditionController extends GetxController {
     var effectHolder = AllTransferController(originalPath: _originPath, itemList: recentItemList, style: effectStyle, initKey: initKey)
       ..parent = this
       ..onInit();
-    var filterHolder = FilterHolder(parent: this)..onInit();
-    var adjustHolder = AdjustHolder(parent: this)..onInit();
+    var filterAdjustHolder = FilterAdjustHolder(parent: this)..onInit();
     var cropHolder = CropHolder(parent: this)..onInit();
     var removeBgHolder = RemoveBgHolder(parent: this)..onInit();
-    var stickerHolder = StickerController(originalPath: _originPath, itemList: recentItemList, initKey: initKey)
-      ..parent = this
-      ..onInit();
     items = [
       EditionItem()
         ..function = ImageEditionFunction.effect
         ..holder = effectHolder,
       EditionItem()
         ..function = ImageEditionFunction.filter
-        ..holder = filterHolder,
+        ..holder = filterAdjustHolder,
       EditionItem()
         ..function = ImageEditionFunction.adjust
-        ..holder = adjustHolder,
+        ..holder = filterAdjustHolder,
       EditionItem()
         ..function = ImageEditionFunction.crop
         ..holder = cropHolder,
       EditionItem()
         ..function = ImageEditionFunction.removeBg
         ..holder = removeBgHolder,
-      EditionItem()
-        ..function = ImageEditionFunction.sticker
-        ..holder = stickerHolder,
     ];
     currentItem = items.pick((t) => t.function == initFunction) ?? items.first;
-    if (currentItem.function != ImageEditionFunction.effect && currentItem.function != ImageEditionFunction.sticker) {
+    if (currentItem.function != ImageEditionFunction.effect) {
       var holder = currentItem.holder as ImageEditionBaseHolder;
       holder.setOriginFilePath(_originPath);
     }
@@ -144,7 +136,7 @@ class ImageEditionController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    if (currentItem.function == ImageEditionFunction.effect || currentItem.function == ImageEditionFunction.sticker) {
+    if (currentItem.function == ImageEditionFunction.effect) {
       var holder = currentItem.holder as TransferBaseController;
       if (holder.selectedEffect != null && holder.resultFile == null) {
         generate(Get.context!, holder);
@@ -243,20 +235,26 @@ class ImageEditionController extends GetxController {
   }
 
   onRightTabClick(BuildContext context, EditionItem e) async {
-    var bool = await preSwitch(context, e);
+    var bool = await preSwitch(context, e, currentItem);
     if (bool) {
       currentItem = e;
     }
   }
 
-  Future<bool> preSwitch(BuildContext context, EditionItem target) async {
+  Future<bool> preSwitch(BuildContext context, EditionItem target, EditionItem currentItem) async {
+    if (target.holder == currentItem.holder) {
+      if (target.holder is FilterAdjustHolder) {
+        await (target.holder as FilterAdjustHolder).buildThumbnails();
+        return true;
+      }
+    }
     if (target.function == currentItem.function) {
       if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
         startRemoveBg();
       }
       return false;
     }
-    if (target.function == ImageEditionFunction.effect || target.function == ImageEditionFunction.sticker) {
+    if (target.function == ImageEditionFunction.effect) {
       if (currentItem.holder is TransferBaseController) {
         var oldController = currentItem.holder as TransferBaseController;
         var targetController = target.holder as TransferBaseController;
@@ -276,8 +274,8 @@ class ImageEditionController extends GetxController {
       //跳转effect或者sticker
       return true;
     }
-    if (currentItem.function == ImageEditionFunction.effect || currentItem.function == ImageEditionFunction.sticker) {
-      //从effect或者sticker跳出
+    if (currentItem.function == ImageEditionFunction.effect) {
+      //从effect跳出
       var oldController = currentItem.holder as TransferBaseController;
       String oldPath = (oldController.resultFile ?? oldController.originFile).path;
       var targetHolder = target.holder as ImageEditionBaseHolder;
@@ -294,7 +292,8 @@ class ImageEditionController extends GetxController {
       }
       return true;
     } else {
-      //其他Holder互相跳转，
+      // if (target.function == ImageEditionFunction.removeBg) {
+      //跳转removeBg，
       state.showLoading();
       var oldHolder = currentItem.holder as ImageEditionBaseHolder;
       await oldHolder.saveToResult();
@@ -312,6 +311,14 @@ class ImageEditionController extends GetxController {
         return false;
       }
       return true;
+      // } else {
+      //   //其他Holder互相跳转，
+      //   var oldHolder = currentItem.holder as ImageEditionBaseHolder;
+      //   await oldHolder.saveToResult();
+      //   var targetHolder = target.holder as ImageEditionBaseHolder;
+      //   await targetHolder.onSwitchImage(oldHolder.shownImage!);
+      //   return true;
+      // }
     }
   }
 
@@ -347,6 +354,73 @@ class ImageEditionController extends GetxController {
     await targetFile.writeAsBytes(resultBytes);
     return targetFile.path;
   }
+
+// Widget buildShownImage(Size size) {
+//   var imageData;
+//   if (currentItem.function == ImageEditionFunction.adjust) {
+//     if (adjustOperator.lastFun!.holder is TransferBaseController) {
+//       var controller = adjustOperator.lastFun!.holder as TransferBaseController;
+//       imageData = controller.resultFile ?? controller.originFile;
+//     } else {
+//       imageData = shownImage!;
+//     }
+//   }
+//   if (imageData == null) {
+//     return CustomPaint(
+//         painter: BackgroundPainter(
+//           bgColor: Colors.transparent,
+//           w: 10,
+//           h: 10,
+//         ),
+//         child: Image.file(originFile));
+//   }
+//   if (textureSource == null) {
+//     return FutureBuilder<TextureSource?>(
+//         future: getData(imageData),
+//         builder: (c, s) {
+//           final image = s.data;
+//           if (image == null) {
+//             return const CircularProgressIndicator();
+//           }
+//           var targetCoverRect = ImageUtils.getTargetCoverRect(size, Size(image.width.toDouble(), image.height.toDouble()));
+//           var w = targetCoverRect.width;
+//           var h = targetCoverRect.height;
+//           return PipelineImageShaderPreview(
+//             configuration: adjustOperator.buildConfiguration(),
+//             texture: image,
+//           ).intoContainer(width: w, height: h).intoCenter().intoContainer(width: size.width, height: size.height);
+//         });
+//   } else {
+//     var targetCoverRect = ImageUtils.getTargetCoverRect(size, Size(textureSource!.width.toDouble(), textureSource!.height.toDouble()));
+//     var w = targetCoverRect.width;
+//     var h = targetCoverRect.height;
+//     return PipelineImageShaderPreview(
+//       configuration: adjustOperator.buildConfiguration(),
+//       texture: textureSource!,
+//     ).intoContainer(width: w, height: h).intoCenter().intoContainer(width: size.width, height: size.height);
+//   }
+//   // return FilterPreviewCard(data: imageData!, configuration: adjustOperator.buildConfiguration(), width: size.width, height: size.height);
+//   // return LibImageWidget(
+//   //   image: shownImage!,
+//   //   width: size.width,
+//   //   height: size.height,
+//   // );
+// }
+//
+// TextureSource? textureSource;
+//
+// Future<TextureSource?> getData(dynamic data) async {
+//   if (data is Uint8List) {
+//     textureSource = await TextureSource.fromMemory(data);
+//   } else if (data is File) {
+//     textureSource = await TextureSource.fromFile(data);
+//   } else if (data is ui.Image) {
+//     textureSource = TextureSource.fromImage(data);
+//   } else if (data is String) {
+//     textureSource = await TextureSource.fromAsset(data);
+//   }
+//   return textureSource;
+// }
 }
 
 class EditionStep {}

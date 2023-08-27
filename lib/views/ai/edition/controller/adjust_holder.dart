@@ -6,6 +6,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/utils/task_executor.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
@@ -154,6 +155,13 @@ class AdjustHolder extends ImageEditionBaseHolder {
   }
 
   @override
+  Future onSwitchImage(imgLib.Image image) async {
+    _originImageData = image;
+    update();
+    resetConfig();
+  }
+
+  @override
   dispose() {
     executor.dispose();
     baseExecutor.clear();
@@ -237,38 +245,4 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
       break;
   }
   return image;
-}
-
-class AdjustData {
-  AdjustFunction function;
-  double value;
-  final double initValue;
-  double previousValue;
-  double start;
-  double end;
-  bool active = false;
-  double multiple;
-
-  AdjustData({
-    required this.function,
-    required this.value,
-    required this.previousValue,
-    required this.start,
-    required this.end,
-    required this.initValue,
-    required this.multiple,
-  });
-
-  double getProgress() {
-    return (value - start) / getTotal();
-  }
-
-  double getTotal() {
-    return end - start;
-  }
-
-  @override
-  String toString() {
-    return 'AdjustData{function: $function, value: $value, initValue: $initValue, previousValue: $previousValue, start: $start, end: $end}';
-  }
 }

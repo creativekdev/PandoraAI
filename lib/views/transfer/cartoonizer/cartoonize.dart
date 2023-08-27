@@ -24,25 +24,25 @@ class Cartoonize {
     ImageEditionFunction function = ImageEditionFunction.effect;
     if (record?.category == 'cartoonize') {
       function = ImageEditionFunction.effect;
+      ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer, function: function, initKey: initKey, record: record, cardType: HomeCardType.cartoonize);
     } else if (record?.category == 'sticker') {
-      function = ImageEditionFunction.sticker;
-    }
-    ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer, function: function, initKey: initKey, record: record, cardType: HomeCardType.cartoonize);
-    return;
-    bool result = await PermissionsUtil.checkPermissions();
-    if (result) {
-      if (record == null) {
-        return _open(context, source, initKey).then((value) {
-          AppDelegate.instance.getManager<UserManager>().refreshUser();
-        });
+      bool result = await PermissionsUtil.checkPermissions();
+      if (result) {
+        if (record == null) {
+          return _open(context, source, initKey).then((value) {
+            AppDelegate.instance.getManager<UserManager>().refreshUser();
+          });
+        } else {
+          return _openFromRecent(context, source, record, initKey).then((value) {
+            AppDelegate.instance.getManager<UserManager>().refreshUser();
+          });
+        }
       } else {
-        return _openFromRecent(context, source, record, initKey).then((value) {
-          AppDelegate.instance.getManager<UserManager>().refreshUser();
-        });
+        return PermissionsUtil.permissionDenied(context);
       }
-    } else {
-      return PermissionsUtil.permissionDenied(context);
+      // function = ImageEditionFunction.sticker;
     }
+    return;
   }
 
   static Future _open(BuildContext context, String source, String? initKey) async {

@@ -18,7 +18,7 @@ class TaskExecutor {
         value.task.cancel();
         print('cancel task dt: ${value.createDate.millisecondsSinceEpoch}');
       } on CanceledError catch (e) {
-        print(e);
+        // print(e);
       }
       taskList.remove(value);
     }

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/api/clip_drop_api.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:common_utils/common_utils.dart';
 
 import '../../../Common/importFile.dart';
@@ -195,11 +196,9 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     return Scaffold(
       backgroundColor: Color(0xaa000000),
       appBar: AppNavigationBar(
-          backgroundColor: Colors.transparent,
-          leading: SizedBox(),
-          backAction: () {
-            Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-          }),
+        backgroundColor: Colors.transparent,
+        showBackItem: false,
+      ),
       body: Column(
         children: [
           Expanded(
@@ -236,7 +235,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                             right: 0,
                             top: (isReverse ? offsetY : -offsetY),
                             child: Image.asset(
-                              "assets/images/ic_swiper_shadow.png",
+                              Images.ic_swiper_shadow,
                               height: $(76),
                               width: _width,
                               fit: BoxFit.cover,
@@ -249,7 +248,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                               child: Transform.rotate(
                                   angle: pi,
                                   child: Image.asset(
-                                    "assets/images/ic_swiper_shadow.png",
+                                    Images.ic_swiper_shadow,
                                     height: $(76),
                                     width: _width,
                                     fit: BoxFit.cover,
@@ -259,7 +258,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                             right: 0,
                             top: offsetY,
                             child: Image.asset(
-                              "assets/images/ic_swiper_line.png",
+                              Images.ic_swiper_line,
                               height: $(3),
                               width: _width,
                               fit: BoxFit.cover,
@@ -270,39 +269,31 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                     },
                   ),
                   Positioned(
+                    top: $(13),
+                    left: $(13),
+                    child: Image.asset(Images.ic_corn, width: $(32)),
+                  ),
+                  Positioned(
                       top: $(13),
-                      left: $(13),
-                      child: Image.asset(
-                        "assets/images/ic_corn.png",
-                        width: $(32),
+                      right: $(13),
+                      child: Transform.rotate(
+                        angle: pi / 2,
+                        child: Image.asset(Images.ic_corn, width: $(32)),
                       )),
                   Positioned(
-                      top: $(13),
-                      right: $(13),
-                      child: Transform.rotate(
-                          angle: pi / 2,
-                          child: Image.asset(
-                            "assets/images/ic_corn.png",
-                            width: $(32),
-                          ))),
-                  Positioned(
                       bottom: $(13),
                       left: $(13),
                       child: Transform.rotate(
-                          angle: -pi / 2,
-                          child: Image.asset(
-                            "assets/images/ic_corn.png",
-                            width: $(32),
-                          ))),
+                        angle: -pi / 2,
+                        child: Image.asset(Images.ic_corn, width: $(32)),
+                      )),
                   Positioned(
                       bottom: $(13),
                       right: $(13),
                       child: Transform.rotate(
-                          angle: pi,
-                          child: Image.asset(
-                            "assets/images/ic_corn.png",
-                            width: $(32),
-                          ))),
+                        angle: pi,
+                        child: Image.asset(Images.ic_corn, width: $(32)),
+                      )),
                 ],
               ),
             ),
