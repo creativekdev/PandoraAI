@@ -21,9 +21,9 @@ class ImageMergingWidget extends StatefulWidget {
     required this.backgroundColor,
     required this.onAddImage,
   }) {
-    personByte = Uint8List.fromList(imgLib.encodeJpg(personImage));
+    personByte = Uint8List.fromList(imgLib.encodePng(personImage));
     if (backgroundImage != null) {
-      backgroundByte = Uint8List.fromList(imgLib.encodeJpg(backgroundImage!));
+      backgroundByte = Uint8List.fromList(imgLib.encodePng(backgroundImage!));
     }
     posX = posY = 0;
     ratio = 1;
@@ -75,9 +75,9 @@ class _ImageMergingWidgetState extends State<ImageMergingWidget> {
                     ),
                   )
                 : SizedBox(
-              width: size.width,
-              height: size.height,
-            ),
+                    width: size.width,
+                    height: size.height,
+                  ),
             Container(
                 child: CustomPaint(
               painter: AlphaImagePainter(widget.personImageForUI, dx: widget.posX, dy: widget.posY, ratio: widget.ratio),

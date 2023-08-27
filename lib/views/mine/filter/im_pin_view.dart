@@ -38,7 +38,7 @@ class ImPinView extends StatefulWidget {
     required this.resultePath,
   }) {
     if (backgroundImage != null) {
-      backgroundByte = Uint8List.fromList(imgLib.encodeJpg(backgroundImage!));
+      backgroundByte = Uint8List.fromList(imgLib.encodePng(backgroundImage!));
     }
     // posX = posY = 0;
     // ratio = 1;

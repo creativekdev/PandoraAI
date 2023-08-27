@@ -6,7 +6,6 @@ import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
@@ -169,7 +168,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   LoadBgController bgController = Get.put(LoadBgController());
 
-  Future<Uint8List?> getPersonImage(Size size) async {
+  Future<void> getPersonImage(Size size) async {
     var byteData = await imageUiFront!.toByteData(format: ui.ImageByteFormat.png);
     personByte = byteData!.buffer.asUint8List();
     final int width = imageFront!.width;

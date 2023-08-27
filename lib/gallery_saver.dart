@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cartoonizer/files.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/services.dart';
-import 'package:cartoonizer/files.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class GallerySaver {
   static const String channelName = 'gallery_saver';
@@ -20,7 +20,8 @@ class GallerySaver {
 
   ///saves video from provided temp path and optional album name in gallery
   static Future<String?> saveVideo(
-    String path, bool isSaveToGallery, {
+    String path,
+    bool isSaveToGallery, {
     String? albumName,
     bool toDcim = false,
     Map<String, String>? headers,
@@ -37,7 +38,7 @@ class GallerySaver {
       path = tempFile.path;
     }
     var result = true;
-    if(isSaveToGallery){
+    if (isSaveToGallery) {
       result = await _channel.invokeMethod(
         methodSaveVideo,
         <String, dynamic>{'path': path, 'albumName': albumName, 'toDcim': toDcim},
@@ -47,7 +48,7 @@ class GallerySaver {
     // if (tempFile != null) {
     //   tempFile.delete();
     // }
-    return result? path : "";
+    return result ? path : "";
   }
 
   ///saves image from provided temp path and optional album name in gallery
@@ -80,7 +81,8 @@ class GallerySaver {
     return result;
   }
 
-  static Future<void> saveImageFromPath(String path, {
+  static Future<void> saveImageFromPath(
+    String path, {
     String? albumName,
     bool toDcim = false,
     Map<String, String>? headers,
@@ -91,8 +93,7 @@ class GallerySaver {
     );
   }
 
-  static Future<File> _downloadFile(String url,
-      {Map<String, String>? headers}) async {
+  static Future<File> _downloadFile(String url, {Map<String, String>? headers}) async {
     LogUtil.v(url);
     LogUtil.v(headers);
     http.Client _client = new http.Client();
@@ -104,8 +105,8 @@ class GallerySaver {
     String dir = (await getTemporaryDirectory()).path;
     File file = new File('$dir/${basename(url)}');
     await file.writeAsBytes(bytes);
-    print('File size:${await file.length()}');
-    print(file.path);
+    LogUtil.d('File size:${await file.length()}');
+    LogUtil.d(file.path);
     return file;
   }
 }

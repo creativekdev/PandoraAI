@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget.dart';
@@ -324,18 +323,24 @@ class ImageEditionController extends GetxController {
 
   Widget buildShownImage(Size size) {
     if (shownImage == null) {
-      return CustomPaint(
-          painter: BackgroundPainter(
-            bgColor: Colors.transparent,
-            w: 10,
-            h: 10,
-          ),
-          child: Image.file(originFile));
+      return Image.file(originFile);
     }
+    int w = shownImage!.width;
+    int h = shownImage!.height;
+    double wScale = w.toDouble() / size.width.toDouble();
+    double hScale = h.toDouble() / size.height.toDouble();
+    if (wScale < hScale) {
+      w = (w / hScale).toInt();
+      h = size.height.toInt();
+    } else {
+      h = (h / wScale).toInt();
+      w = size.width.toInt();
+    }
+
     return LibImageWidget(
       image: shownImage!,
-      width: size.width,
-      height: size.height,
+      width: w.toDouble(),
+      height: h.toDouble(),
     );
   }
 
@@ -349,8 +354,8 @@ class ImageEditionController extends GetxController {
     var directory = Directory(dir.path + projName);
     await mkdir(directory);
     var fileName = getFileName(originFile.path);
-    var targetFile = File(directory.path + '/${DateTime.now().millisecondsSinceEpoch}' + fileName);
-    var resultBytes = Uint8List.fromList(imgLib.encodeJpg(_shownLibImage!));
+    var targetFile = File(directory.path + '/${DateTime.now().millisecondsSinceEpoch}' + fileName.replaceFirst(".jpg", ".png"));
+    var resultBytes = Uint8List.fromList(imgLib.encodePng(_shownLibImage!));
     await targetFile.writeAsBytes(resultBytes);
     return targetFile.path;
   }

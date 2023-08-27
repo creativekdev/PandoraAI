@@ -7,6 +7,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
@@ -115,6 +116,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     });
   }
 
+  double showWidth = 0;
+  double showHeight = 0;
+
   @override
   onBlankTap() {
     EventBusHelper().eventBus.fire(OnHideDeleteStatusEvent());
@@ -124,7 +128,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     await showLoading();
     if (controller.currentItem.function == ImageEditionFunction.effect) {
       TransferBaseController effectHolder = controller.currentItem.holder;
-      await GallerySaver.saveImage((effectHolder.resultFile ?? effectHolder.originFile).path, albumName: saveAlbumName);
+      String path = (effectHolder.resultFile ?? effectHolder.originFile).path;
+      await GallerySaver.saveImage(path.replaceFirst('.jpg', '.png'), albumName: saveAlbumName);
     } else {
       controller.saveResult().then((value) async {
         if (value == null) {
@@ -359,9 +364,30 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   Widget buildContent(BuildContext context, ImageEditionController controller) {
+    delay(() {
+      if (showWidth > 0) {
+        return;
+      }
+      Rect bgRect = Rect.zero;
+      if (controller.shownImage != null) {
+        bgRect = ImageUtils.getTargetCoverRect(
+          imageSize,
+          Size(controller.shownImage!.width.toDouble(), controller.shownImage!.height.toDouble()),
+        );
+      }
+      showWidth = bgRect.width;
+      showHeight = bgRect.height;
+      setState(() {});
+    });
     return Stack(
       fit: StackFit.expand,
       children: [
+        BackgroundCard(
+            bgColor: Colors.transparent,
+            child: SizedBox(
+              width: showWidth,
+              height: showHeight,
+            )).intoCenter(),
         getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView).intoCenter(),
         Align(
           alignment: Alignment.centerRight,
@@ -380,6 +406,18 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     ).listenSizeChanged(onSizeChanged: (size) {
       setState(() {
         imageSize = size;
+        // delay(() {
+        Rect bgRect = Rect.zero;
+        if (controller.shownImage != null) {
+          bgRect = ImageUtils.getTargetCoverRect(
+            imageSize,
+            Size(controller.shownImage!.width.toDouble(), controller.shownImage!.height.toDouble()),
+          );
+        }
+        showWidth = bgRect.width;
+        showHeight = bgRect.height;
+        // setState(() {});
+        // });
       });
     });
   }
@@ -417,21 +455,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
       return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage(imageSize);
     }
-
-    // File originFile;
-    // if (controller.currentItem.holder is ImageEditionBaseHolder) {
-    //   var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
-    //   originFile = baseHolder.originFile!;
-    // } else {
-    //   var holder2 = (controller.currentItem.holder as AdjustOperator).lastFun!.holder;
-    //   if (holder2 is ImageEditionBaseHolder) {
-    //     originFile = holder2.originFile!;
-    //   } else {
-    //     originFile = (holder2 as TransferBaseController).originFile;
-    //   }
-    // }
-    // // var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
-    // return controller.showOrigin ? Image.file(originFile) : controller.buildShownImage(imageSize);
   }
 
   Widget generateAgainBtn(BuildContext context) {
