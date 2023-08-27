@@ -1,4 +1,3 @@
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
@@ -18,11 +17,12 @@ class RemoveBgOptions extends StatelessWidget {
 
   final double bottomPadding;
   final double switchButtonPadding;
-  late BuildContext _currentContext;
+
+  // late BuildContext _currentContext;
 
   @override
   Widget build(BuildContext context) {
-    _currentContext = context;
+    // _currentContext = context;
     controller.preBackgroundData = controller?.selectData ?? controller.preBackgroundData;
 
     return BackgroundPickerBar(

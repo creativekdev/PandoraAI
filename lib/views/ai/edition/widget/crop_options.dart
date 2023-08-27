@@ -6,6 +6,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
 import 'package:image/image.dart' as imgLib;
 
+import '../../../../Common/event_bus_helper.dart';
 import '../../../../Widgets/custom_crop/custom_crop_settings.dart';
 import '../../../../Widgets/custom_crop/custom_cropper.dart';
 import '../../../../croppy/src/model/crop_aspect_ratio.dart';
@@ -96,6 +97,7 @@ class CropOptions extends StatelessWidget {
           }
         }
         controller.currentItem = selected;
+        EventBusHelper().eventBus.fire(OnCropedImageEvent(data: (ar, result)));
         return result;
       },
       currentItem: e,
