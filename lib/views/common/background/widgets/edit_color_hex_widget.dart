@@ -32,31 +32,35 @@ class _EditColorHexWidgetState extends State<EditColorHexWidget> {
 
   late RxInt backgroundColor;
   final textController = TextEditingController();
+  late ValueNotifier<Color> _textColorNotifier;
+
   Color bgColor;
   String colorHex;
 
-  TextField? _textField;
-
   final RegExp _colorRegExp = RegExp(r'^#(?:[0-9a-fA-F]{6})$'); // 正则表达式校验色值
-
-  void _onColorChanged(String color) {
-    if (_colorRegExp.hasMatch(textController.text)) {
-      bgColor = ColorUtil.hexColor(textController.text);
-      backgroundColor.value = bgColor.value;
-    }
-  }
 
   @override
   void initState() {
     super.initState();
     textController.text = colorHex.toUpperCase();
+    _textColorNotifier = ValueNotifier<Color>(getTextColorForBackground(bgColor));
+    textController.addListener(_updateTextColor);
     _focusNode.requestFocus();
+  }
+
+  void _updateTextColor() {
+    if (_colorRegExp.hasMatch(textController.text)) {
+      bgColor = ColorUtil.hexColor(textController.text);
+      backgroundColor.value = bgColor.value;
+      _textColorNotifier.value = getTextColorForBackground(bgColor);
+    }
   }
 
   @override
   void dispose() {
     _focusNode.dispose();
     textController.dispose();
+    _textColorNotifier.dispose();
     super.dispose();
   }
 
@@ -83,31 +87,27 @@ class _EditColorHexWidgetState extends State<EditColorHexWidget> {
                 margin: EdgeInsets.only(left: $(15), right: $(15), top: $(80)),
                 height: $(38),
                 alignment: Alignment.center,
-                child: _textField ??= TextField(
-                    controller: textController,
-                    textAlign: TextAlign.center,
-                    focusNode: _focusNode,
-                    onChanged: (color) {
-                      if (color.length > 1) {
-                        _onColorChanged(color);
-                      }
-                    },
-                    style: TextStyle(
-                      color: getTextColorForBackground(bgColor),
-                      fontSize: $(18),
-                      fontWeight: FontWeight.bold,
-                    ),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                    )),
-                decoration: BoxDecoration(
-                    // color: Color(0xff444547),
-                    // borderRadius: BorderRadius.circular($(19)),
-                    // border: Border.all(
-                    //   color: Colors.white,
-                    //   width: 1,
-                    // ),
-                    ),
+                child: ValueListenableBuilder<Color>(
+                    valueListenable: _textColorNotifier,
+                    builder: (context, textColor, child) {
+                      return TextField(
+                          controller: textController,
+                          textAlign: TextAlign.center,
+                          focusNode: _focusNode,
+                          // onChanged: (color) {
+                          //   if (color.length > 1) {
+                          //     _onColorChanged(color);
+                          //   }
+                          // },
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: $(18),
+                            fontWeight: FontWeight.bold,
+                          ),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                          ));
+                    }),
               ),
               Expanded(child: SizedBox()),
               TitleTextWidget(

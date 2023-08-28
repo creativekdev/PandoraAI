@@ -95,6 +95,7 @@ class HomePageHomepageTools {
 class HomePageHomepageGalleries {
   @JSONField(name: 'category')
   String? categoryString;
+  int? records;
 
   @JSONField(serialize: false, deserialize: false)
   HomeCardType? _category;
