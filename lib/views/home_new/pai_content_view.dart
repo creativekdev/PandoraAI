@@ -5,6 +5,7 @@ import 'package:cartoonizer/models/home_page_entity.dart';
 import '../../Common/importFile.dart';
 import '../../api/app_api.dart';
 import '../../models/discovery_list_entity.dart';
+import '../../models/home_post_entity.dart';
 
 typedef OnClickAll = Function(String category, List<DiscoveryListEntity>? posts, String title);
 typedef OnClickItem = Function(int index, String category, List<DiscoveryListEntity>? posts, String title);
@@ -25,6 +26,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
 
   ScrollController _scrollController = ScrollController(keepScrollOffset: true);
   List<DiscoveryListEntity>? socialPost;
+  int postsLength = 0;
 
   bool isLoading = false;
   late AppApi appApi;
@@ -33,6 +35,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
   void initState() {
     super.initState();
     appApi = AppApi();
+    postsLength = widget.galleries?.records ?? 0;
     _scrollController.addListener(() {
       if (_scrollController.position.pixels + $(80) >= _scrollController.position.maxScrollExtent) {
         _loadNextPage();
@@ -47,16 +50,25 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
     setState(() {
       isLoading = true;
     });
-    appApi.socialHomePost(from: socialPost?.length ?? 0, size: 10, category: widget.galleries?.categoryString ?? '').then((value) {
+
+    HomePostEntity? homePostEntity = await loadData(socialPost?.length ?? 0, 10);
+    if (postsLength != homePostEntity?.data.records) {
+      homePostEntity = await loadData(0, homePostEntity?.data.records ?? 0);
       setState(() {
-        socialPost?.addAll(value?.data.rows ?? []);
+        postsLength = homePostEntity?.data.records ?? 0;
+        socialPost = homePostEntity?.data.rows ?? [];
         isLoading = false;
-        // _scrollController = ScrollController(
-        //   initialScrollOffset: currentPosition,
-        //   keepScrollOffset: true,
-        // );
       });
-    });
+    } else {
+      setState(() {
+        socialPost?.addAll(homePostEntity?.data.rows ?? []);
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<HomePostEntity?> loadData(int from, int size) async {
+    return await appApi.socialHomePost(from: from, size: size, category: widget.galleries?.categoryString ?? '');
   }
 
   @override

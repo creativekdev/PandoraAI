@@ -226,11 +226,18 @@ class _PaletteWidgetState extends State<PaletteWidget> {
             onTap: () {
               setState(() {
                 selectedIndex = index;
+                opacity = 0.5;
               });
               widget.onChange.call(colorList[selectedIndex], this.opacity);
             },
           ),
-          if (index == selectedIndex) Image.asset(Images.ic_bg_color_sel, width: $(26))
+          if (index == selectedIndex)
+            Image.asset(Images.ic_bg_color_sel, width: $(26)).intoGestureDetector(onTap: () {
+              setState(() {
+                opacity = 0.5;
+              });
+              widget.onChange.call(colorList[selectedIndex], this.opacity);
+            })
         ],
       ),
     );

@@ -106,7 +106,7 @@ dependencies:
   kochava_tracker: 2.0.2
   flutter_google_places: 0.3.0
   calendar_date_picker2: 0.5.2
-  #  croppy: 0.2.6
+  croppy: 1.1.0
   card_swiper: 2.0.4
   flutter_swiper_null_safety: 1.0.2
   intl_phone_number_input: 0.7.3+1
@@ -123,7 +123,7 @@ dependencies:
   vector_math: ^2.1.4
 dependency_overrides:
   intl: 0.18.1
-  watcher: 1.1.0
+#  watcher: 1.1.0
 
 dev_dependencies:
   flutter_test:
