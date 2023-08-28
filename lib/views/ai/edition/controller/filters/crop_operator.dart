@@ -5,11 +5,11 @@ import 'package:cartoonizer/views/ai/edition/controller/filters/base_filter_oper
 class CropOperator extends BaseFilterOperator {
   late List<CropConfig> items;
 
-  late CropConfig _currentItem;
+  CropConfig? _currentItem;
 
-  CropConfig get currentItem => _currentItem;
+  CropConfig? get currentItem => _currentItem;
 
-  set currentItem(CropConfig item) {
+  set currentItem(CropConfig? item) {
     _currentItem = item;
     update();
   }
@@ -54,7 +54,7 @@ class CropOperator extends BaseFilterOperator {
       CropConfig(width: 16, height: 9, title: '16:9'),
       CropConfig(width: 9, height: 16, title: '9:16'),
     ];
-    currentItem = items.first;
+    // currentItem = items.first;
   }
 }
 
