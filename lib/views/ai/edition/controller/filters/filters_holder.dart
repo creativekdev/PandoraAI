@@ -1,12 +1,10 @@
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/task_executor.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filters/base_filter_operator.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
@@ -52,6 +50,8 @@ class FiltersHolder extends ImageEditionBaseHolder {
   initData() async {
     await super.initData();
     _originImageData = shownImage;
+    cropOperator.cropData = null;
+    cropOperator.currentItem = null;
     buildThumbnails();
     await buildImage();
   }

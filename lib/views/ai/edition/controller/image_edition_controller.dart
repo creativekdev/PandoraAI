@@ -9,8 +9,6 @@ import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
@@ -315,7 +313,8 @@ class ImageEditionController extends GetxController {
       }
       state.showLoading();
       await targetHolder.setOriginFilePath(oldPath);
-      showImageSize = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble())).size;
+      backgroundCardSize = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble()));
+      showImageSize = backgroundCardSize.size;
       state.hideLoading();
       if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
         return false;
