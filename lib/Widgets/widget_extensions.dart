@@ -28,6 +28,11 @@ extension WidgetExtension on Widget {
         child: this,
       );
 
+  ClipRRect clipRRect({required borderRadius}) => ClipRRect(
+        child: this,
+        borderRadius: borderRadius,
+      );
+
   Container intoContainer({
     Key? key,
     AlignmentGeometry? alignment,

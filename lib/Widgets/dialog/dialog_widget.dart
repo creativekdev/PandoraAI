@@ -477,3 +477,66 @@ Future<PAICameraEntity?> showPhotoTakeDialog(BuildContext context, bool showRece
     return null;
   }
 }
+
+Future<bool?> showEnsureToSwitchRemoveBg(BuildContext context) async {
+  return await showDialog(
+      context: context,
+      builder: (_) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: $(4)),
+              Text(
+                S.of(context).remove_bg_again_tips,
+                style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+                textAlign: TextAlign.center,
+              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+              Row(
+                children: [
+                  SizedBox(width: $(17)),
+                  Expanded(
+                    child: TitleTextWidget(
+                      S.of(context).ok,
+                      ColorConstant.White,
+                      FontWeight.w500,
+                      17,
+                    )
+                        .intoContainer(
+                      padding: EdgeInsets.symmetric(vertical: $(10)),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(32), border: Border.all(color: Colors.white, width: 1)),
+                    )
+                        .intoGestureDetector(onTap: () {
+                      Navigator.pop(context, true);
+                    }),
+                  ),
+                  SizedBox(width: $(10)),
+                  Expanded(
+                      child: TitleTextWidget(
+                    S.of(context).cancel,
+                    ColorConstant.TextBlack,
+                    FontWeight.w500,
+                    17,
+                  )
+                          .intoContainer(
+                    padding: EdgeInsets.symmetric(vertical: $(10)),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(32), color: Colors.white),
+                  )
+                          .intoGestureDetector(onTap: () {
+                    Navigator.pop(context);
+                  })),
+                  SizedBox(width: $(17)),
+                ],
+              ),
+              SizedBox(height: $(15)),
+            ],
+          )
+              .intoContainer(
+                decoration: BoxDecoration(
+                  image: DecorationImage(image: AssetImage(Images.ic_remove_dialog_background), fit: BoxFit.fill),
+                  borderRadius: BorderRadius.circular(20)
+                ),
+              )
+              // .clipRRect(borderRadius: BorderRadius.circular($(24)))
+              .intoMaterial(color: Colors.transparent)
+              .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(35)))
+              .intoCenter());
+}

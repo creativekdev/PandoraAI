@@ -156,7 +156,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   set showedSize(Size size) {
     _showedSize = size;
-    borderRect = getMaxRealImageRect(imageFront!.width, imageFront!.height, imageFront!);
+    borderRect = getMaxRealImageRect(imageFront?.width ?? 0, imageFront?.height ?? 0, imageFront);
   }
 
   Size get showedSize => _showedSize;
@@ -166,7 +166,10 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   LoadBgController bgController = Get.put(LoadBgController());
 
-  Rect getMaxRealImageRect(int width, int height, imgLib.Image image) {
+  Rect getMaxRealImageRect(int width, int height, imgLib.Image? image) {
+    if (image == null) {
+      return Rect.zero;
+    }
     int minX = width;
     int maxX = 0;
     int minY = height;

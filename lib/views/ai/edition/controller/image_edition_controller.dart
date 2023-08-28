@@ -90,10 +90,7 @@ class ImageEditionController extends GetxController {
 
   ui.Image? get shownImage => _shownImage;
 
-  imgLib.Image? _shownLibImage;
-
   setShownImage(imgLib.Image? image, {bool isUpdate = true}) async {
-    _shownLibImage = image;
     if (image == null) {
       _shownImage = null;
     } else {
@@ -123,15 +120,9 @@ class ImageEditionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    var effectHolder = AllTransferController(originalPath: _originPath, itemList: recentItemList, style: effectStyle, initKey: initKey)
-      ..parent = this
-      ..onInit();
     filtersHolder = FiltersHolder(parent: this)..onInit();
     var removeBgHolder = RemoveBgHolder(parent: this)..onInit();
     items = [
-      EditionItem()
-        ..function = ImageEditionFunction.effect
-        ..holder = effectHolder,
       EditionItem()
         ..function = ImageEditionFunction.filter
         ..holder = filtersHolder,
@@ -145,12 +136,26 @@ class ImageEditionController extends GetxController {
         ..function = ImageEditionFunction.removeBg
         ..holder = removeBgHolder,
     ];
+    if (initFunction != ImageEditionFunction.removeBg) {
+      var effectHolder = AllTransferController(originalPath: _originPath, itemList: recentItemList, style: effectStyle, initKey: initKey)
+        ..parent = this
+        ..onInit();
+      items.insert(
+        0,
+        EditionItem()
+          ..function = ImageEditionFunction.effect
+          ..holder = effectHolder,
+      );
+    }
     currentItem = items.pick((t) => t.function == initFunction) ?? items.first;
     filtersHolder.setOriginFilePath(_originPath).then((value) {
       var rect = ImageUtils.getTargetCoverRect(imageContainerSize, Size(filtersHolder.shownImage!.width.toDouble(), filtersHolder.shownImage!.height.toDouble()));
       showImageSize = rect.size;
       backgroundCardSize = rect;
     });
+    if (initFunction == ImageEditionFunction.removeBg) {
+      removeBgHolder.setOriginFilePath(_originPath);
+    }
   }
 
   @override
@@ -276,6 +281,15 @@ class ImageEditionController extends GetxController {
         startRemoveBg();
       }
       return false;
+    }
+    if (target.function == ImageEditionFunction.removeBg) {
+      var holder = target.holder as RemoveBgHolder;
+      if (holder.removedImage != null) {
+        var bool = await showEnsureToSwitchRemoveBg(context);
+        if (bool == null || bool == false) {
+          return false;
+        }
+      }
     }
     if (target.function == ImageEditionFunction.effect) {
       //跳转effect

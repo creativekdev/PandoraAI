@@ -1,6 +1,18 @@
 import 'package:image/image.dart' as imgLib;
 
 class ImageProcessor {
+  static int argbToRgb(int pixel) {
+    var alpha = imgLib.getAlpha(pixel);
+    var a = alpha / 255;
+    var red = imgLib.getRed(pixel);
+    var green = imgLib.getGreen(pixel);
+    var blue = imgLib.getBlue(pixel);
+    var r = a * red + (1 - a) * 255;
+    var g = a * green + (1 - a) * 255;
+    var b = a * blue + (1 - a) * 255;
+    return imgLib.Color.fromRgb(r.toInt(), g.toInt(), b.toInt());
+  }
+
   static int getR(int pixel) {
     return imgLib.getRed(pixel);
   }

@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -21,15 +22,23 @@ class Cartoonize {
     RecentEffectModel? record,
     String? initKey,
   }) async {
-    ImageEditionFunction function = ImageEditionFunction.effect;
-    if(record == null) {
-      ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer, function: function, initKey: initKey, record: record, cardType: HomeCardType.cartoonize);
-      return;
+    EffectDataController dataController = Get.find();
+    String category = 'cartoonize';
+    if (initKey != null) {
+      var list = dataController.data?.sticker?.children ?? [];
+      for (var value in list) {
+        if (category == 'sticker') {
+          break;
+        }
+        for (var key in value.effects) {
+          if (key == initKey) {
+            category = 'sticker';
+            break;
+          }
+        }
+      }
     }
-    if (record.category == 'cartoonize') {
-      function = ImageEditionFunction.effect;
-      ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer, function: function, initKey: initKey, record: record, cardType: HomeCardType.cartoonize);
-    } else if (record.category == 'sticker') {
+    if (category == 'sticker') {
       bool result = await PermissionsUtil.checkPermissions();
       if (result) {
         if (record == null) {
@@ -44,9 +53,10 @@ class Cartoonize {
       } else {
         return PermissionsUtil.permissionDenied(context);
       }
-      // function = ImageEditionFunction.sticker;
+    } else {
+      ImageEdition.open(context,
+          source: source, style: EffectStyle.Cartoonizer, function: ImageEditionFunction.effect, initKey: initKey, record: record, cardType: HomeCardType.cartoonize);
     }
-    return;
   }
 
   static Future _open(BuildContext context, String source, String? initKey) async {

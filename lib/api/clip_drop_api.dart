@@ -9,9 +9,10 @@ import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
+import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
-import 'package:image/image.dart';
+import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
 
 class ClipDropApi extends RetryAbleRequester {
@@ -70,14 +71,17 @@ class ClipDropApi extends RetryAbleRequester {
       for (var x = 0; x < image.width; x++) {
         for (var y = 0; y < image.height; y++) {
           var pixel = image.getPixel(x, y);
-          var alpha = getAlpha(pixel);
-          if (alpha != 0) {
+          var alpha = imgLib.getAlpha(pixel);
+          if (alpha <= 20) {
+            alpha = 0;
+          } else if (alpha < 255 && alpha > 20) {
+            pixel = ImageProcessor.argbToRgb(pixel);
             alpha = 255;
           }
-          var red = getRed(pixel);
-          var green = getGreen(pixel);
-          var blue = getBlue(pixel);
-          var fromRgb = Color.fromRgba(red, green, blue, alpha);
+          var red = imgLib.getRed(pixel);
+          var green = imgLib.getGreen(pixel);
+          var blue = imgLib.getBlue(pixel);
+          var fromRgb = imgLib.Color.fromRgba(red, green, blue, alpha);
           image.setPixel(x, y, fromRgb);
         }
       }

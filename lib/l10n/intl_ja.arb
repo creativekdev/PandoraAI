@@ -498,5 +498,6 @@
   "print": "印刷",
   "enter_the_color_value": "正しい色の値を入力してください",
   "buy_attr_ai_tools": "Pandora AI のすべてのエフェクトに無制限にフルアクセスできます。Cartoonize、AIColoring、RemoveBackground、Me-taverse、AIScribble、TextToImage など。",
-  "fill_in_address": "住所をご記入ください"
+  "fill_in_address": "住所をご記入ください",
+  "remove_bg_again_tips": "背景を再度削除してもよろしいですか？"
 }

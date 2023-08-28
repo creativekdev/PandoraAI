@@ -497,6 +497,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "refunded": MessageLookupByLibrary.simpleMessage("返金済み"),
         "remaining_credits": MessageLookupByLibrary.simpleMessage("すでに持っている権益"),
         "remind": MessageLookupByLibrary.simpleMessage("ヒント"),
+        "remove_bg_again_tips":
+            MessageLookupByLibrary.simpleMessage("背景を再度削除してもよろしいですか？"),
         "reply": MessageLookupByLibrary.simpleMessage("返信"),
         "resend": MessageLookupByLibrary.simpleMessage("再送信"),
         "resend_failed": MessageLookupByLibrary.simpleMessage("送信が失敗しました"),
