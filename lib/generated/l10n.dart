@@ -5109,6 +5109,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Are you sure to remove background again?`
+  String get remove_bg_again_tips {
+    return Intl.message(
+      'Are you sure to remove background again?',
+      name: 'remove_bg_again_tips',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

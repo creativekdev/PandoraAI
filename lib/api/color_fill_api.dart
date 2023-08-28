@@ -15,6 +15,7 @@ import 'package:common_utils/common_utils.dart';
 
 class ColorFillApi extends RetryAbleRequester {
   ColorFillApi() : super(client: DioNode().build());
+
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {
     var userManager = AppDelegate.instance.getManager<UserManager>();
@@ -32,11 +33,15 @@ class ColorFillApi extends RetryAbleRequester {
     required String directoryPath,
     onFailed,
   }) async {
-    var baseEntity = await post('/sdapi/v1/lineart',
-        params: {
-          'init_images': [imageUrl],
-        },
-        onFailed: onFailed);
+    var baseEntity = await post(
+      '/sdapi/v1/lineart',
+      params: {
+        'init_images': [imageUrl],
+      },
+      onFailed: onFailed,
+      needRetry: true,
+      canClickRetry: true,
+    );
     ColorFillResultEntity? result = jsonConvert.convert<ColorFillResultEntity>(baseEntity?.data);
     if (result == null) {
       return null;

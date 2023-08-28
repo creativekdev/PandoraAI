@@ -592,6 +592,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "remaining_credits":
             MessageLookupByLibrary.simpleMessage("Beneficios adquiridos"),
         "remind": MessageLookupByLibrary.simpleMessage("pronto"),
+        "remove_bg_again_tips": MessageLookupByLibrary.simpleMessage(
+            "Estás seguro de eliminar el fondo otra vez?"),
         "reply": MessageLookupByLibrary.simpleMessage("Respuesta"),
         "resend": MessageLookupByLibrary.simpleMessage("Reenviar"),
         "resend_failed": MessageLookupByLibrary.simpleMessage("Error de envío"),
