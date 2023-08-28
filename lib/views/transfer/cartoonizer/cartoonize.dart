@@ -22,10 +22,14 @@ class Cartoonize {
     String? initKey,
   }) async {
     ImageEditionFunction function = ImageEditionFunction.effect;
-    if (record?.category == 'cartoonize') {
+    if(record == null) {
+      ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer, function: function, initKey: initKey, record: record, cardType: HomeCardType.cartoonize);
+      return;
+    }
+    if (record.category == 'cartoonize') {
       function = ImageEditionFunction.effect;
       ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer, function: function, initKey: initKey, record: record, cardType: HomeCardType.cartoonize);
-    } else if (record?.category == 'sticker') {
+    } else if (record.category == 'sticker') {
       bool result = await PermissionsUtil.checkPermissions();
       if (result) {
         if (record == null) {

@@ -199,87 +199,86 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   Widget buildShownImage(Size size, Size showSize) {
     showedSize = showSize;
-    return Expanded(
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          RepaintBoundary(
-            key: globalKey,
-            child: Listener(
-              onPointerDown: (PointerDownEvent event) {
-                isShowSquar.value = true;
-              },
-              onPointerUp: (PointerUpEvent event) {
-                isShowSquar.value = false;
-              },
-              child: ClipRect(
-                child: Container(
-                  width: showSize.width,
-                  height: showSize.height,
-                  child: Stack(alignment: Alignment.center, children: [
-                    LoadBgView(width: showSize.width, height: showSize.height),
-                    PinGestureView(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            child: Image.file(
-                              key: _personImageKey,
-                              removedImage!,
-                              fit: BoxFit.contain,
-                            ),
+    return Stack(
+      alignment: Alignment.center,
+      fit: StackFit.expand,
+      children: [
+        RepaintBoundary(
+          key: globalKey,
+          child: Listener(
+            onPointerDown: (PointerDownEvent event) {
+              isShowSquar.value = true;
+            },
+            onPointerUp: (PointerUpEvent event) {
+              isShowSquar.value = false;
+            },
+            child: ClipRect(
+              child: Container(
+                width: showSize.width,
+                height: showSize.height,
+                child: Stack(alignment: Alignment.center, children: [
+                  LoadBgView(width: showSize.width, height: showSize.height),
+                  PinGestureView(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          child: Image.file(
+                            key: _personImageKey,
+                            removedImage!,
+                            fit: BoxFit.contain,
                           ),
-                          Obx(
-                            () => isShowSquar.value
-                                ? UnconstrainedBox(
-                                    child: Container(
-                                      width: showSize.width,
-                                      height: showSize.height,
-                                      padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
-                                      child: CustomPaint(
-                                        painter: GradientBorderPainter(
-                                          width: borderRect.width,
-                                          height: borderRect.height,
-                                          strokeWidth: $(2),
-                                          borderRadius: $(8),
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Color(0xFFE31ECD),
-                                              Color(0xFF243CFF),
-                                              Color(0xFFE31ECD),
-                                            ],
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                          ),
+                        ),
+                        Obx(
+                          () => isShowSquar.value
+                              ? UnconstrainedBox(
+                                  child: Container(
+                                    width: showSize.width,
+                                    height: showSize.height,
+                                    padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
+                                    child: CustomPaint(
+                                      painter: GradientBorderPainter(
+                                        width: borderRect.width,
+                                        height: borderRect.height,
+                                        strokeWidth: $(2),
+                                        borderRadius: $(8),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Color(0xFFE31ECD),
+                                            Color(0xFF243CFF),
+                                            Color(0xFFE31ECD),
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
                                         ),
                                       ),
                                     ),
-                                  )
-                                : SizedBox(),
-                          )
-                        ],
-                      ),
-                      scale: scale,
-                      dx: dx,
-                      dy: dy,
-                      onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                        canReset = true;
-                        scale = newScale;
-                        dx = newDx;
-                        dy = newDy;
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
-                        });
-                      },
+                                  ),
+                                )
+                              : SizedBox(),
+                        )
+                      ],
                     ),
-                  ]),
-                ),
+                    scale: scale,
+                    dx: dx,
+                    dy: dy,
+                    onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                      canReset = true;
+                      scale = newScale;
+                      dx = newDx;
+                      dy = newDy;
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
+                      });
+                    },
+                  ),
+                ]),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     ).intoContainer(width: size.width, height: size.height, alignment: Alignment.center);
   }
 
