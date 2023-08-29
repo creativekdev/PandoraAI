@@ -57,7 +57,7 @@ class ImageEdition {
       return;
     }
     CacheManager cacheManager = AppDelegate().getManager();
-    var path = await ImageUtils.onImagePick(paiCameraEntity.xFile.path, cacheManager.storageOperator.imageDir.path, compress: true, size: 2048, showLoading: true, maxM: 2);
+    var path = await ImageUtils.onImagePick(paiCameraEntity.xFile.path, cacheManager.storageOperator.imageDir.path, compress: true, size: 1536, showLoading: true, maxM: 2);
     await Navigator.of(context).push(
       MaterialPageRoute(
         settings: RouteSettings(name: '/ImageEditionScreen'),
@@ -71,6 +71,7 @@ class ImageEdition {
           recentEffectItems: [],
           filter: FilterEnum.NOR,
           adjustData: [],
+          cropRect: Rect.zero,
         ),
       ),
     );
@@ -87,6 +88,7 @@ class ImageEdition {
     String path = '';
     List<RecentEffectItem> items = [];
     List<RecentAdjustData> adjustData = [];
+    Rect cropRect = Rect.zero;
     FilterEnum filter = FilterEnum.NOR;
     if (record is RecentEffectModel) {
       path = record.originalPath!;
@@ -98,11 +100,8 @@ class ImageEdition {
       items = record.itemList;
       filter = record.filter ?? FilterEnum.NOR;
       adjustData = record.adjustData;
-      if (!TextUtil.isEmpty(record.filePath)) {
-        path = record.filePath!;
-      } else {
-        path = record.originFilePath!;
-      }
+      cropRect = record.cropRect;
+      path = record.originFilePath!;
     }
     await Navigator.of(context).push(MaterialPageRoute(
       builder: (_) {
@@ -116,6 +115,7 @@ class ImageEdition {
           recentEffectItems: items,
           adjustData: adjustData,
           filter: filter,
+          cropRect: cropRect,
         );
       },
     ));

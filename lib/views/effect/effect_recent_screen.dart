@@ -146,7 +146,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                               context,
                               source: 'recently',
                               style: EffectStyle.All,
-                              function: ImageEditionFunction.effect,
+                              function: ImageEditionFunction.filter,
                               cardType: HomeCardType.imageEdition,
                               record: data,
                             );

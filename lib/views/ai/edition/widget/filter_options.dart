@@ -22,6 +22,15 @@ class FilterOptions extends StatelessWidget {
       return Container();
     }
     var itemWidth = ScreenUtil.getCurrentWidgetSize(context).width / 6.2;
+    delay(() {
+      if (controller.filterOperator.scrollController.isAttached) {
+        var pos = (controller.filterOperator.filters.findPosition((data) => data == controller.filterOperator.currentFilter) ?? 0);
+        if (pos == 0) {
+          return;
+        }
+        controller.filterOperator.scrollController.scrollTo(index: pos - 1, duration: Duration(milliseconds: 300));
+      }
+    });
     return Column(
       children: [
         Row(
@@ -32,6 +41,7 @@ class FilterOptions extends StatelessWidget {
             Expanded(
                 child: ScrollablePositionedList.separated(
               initialScrollIndex: 0,
+              itemScrollController: controller.filterOperator.scrollController,
               physics: ClampingScrollPhysics(),
               padding: EdgeInsets.only(right: $(12)),
               itemCount: controller.thumbnails.length - 1,

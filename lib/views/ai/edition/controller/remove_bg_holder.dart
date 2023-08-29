@@ -18,39 +18,65 @@ import '../../../../Common/event_bus_helper.dart';
 import '../../../common/background/background_picker.dart';
 import '../../../mine/filter/pin_gesture_views.dart';
 
-class RemoveBgHolder extends ImageEditionBaseHolder {
+class RemoveBgConfig {
+  File? removedImage;
   BackgroundData? selectData;
+  double ratio = 1;
+  double scale = 1;
+  double dx = 0;
+  double dy = 0;
 
-  File? _removedImage;
+  RemoveBgConfig();
 
-  File? get removedImage => _removedImage;
+  @override
+  String toString() {
+    return 'RemoveBgConfig{removedImage: ${removedImage?.path}, selectData: ${selectData?.toString()}, ratio: $ratio, scale: $scale, dx: $dx, dy: $dy}';
+  }
+}
+
+class RemoveBgHolder extends ImageEditionBaseHolder {
+  late RemoveBgConfig config;
+
+  File? get removedImage => config.removedImage;
 
   set removedImage(File? file) {
-    _removedImage = file;
+    config.removedImage = file;
     update();
   }
-
-  double ratio = 1;
 
   ui.Image? imageUiFront;
   imgLib.Image? imageFront;
 
   BackgroundData preBackgroundData = BackgroundData();
-  late StreamSubscription onRightTitleSwitchEvent;
 
-  String? resultFilePath;
+  late Uint8List personByte;
+  GlobalKey globalKey = GlobalKey(); // 保存图片的key
+  RxBool isShowSquar = false.obs; // 显示人像的边框
+
+  GlobalKey _personImageKey = GlobalKey();
+  Rect borderRect = Rect.fromLTRB(0, 0, 0, 0);
+
+  LoadBgController bgController = Get.put(LoadBgController());
 
   RemoveBgHolder({required super.parent});
 
   @override
+  Future setOriginFilePath(String? path, {dynamic conf}) async {
+    bool needRemove = true;
+    if (conf != null) {
+      needRemove = conf as bool;
+    }
+    if (originFilePath == path || !needRemove) {
+      return;
+    }
+    originFilePath = path;
+    await initData();
+    update();
+  }
+
+  @override
   onInit() {
-    onRightTitleSwitchEvent = EventBusHelper().eventBus.on<OnEditionRightTabSwitchEvent>().listen((event) {
-      if (event.data != "Background") {
-        scale = 1.0;
-        dx = 0;
-        dy = 0;
-      }
-    });
+    config = RemoveBgConfig();
   }
 
   @override
@@ -58,8 +84,11 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     await super.initData();
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
-    resultFilePath = null;
+    resultFilePath = '';
     removedImage = null;
+    config.scale = 1.0;
+    config.dx = 0;
+    config.dy = 0;
     imageFront = null;
     imageUiFront = null;
     final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
@@ -75,7 +104,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
           onGetRemoveBgImage: (String path) async {
             removedImage = File(path);
             var imageInfo = await SyncFileImage(file: removedImage!).getImage();
-            ratio = imageInfo.image.width / imageInfo.image.height;
+            config.ratio = imageInfo.image.width / imageInfo.image.height;
             imageUiFront = await getImage(File(path));
             imageFront = await getLibImage(imageUiFront!);
             shownImage = imageFront;
@@ -94,7 +123,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       canReset = true;
     }
     if (isPopMerge) {
-      preBackgroundData = selectData ?? preBackgroundData;
+      preBackgroundData = config.selectData ?? preBackgroundData;
     } else {
       if (data.filePath != null) {
         File backFile = File(data.filePath!);
@@ -102,7 +131,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       } else {
         bgController.setBackgroundData(null, rgbaToAbgr(data.color!));
       }
-      selectData = data;
+      config.selectData = data;
     }
     delay(() => onProductShowImage());
   }
@@ -126,10 +155,10 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     preBackgroundData.filePath = null;
     bgController.setBackgroundData(null, Colors.transparent);
     await onSavedBackground(BackgroundData()..color = Colors.transparent, false);
-    if (scale != 1 || dy != 0 || dx != 0) {
-      scale = 1;
-      dy = 0;
-      dx = 0;
+    if (config.scale != 1 || config.dy != 0 || config.dx != 0) {
+      config.scale = 1;
+      config.dy = 0;
+      config.dx = 0;
     }
     EventBusHelper().eventBus.fire(OnResetScaleEvent());
     delay(() => onProductShowImage());
@@ -142,29 +171,6 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       shownImage = await getLibImage(image);
     }
   }
-
-  late Uint8List personByte;
-  GlobalKey globalKey = GlobalKey(); // 保存图片的key
-  RxBool isShowSquar = false.obs; // 显示人像的边框
-  double scale = 1;
-  double dx = 0;
-  double dy = 0;
-
-  // double _width = 0;
-  // double _height = 0;
-  // Size _showedSize = Size(0, 0);
-  //
-  // set showedSize(Size size) {
-  //   _showedSize = size;
-  //   borderRect = getMaxRealImageRect(imageFront?.width ?? 0, imageFront?.height ?? 0, imageFront);
-  // }
-
-  // Size get showedSize => _showedSize;
-
-  GlobalKey _personImageKey = GlobalKey();
-  Rect borderRect = Rect.fromLTRB(0, 0, 0, 0);
-
-  LoadBgController bgController = Get.put(LoadBgController());
 
   Rect getMaxRealImageRect(int width, int height, imgLib.Image? image) {
     if (image == null) {
@@ -260,14 +266,14 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                     )
                   ],
                 ),
-                scale: scale,
-                dx: dx,
-                dy: dy,
+                scale: config.scale,
+                dx: config.dx,
+                dy: config.dy,
                 onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
                   canReset = true;
-                  scale = newScale;
-                  dx = newDx;
-                  dy = newDy;
+                  config.scale = newScale;
+                  config.dx = newDx;
+                  config.dy = newDy;
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
                   });
@@ -283,16 +289,15 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   @override
   dispose() {
     Get.delete<LoadBgController>();
-    onRightTitleSwitchEvent.cancel();
     return super.dispose();
   }
 
   @override
   Future<String> saveToResult() async {
     String? waitToDelete = resultFilePath;
-    var key = EncryptUtil.encodeMd5('${originFilePath}');
+    var key = EncryptUtil.encodeMd5('${config.toString()}');
     var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';
-    if (newPath == waitToDelete) {
+    if (newPath == waitToDelete && File(newPath).existsSync()) {
       return newPath;
     } else {
       var list = await new Executor().execute(arg1: shownImage!, fun1: encodePngThread);

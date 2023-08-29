@@ -36,7 +36,11 @@ class AdjustData {
 
   @override
   String toString() {
-    return 'AdjustData{function: $function, value: $value, initValue: $initValue, previousValue: $previousValue, start: $start, end: $end}';
+    return 'AdjustData{function: $function, value: ${value.toStringAsFixed(0)}, initValue: $initValue, previousValue: $previousValue, start: $start, end: $end}';
+  }
+
+  AdjustData copy() {
+    return AdjustData(function: function, value: value, previousValue: previousValue, start: start, end: end, initValue: initValue, multiple: multiple);
   }
 }
 

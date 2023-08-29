@@ -361,6 +361,7 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
             ],
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))).customDialogStyle()).then((value) {
     if (value == null) {
+      EventBusHelper().eventBus.fire(OnLimitDialogCancelEvent());
       // do nothing
     } else if (value) {
       switch (type) {
@@ -480,6 +481,7 @@ Future<PAICameraEntity?> showPhotoTakeDialog(BuildContext context, bool showRece
 
 Future<bool?> showEnsureToSwitchRemoveBg(BuildContext context) async {
   return await showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (_) => Column(
             mainAxisSize: MainAxisSize.min,
@@ -530,10 +532,7 @@ Future<bool?> showEnsureToSwitchRemoveBg(BuildContext context) async {
             ],
           )
               .intoContainer(
-                decoration: BoxDecoration(
-                  image: DecorationImage(image: AssetImage(Images.ic_remove_dialog_background), fit: BoxFit.fill),
-                  borderRadius: BorderRadius.circular(20)
-                ),
+                decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_remove_dialog_background), fit: BoxFit.fill), borderRadius: BorderRadius.circular(20)),
               )
               // .clipRRect(borderRadius: BorderRadius.circular($(24)))
               .intoMaterial(color: Colors.transparent)

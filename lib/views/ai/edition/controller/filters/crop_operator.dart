@@ -2,7 +2,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/croppy/src/model/crop_image_result.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/base_filter_operator.dart';
 
-class CropOperator extends BaseFilterOperator {
+class CropOperator extends BaseFilterOperator<Rect> {
   late List<CropConfig> items;
 
   CropConfig? _currentItem;
@@ -14,11 +14,11 @@ class CropOperator extends BaseFilterOperator {
     update();
   }
 
-  CropImageResult? _cropData;
+  Rect? _cropData;
 
-  CropImageResult? get cropData => _cropData;
+  Rect? get cropData => _cropData;
 
-  set cropData(CropImageResult? data) {
+  set cropData(Rect? data) {
     this._cropData = data;
     parent.buildImage();
   }
@@ -28,10 +28,10 @@ class CropOperator extends BaseFilterOperator {
   CropOperator({required super.parent});
 
   Rect getShownRect(double scale) {
-    if (cropData == null) {
+    if (cropData == null || cropData!.isEmpty) {
       return Rect.zero;
     }
-    var rect = cropData!.transformationsData.cropRect;
+    var rect = cropData!;
     return Rect.fromLTRB(rect.left * scale, rect.top * scale, rect.right * scale, rect.bottom * scale);
   }
 
@@ -39,11 +39,11 @@ class CropOperator extends BaseFilterOperator {
     if (cropData == null) {
       return Rect.zero;
     }
-    return cropData!.transformationsData.cropRect;
+    return cropData!;
   }
 
   @override
-  onInit() {
+  onInit(Rect recent) {
     items = [
       CropConfig(width: 10000, height: 10000 / parent.originRatio, title: 'Original'),
       CropConfig(width: 1, height: 1, title: '1:1'),
@@ -54,6 +54,7 @@ class CropOperator extends BaseFilterOperator {
       CropConfig(width: 16, height: 9, title: '16:9'),
       CropConfig(width: 9, height: 16, title: '9:16'),
     ];
+    cropData = recent;
     // currentItem = items.first;
   }
 }

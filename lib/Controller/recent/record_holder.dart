@@ -271,6 +271,9 @@ class ImageEditionRecordHolder extends RecordHolder<RecentImageEditionEntity> {
 
   @override
   Future<bool> record(List<RecentImageEditionEntity> source, RecentImageEditionEntity data, {bool toCache = true}) async {
+    if (source.pick((t) => t.filePath == data.filePath) != null) {
+      return true;
+    }
     source.insert(0, data);
     if (toCache) {
       await saveToCache(source);

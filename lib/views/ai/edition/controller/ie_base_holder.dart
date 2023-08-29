@@ -15,7 +15,7 @@ abstract class ImageEditionBaseHolder {
 
   String? originFilePath;
 
-  Future setOriginFilePath(String? path) async {
+  Future setOriginFilePath(String? path, {dynamic conf}) async {
     if (originFilePath == path) {
       return;
     }
@@ -53,6 +53,8 @@ abstract class ImageEditionBaseHolder {
     _canReset = value;
     update();
   }
+
+  String resultFilePath = '';
 
   ///------------------------------------------------------------------------------------
   ImageEditionBaseHolder({required this.parent});

@@ -82,6 +82,11 @@ class BackgroundData {
       ..color = color
       ..filePath = filePath;
   }
+
+  @override
+  String toString() {
+    return 'BackgroundData{filePath: $filePath, color: $color}';
+  }
 }
 
 class BackgroundPickerBar extends StatefulWidget {
