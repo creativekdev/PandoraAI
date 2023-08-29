@@ -281,39 +281,38 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       },
       slivers: [
         (listController.isMetagram)
-            ? SliverWaterfallFlow(
-                gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: $(15),
-                  // mainAxisSpacing: $(15),
-                ),
-                delegate: SliverChildBuilderDelegate(
+            ? SizeCacheWidget(
+                child: SliverWaterfallFlow(
+                    gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: $(15),
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        var data = listController.dataList[index];
+                        if (data.data is SocialPostPageEntity) {
+                          return DiscoveryMgListCard(
+                            width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                            data: data.data! as SocialPostPageEntity,
+                            onTap: () {
+                              Metagram.open(context, source: 'discovery_page', socialPostPage: data.data!);
+                            },
+                          ).marginOnly(top: $(15));
+                        } else {
+                          return SizedBox.shrink();
+                        }
+                      },
+                      childCount: listController.dataList.length,
+                    )),
+              )
+            : SizeCacheWidget(
+                child: SliverList(
+                    delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     var data = listController.dataList[index];
-                    if (data.data is SocialPostPageEntity) {
-                      return FrameSeparateWidget(
-                        child: DiscoveryMgListCard(
-                          width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                          data: data.data! as SocialPostPageEntity,
-                          onTap: () {
-                            Metagram.open(context, source: 'discovery_page', socialPostPage: data.data!);
-                          },
-                        ).marginOnly(top: $(15)),
-                      );
-                    } else {
-                      return SizedBox.shrink();
-                    }
-                  },
-                  childCount: listController.dataList.length,
-                ))
-            : SliverList(
-                delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  var data = listController.dataList[index];
-                  if (data.data is DiscoveryListEntity) {
-                    if (data.visible) {
-                      return Obx(() => FrameSeparateWidget(
-                            child: DiscoveryListCard(
+                    if (data.data is DiscoveryListEntity) {
+                      if (data.visible) {
+                        return Obx(() => DiscoveryListCard(
                               data: data.data! as DiscoveryListEntity,
                               liked: data.liked.value,
                               hasLine: index != 0,
@@ -375,17 +374,17 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                                 return result;
                               },
                               ignoreLikeBtn: listController.likeLocalAddAlready.value,
-                            ),
-                          ));
+                            ));
+                      } else {
+                        return SizedBox.shrink();
+                      }
                     } else {
                       return SizedBox.shrink();
                     }
-                  } else {
-                    return SizedBox.shrink();
-                  }
-                },
-                childCount: listController.dataList.length,
-              )),
+                  },
+                  childCount: listController.dataList.length,
+                )),
+              ),
       ],
     ).intoContainer(
       margin: EdgeInsets.only(
