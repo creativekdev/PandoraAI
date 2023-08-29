@@ -4,18 +4,18 @@ import 'dart:math';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/utils/ffmpeg_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 
 import '../../../Common/importFile.dart';
 import '../../../Widgets/image/sync_download_video.dart';
+import '../../../app/app.dart';
 
 enum AlignType {
   first,
   last,
-  maxOne,
-  minOne,
 }
 
 typedef PlaceholderWidgetBuilder = Widget Function(BuildContext context, DiscoveryResource data, double width, double height);
@@ -113,102 +113,50 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
     _init();
   }
 
+  CacheManager cacheManager = AppDelegate.instance.getManager();
+
   _init() {
     space = widget.space;
     alignType = widget.alignType;
     datas = widget.datas;
     placeholderWidgetBuilder = widget.placeholderWidgetBuilder;
     onTap = widget.onTap;
-    delay(() {
-      if (!mounted) {
-        return;
-      }
-      totalWidth = ScreenUtil.getCurrentWidgetSize(context).width;
-      var imgTotalWidth = totalWidth - space * datas.length - 1;
-      itemWidth = imgTotalWidth / datas.length;
-      calculateSize();
-      if (mounted) {
-        setState(() {});
-      }
-    });
+    totalWidth = ScreenUtil.screenSize.width;
+    var imgTotalWidth = totalWidth - space * datas.length - 1;
+    itemWidth = imgTotalWidth / datas.length;
+    calculateSize();
   }
 
+  // get the image's height
   calculateSize() {
     switch (alignType) {
       case AlignType.first:
         var item = datas.first;
-        if (item.type == DiscoveryResourceType.image) {
-          SyncCachedNetworkImage(url: item.url!).getImage().then((value) {
-            itemHeight = itemWidth / (value.image.width / value.image.height);
-            if (mounted) {
-              setState(() {});
-            }
-          });
+        // get the width/height from cache
+        double? ration = cacheManager.imageScaleOperator.getScale(item.url!);
+        // ration is not null, get the height
+        // ration is null, get the height from SyncCachedNetworkImage
+        if (ration != null) {
+          itemHeight = itemWidth / ration;
         } else {
-          SyncDownloadVideo(type: getFileType(item.url!), url: item.url!).getVideo().then((value) {
-            if (value != null) {
-              FFmpegUtil.getVideoRatio(value.path).then((value) {
-                if (value != null) {
-                  itemHeight = itemWidth / value;
-                } else {
-                  itemHeight = itemWidth;
-                }
-                if (mounted) {
-                  setState(() {});
-                }
-              });
-            }
-          });
-        }
-        break;
-      case AlignType.last:
-        var item = datas.last;
-        if (item.type == DiscoveryResourceType.image) {
-          SyncCachedNetworkImage(url: item.url!).getImage().then((value) {
-            itemHeight = itemWidth / (value.image.width / value.image.height);
-            if (mounted) {
-              setState(() {});
-            }
-          });
-        } else {
-          SyncDownloadVideo(type: getFileType(item.url!), url: item.url!).getVideo().then((value) {
-            if (value != null) {
-              FFmpegUtil.getVideoRatio(value.path).then((value) {
-                if (value != null) {
-                  itemHeight = itemWidth / value;
-                } else {
-                  itemHeight = itemWidth;
-                }
-                if (mounted) {
-                  setState(() {});
-                }
-              });
-            }
-          });
-        }
-        break;
-      case AlignType.maxOne:
-        for (var value in datas) {
-          if (value.type == DiscoveryResourceType.image) {
-            SyncCachedNetworkImage(url: value.url!).getImage().then((value) {
-              var height = itemWidth / (value.image.width / value.image.height);
-              if (height > itemHeight) {
-                itemHeight = height;
-              }
+          if (item.type == DiscoveryResourceType.image) {
+            SyncCachedNetworkImage(url: item.url!).getImage().then((value) {
+              itemHeight = itemWidth / (value.image.width / value.image.height);
+              cacheManager.imageScaleOperator.setScale(item.url!, value.image.width / value.image.height);
               if (mounted) {
                 setState(() {});
               }
             });
           } else {
-            SyncDownloadVideo(type: getFileType(value.url!), url: value.url!).getVideo().then((value) {
+            SyncDownloadVideo(type: getFileType(item.url!), url: item.url!).getVideo().then((value) {
               if (value != null) {
                 FFmpegUtil.getVideoRatio(value.path).then((value) {
                   if (value != null) {
-                    var height = itemHeight = itemWidth / value;
-                    if (height > itemHeight) {
-                      itemHeight = height;
-                    }
+                    itemHeight = itemWidth / value;
+                  } else {
+                    itemHeight = itemWidth;
                   }
+                  cacheManager.imageScaleOperator.setScale(item.url!, value ?? 1.0);
                   if (mounted) {
                     setState(() {});
                   }
@@ -218,34 +166,30 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
           }
         }
         break;
-      case AlignType.minOne:
-        for (var value in datas) {
-          if (value.type == DiscoveryResourceType.image) {
-            SyncCachedNetworkImage(url: value.url!).getImage().then((value) {
-              var height = itemWidth / (value.image.width / value.image.height);
-              if (itemHeight == 0) {
-                itemHeight = height;
-              }
-              if (height < itemHeight) {
-                itemHeight = height;
-              }
+      case AlignType.last:
+        var item = datas.last;
+        double? ration = cacheManager.imageScaleOperator.getScale(item.url!);
+        if (ration != null) {
+          itemHeight = itemWidth / ration;
+        } else {
+          if (item.type == DiscoveryResourceType.image) {
+            SyncCachedNetworkImage(url: item.url!).getImage().then((value) {
+              itemHeight = itemWidth / (value.image.width / value.image.height);
+              cacheManager.imageScaleOperator.setScale(item.url!, value.image.width / value.image.height);
               if (mounted) {
                 setState(() {});
               }
             });
           } else {
-            SyncDownloadVideo(type: getFileType(value.url!), url: value.url!).getVideo().then((value) {
+            SyncDownloadVideo(type: getFileType(item.url!), url: item.url!).getVideo().then((value) {
               if (value != null) {
                 FFmpegUtil.getVideoRatio(value.path).then((value) {
                   if (value != null) {
-                    var height = itemHeight = itemWidth / value;
-                    if (itemHeight == 0) {
-                      itemHeight = height;
-                    }
-                    if (height < itemHeight) {
-                      itemHeight = height;
-                    }
+                    itemHeight = itemWidth / value;
+                  } else {
+                    itemHeight = itemWidth;
                   }
+                  cacheManager.imageScaleOperator.setScale(item.url!, value ?? 1.0);
                   if (mounted) {
                     setState(() {});
                   }
@@ -270,9 +214,9 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
         ),
       ).intoContainer(width: totalWidth);
     }
-    if (!TickerMode.of(context)) {
-      return SizedBox(width: ScreenUtil.getCurrentWidgetSize(context).width, height: itemHeight);
-    }
+    // if (!TickerMode.of(context)) {
+    //   return SizedBox(width: ScreenUtil.getCurrentWidgetSize(context).width, height: itemHeight);
+    // }
     return Row(
       children: datas.transfer((e, index) {
         if (e.type == DiscoveryResourceType.image) {
