@@ -320,7 +320,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery'),
+                                    builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, liked: data.liked.value, prePage: 'discovery'),
                                     settings: RouteSettings(name: "/DiscoveryDetailScreen"),
                                   ),
                                 );
@@ -340,7 +340,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', autoComment: true),
+                                    builder: (BuildContext context) =>
+                                        DiscoveryDetailScreen(discoveryEntity: data.data!, liked: data.liked.value, prePage: 'discovery', autoComment: true),
                                     settings: RouteSettings(name: "/DiscoveryDetailScreen"),
                                   ),
                                 );
@@ -353,23 +354,23 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                                 bool result;
                                 listController.likeLocalAddAlready.value = true;
                                 if (liked) {
+                                  data.liked.value = false;
                                   data.data!.likes--;
+                                  result = false;
                                   listController.api.discoveryUnLike(data.data!.id, data.data!.likeId!).then((value) {
                                     if (value == null) {
                                       listController.likeLocalAddAlready.value = false;
                                     }
                                   });
-                                  result = false;
-                                  data.liked.value = false;
                                 } else {
+                                  data.liked.value = true;
                                   data.data!.likes++;
+                                  result = true;
                                   listController.api.discoveryLike(data.data!.id, source: 'discovery_page', style: getStyle(data.data!)).then((value) {
                                     if (value == null) {
                                       listController.likeLocalAddAlready.value = false;
                                     }
                                   });
-                                  result = true;
-                                  data.liked.value = true;
                                 }
                                 return result;
                               },
