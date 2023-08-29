@@ -119,6 +119,7 @@ class FiltersHolder extends ImageEditionBaseHolder {
     cancelable.then((value) {
       taskExecutor.cancelOldTask(time);
       shownImage = value;
+      parent.calculateBackgroundCardSize(this);
       LogUtil.d('spend: ${DateTime.now().millisecondsSinceEpoch - start}');
     });
   }
@@ -146,7 +147,7 @@ class FiltersHolder extends ImageEditionBaseHolder {
     String waitToDelete = resultFilePath;
     var key = getConfigKey();
     if (key == initHash) {
-      return originFilePath!;
+      return '';
     }
     var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';
     if (newPath == waitToDelete && File(newPath).existsSync()) {

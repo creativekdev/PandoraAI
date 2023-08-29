@@ -311,7 +311,7 @@ class ImageEditionController extends GetxController {
       state.showLoading();
       String filePath = await oldHolder.saveToResult();
       state.hideLoading();
-      if (filePath != targetController.originalPath) {
+      if (filePath != targetController.originalPath && !TextUtil.isEmpty(filePath)) {
         await targetController.setOriginPath(filePath);
       }
       return true;
@@ -341,6 +341,9 @@ class ImageEditionController extends GetxController {
       state.showLoading();
       var oldHolder = currentItem.holder as ImageEditionBaseHolder;
       String filePath = await oldHolder.saveToResult();
+      if (TextUtil.isEmpty(filePath)) {
+        return true;
+      }
       var targetHolder = target.holder as ImageEditionBaseHolder;
       String? targetPath = targetHolder.originFilePath;
       if (filePath == targetPath) {
@@ -364,7 +367,7 @@ class ImageEditionController extends GetxController {
   }
 
   void calculateBackgroundCardSize(ImageEditionBaseHolder targetHolder) {
-     var targetCoverRect = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble()));
+    var targetCoverRect = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble()));
     showImageSize = targetCoverRect.size;
     backgroundCardSize = targetCoverRect;
   }
