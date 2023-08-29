@@ -17,6 +17,7 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
@@ -132,9 +133,13 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     var holder = controller.currentItem.holder as ImageEditionBaseHolder;
     String value = await holder.saveToResult();
     var recentController = Get.find<RecentController>();
+    String originPath = controller.originFile.path;
+    if (controller.currentItem.holder is RemoveBgHolder) {
+      originPath = value;
+    }
     var filtersHolder = controller.filtersHolder;
     recentController.onImageEditionUsed(
-      controller.originFile.path,
+      originPath,
       value,
       filtersHolder.filterOperator.currentFilter,
       filtersHolder.adjustOperator.adjustList

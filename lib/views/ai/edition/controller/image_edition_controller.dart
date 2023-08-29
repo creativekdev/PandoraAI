@@ -201,7 +201,7 @@ class ImageEditionController extends GetxController {
       NoAnimRouter(
         ImRemoveBgScreen(
           bottomPadding: bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
-          filePath: holder.originFilePath??_originPath,
+          filePath: holder.originFilePath ?? _originPath,
           imageRatio: image.image.width / image.image.height,
           imageHeight: image.image.height.toDouble(),
           imageWidth: image.image.width.toDouble(),
@@ -323,6 +323,7 @@ class ImageEditionController extends GetxController {
       var targetHolder = target.holder as ImageEditionBaseHolder;
       if (oldPath == targetHolder.originFilePath || oldPath == targetHolder.resultFilePath) {
         //没切换file，不需要做任何处理
+        calculateBackgroundCardSize(targetHolder);
         return true;
       }
       // bool needRemove = await needRemoveBg(context, target);
@@ -347,13 +348,12 @@ class ImageEditionController extends GetxController {
         if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
           startRemoveBg();
         }
+        calculateBackgroundCardSize(targetHolder);
         return true;
       } else {
         bool needRemove = await needRemoveBg(context, target);
         await targetHolder.setOriginFilePath(filePath, conf: needRemove);
-        var targetCoverRect = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble()));
-        showImageSize = targetCoverRect.size;
-        backgroundCardSize = targetCoverRect;
+        calculateBackgroundCardSize(targetHolder);
         state.hideLoading();
       }
       if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
@@ -361,6 +361,12 @@ class ImageEditionController extends GetxController {
       }
       return true;
     }
+  }
+
+  void calculateBackgroundCardSize(ImageEditionBaseHolder targetHolder) {
+     var targetCoverRect = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble()));
+    showImageSize = targetCoverRect.size;
+    backgroundCardSize = targetCoverRect;
   }
 
   Future<bool> needRemoveBg(BuildContext context, EditionItem target) async {

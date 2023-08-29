@@ -111,7 +111,7 @@ class FiltersHolder extends ImageEditionBaseHolder {
     if (shownRect.isEmpty) {
       parent.backgroundCardSize = Rect.fromLTWH(0, 0, parent.showImageSize.width, parent.showImageSize.height);
     } else {
-      parent.backgroundCardSize = ImageUtils.getTargetCoverRect(parent.showImageSize, shownRect.size);
+      parent.backgroundCardSize = ImageUtils.getTargetCoverRect(parent.imageContainerSize, shownRect.size);
     }
     var cancelable = executor.execute(arg1: filterOperator.currentFilter, arg2: adjustOperator.adjustList, arg3: _originImageData, arg4: shownRect, fun4: _buildImage);
     var time = taskExecutor.insert(cancelable);

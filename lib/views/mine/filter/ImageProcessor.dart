@@ -7,9 +7,9 @@ class ImageProcessor {
     var red = imgLib.getRed(pixel);
     var green = imgLib.getGreen(pixel);
     var blue = imgLib.getBlue(pixel);
-    var r = a * red + (1 - a) * 255;
-    var g = a * green + (1 - a) * 255;
-    var b = a * blue + (1 - a) * 255;
+    var r = a * red + (1 - a) * 128;
+    var g = a * green + (1 - a) * 128;
+    var b = a * blue + (1 - a) * 128;
     return imgLib.Color.fromRgb(r.toInt(), g.toInt(), b.toInt());
   }
 

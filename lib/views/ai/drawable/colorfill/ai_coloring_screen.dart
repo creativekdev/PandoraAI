@@ -195,7 +195,9 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
       if (value == null) {
         return;
       }
-      var xFile = await CropScreen.crop(context, image: value.xFile, brightness: Brightness.dark);
+      CacheManager cacheManager = AppDelegate().getManager();
+      var path = await ImageUtils.onImagePick(value.xFile.path, cacheManager.storageOperator.recordAiColoringDir.path);
+      var xFile = await CropScreen.crop(context, image: XFile(path), brightness: Brightness.dark);
       String r;
       if (xFile != null) {
         r = xFile.path;
@@ -203,9 +205,8 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
         r = value.xFile.path;
       }
       controller.photoType = value.source;
-      CacheManager cacheManager = AppDelegate().getManager();
-      var path = await ImageUtils.onImagePick(r, cacheManager.storageOperator.recordAiColoringDir.path);
-      controller.changeOriginFile(context, File(path));
+      var p = await ImageUtils.onImagePick(r, cacheManager.storageOperator.recordAiColoringDir.path);
+      controller.changeOriginFile(context, File(p));
     });
   }
 
