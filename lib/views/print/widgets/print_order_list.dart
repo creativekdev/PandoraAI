@@ -74,7 +74,17 @@ class _PrintOrderListState extends AppState<PrintOrderList> {
             );
           }
           return LoadingOverlay(
-              isLoading: controller.isfirstLoading, child: Center(child: TitleTextWidget(S.of(context).empty_msg, ColorConstant.White, FontWeight.normal, $(12))));
+            opacity: 0,
+            isLoading: controller.isfirstLoading,
+            child: Center(
+              child: TitleTextWidget(
+                S.of(context).empty_msg,
+                ColorConstant.White,
+                FontWeight.normal,
+                $(12),
+              ),
+            ),
+          );
         });
   }
 
