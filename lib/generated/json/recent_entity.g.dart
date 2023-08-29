@@ -1,5 +1,7 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'dart:ui';
+
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
@@ -211,6 +213,22 @@ RecentImageEditionEntity $RecentImageEditionEntityFromJson(Map<String, dynamic> 
 	if (itemList != null) {
 		recentImageEditionEntity.itemList = itemList;
 	}
+	final double? l = jsonConvert.convert<double>(json['l']);
+	if (l != null) {
+		recentImageEditionEntity.l = l;
+	}
+	final double? t = jsonConvert.convert<double>(json['t']);
+	if (t != null) {
+		recentImageEditionEntity.t = t;
+	}
+	final double? r = jsonConvert.convert<double>(json['r']);
+	if (r != null) {
+		recentImageEditionEntity.r = r;
+	}
+	final double? b = jsonConvert.convert<double>(json['b']);
+	if (b != null) {
+		recentImageEditionEntity.b = b;
+	}
 	return recentImageEditionEntity;
 }
 
@@ -222,6 +240,10 @@ Map<String, dynamic> $RecentImageEditionEntityToJson(RecentImageEditionEntity en
 	data['filter'] = entity.filter?.name;
 	data['adjustData'] =  entity.adjustData.map((v) => v.toJson()).toList();
 	data['itemList'] =  entity.itemList.map((v) => v.toJson()).toList();
+	data['l'] = entity.l;
+	data['t'] = entity.t;
+	data['r'] = entity.r;
+	data['b'] = entity.b;
 	return data;
 }
 

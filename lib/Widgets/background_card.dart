@@ -67,7 +67,7 @@ class BackgroundPainter extends CustomPainter {
         canvas.drawRect(Rect.fromLTRB(nx, ny, math.min(nx + w, size.width), math.min(ny + h, size.height)), paints[(x + y) % paints.length]);
       }
     }
-    canvas.drawRect(Rect.fromLTWH(-2, -2, size.width + 4, size.height + 4), bgPaint);
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);
   }
 
   @override

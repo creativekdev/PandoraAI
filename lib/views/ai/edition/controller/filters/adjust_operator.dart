@@ -1,14 +1,23 @@
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
+import 'package:common_utils/common_utils.dart';
 
 import 'base_filter_operator.dart';
 
-class AdjustOperator extends BaseFilterOperator {
+class AdjustOperator extends BaseFilterOperator<List<RecentAdjustData>> {
+  String _initHash = '';
+
   AdjustOperator({required super.parent});
 
   @override
-  onInit() {
+  onInit(List<RecentAdjustData> recent) {
     adjustList = FilterAdjustUtils.createAdjusts();
+    _initHash = EncryptUtil.encodeMd5(adjustList.map((e) => e.toString()).join(','));
+    for (var value in recent) {
+      adjustList.pick((t) => t.function == value.mAdjustFunction)?.value = value.value;
+    }
+    adjIndex = 0;
   }
 
   List<AdjustData> adjustList = [];
@@ -37,6 +46,8 @@ class AdjustOperator extends BaseFilterOperator {
   double itemWidth = 0;
   bool isClick = false;
 
+  bool diffWithOri() => EncryptUtil.encodeMd5(adjustList.map((e) => e.toString()).join(',')) != _initHash;
+
   autoCompleteScroll() {
     if (isClick) {
       return;
@@ -53,5 +64,4 @@ class AdjustOperator extends BaseFilterOperator {
     }
     scrollController.animateTo(pos * itemWidth, duration: Duration(milliseconds: 100), curve: Curves.bounceOut);
   }
-
 }

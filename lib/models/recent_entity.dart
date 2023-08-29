@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/recent_entity.g.dart';
@@ -136,6 +137,21 @@ class RecentImageEditionEntity {
   FilterEnum? filter;
   List<RecentAdjustData> adjustData = [];
   List<RecentEffectItem> itemList = [];
+
+  double l = 0;
+  double t = 0;
+  double r = 0;
+  double b = 0;
+
+  @JSONField(serialize: false)
+  Rect get cropRect => Rect.fromLTRB(l, t, r, b);
+
+  set cropRect(Rect rect) {
+    l = rect.left;
+    t = rect.top;
+    r = rect.right;
+    b = rect.bottom;
+  }
 
   RecentImageEditionEntity();
 

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
+import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/task_executor.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -28,15 +29,27 @@ class FiltersHolder extends ImageEditionBaseHolder {
 
   Map<FilterEnum, Uint8List> thumbnails = {};
 
-  FiltersHolder({required super.parent});
+  final FilterEnum filter;
+  final List<RecentAdjustData> adjust;
+  final Rect crop;
 
-  String lastConfigKey = '';
+  FiltersHolder({
+    required super.parent,
+    required this.filter,
+    required this.adjust,
+    required this.crop,
+  });
+
+  String initHash = '';
 
   @override
   onInit() {
-    filterOperator = FilterOperator(parent: this)..onInit();
-    adjustOperator = AdjustOperator(parent: this)..onInit();
-    cropOperator = CropOperator(parent: this)..onInit();
+    filterOperator = FilterOperator(parent: this);
+    filterOperator.onInit(filter);
+    adjustOperator = AdjustOperator(parent: this);
+    adjustOperator.onInit(adjust);
+    cropOperator = CropOperator(parent: this);
+    cropOperator.onInit(crop);
   }
 
   @override
@@ -47,29 +60,37 @@ class FiltersHolder extends ImageEditionBaseHolder {
   }
 
   @override
+  Future setOriginFilePath(String? path, {conf}) async {
+    //conf is true means load recent config
+    if (conf != true) {
+      cropOperator.cropData = null;
+      cropOperator.currentItem = null;
+      filterOperator.currentFilter = filterOperator.filters.first;
+      adjustOperator.onInit([]);
+    }
+    return super.setOriginFilePath(path, conf: conf);
+  }
+
+  @override
   initData() async {
     await super.initData();
+    initHash = getInitKey();
     _originImageData = shownImage;
-    cropOperator.cropData = null;
-    cropOperator.currentItem = null;
     buildThumbnails();
     await buildImage();
   }
 
   @override
   onResetClick() {
-    return super.onResetClick();
+    adjustOperator.onInit([]);
+    update();
+    buildImage();
   }
 
   Future buildThumbnails() async {
     if (shownImage == null) {
       return;
     }
-    if (lastConfigKey == getConfigKey()) {
-      return;
-    }
-    thumbnails.clear();
-    update();
     var targetCoverRect = ImageUtils.getTargetCoverRect(Size(shownImage!.width.toDouble(), shownImage!.height.toDouble()), Size(60, 60));
     imgLib.Image cropedImage =
         imgLib.copyCrop(shownImage!, targetCoverRect.left.toInt(), targetCoverRect.top.toInt(), targetCoverRect.width.toInt(), targetCoverRect.height.toInt());
@@ -83,7 +104,9 @@ class FiltersHolder extends ImageEditionBaseHolder {
   }
 
   Future buildImage() async {
-    lastConfigKey = getConfigKey();
+    if (_originImageData == null) {
+      return;
+    }
     var shownRect = cropOperator.getShownRect(originSize);
     if (shownRect.isEmpty) {
       parent.backgroundCardSize = Rect.fromLTWH(0, 0, parent.showImageSize.width, parent.showImageSize.height);
@@ -96,16 +119,22 @@ class FiltersHolder extends ImageEditionBaseHolder {
     cancelable.then((value) {
       taskExecutor.cancelOldTask(time);
       shownImage = value;
-      print('spend: ${DateTime.now().millisecondsSinceEpoch - start}');
+      LogUtil.d('spend: ${DateTime.now().millisecondsSinceEpoch - start}');
     });
   }
 
-  String resultFilePath = '';
-
   Future<String> _buildFinalImage(String path) async {
     var originImage = await getLibImage(await getImage(originFile!));
-    var result =
-        await executor.execute(arg1: filterOperator.currentFilter, arg2: adjustOperator.adjustList, arg3: originImage, arg4: cropOperator.getFinalRect(), fun4: _buildImage);
+    var adjustList = adjustOperator.adjustList.map((e) {
+      var copy = e.copy();
+      if (e.function == AdjustFunction.pixelate) {
+        copy.value = copy.value / originSize;
+        return copy;
+      } else {
+        return copy;
+      }
+    }).toList();
+    var result = await executor.execute(arg1: filterOperator.currentFilter, arg2: adjustList, arg3: originImage, arg4: cropOperator.getFinalRect(), fun4: _buildImage);
     var list = await new Executor().execute(arg1: result, fun1: encodePngThread);
     var uint8list = Uint8List.fromList(list);
     await File(path).writeAsBytes(uint8list);
@@ -115,9 +144,12 @@ class FiltersHolder extends ImageEditionBaseHolder {
   @override
   Future<String> saveToResult() async {
     String waitToDelete = resultFilePath;
-    var key = EncryptUtil.encodeMd5(getConfigKey());
+    var key = getConfigKey();
+    if (key == initHash) {
+      return originFilePath!;
+    }
     var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';
-    if (newPath == waitToDelete) {
+    if (newPath == waitToDelete && File(newPath).existsSync()) {
       return newPath;
     } else {
       await _buildFinalImage(newPath);
@@ -133,11 +165,17 @@ class FiltersHolder extends ImageEditionBaseHolder {
     }
   }
 
+  String getInitKey() {
+    return EncryptUtil.encodeMd5(
+      originFilePath! + FilterAdjustUtils.createAdjusts().map((e) => e.getProgress().toStringAsFixed(1)).toList().join(',') + FilterEnum.NOR.name + (Rect.zero.toString() ?? ''),
+    );
+  }
+
   String getConfigKey() {
-    return originFilePath! +
+    return EncryptUtil.encodeMd5(originFilePath! +
         adjustOperator.adjustList.map((e) => e.getProgress().toStringAsFixed(1)).toList().join(',') +
         filterOperator.currentFilter.name +
-        (cropOperator.cropData?.transformationsData.toString() ?? '');
+        (cropOperator.cropData?.toString() ?? ''));
   }
 }
 

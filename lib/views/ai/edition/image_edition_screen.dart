@@ -52,6 +52,7 @@ class ImageEditionScreen extends StatefulWidget {
   List<RecentEffectItem> recentEffectItems;
   List<RecentAdjustData> adjustData;
   FilterEnum filter;
+  Rect cropRect;
 
   ImageEditionScreen({
     super.key,
@@ -64,6 +65,7 @@ class ImageEditionScreen extends StatefulWidget {
     required this.recentEffectItems,
     required this.adjustData,
     required this.filter,
+    required this.cropRect,
   });
 
   @override
@@ -78,6 +80,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   late TimerUtil timer;
   String? title;
   late Size imageSize;
+  late StreamSubscription onLimitDialogCancelListener;
 
   @override
   void initState() {
@@ -92,6 +95,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       initKey: widget.initKey,
       photoType: widget.photoType,
       source: widget.source,
+      recentFilter: widget.filter,
+      recentAdjust: widget.adjustData,
+      recentCropRect: widget.cropRect,
       recentItemList: widget.recentEffectItems,
       imageContainerSize: imageSize,
     )..state = this);
@@ -112,11 +118,34 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       titleShow.value = true;
       timer.startTimer();
     });
+    onLimitDialogCancelListener = EventBusHelper().eventBus.on<OnLimitDialogCancelEvent>().listen((event) {
+      controller.switchBack(context);
+    });
   }
 
   @override
   onBlankTap() {
     EventBusHelper().eventBus.fire(OnHideDeleteStatusEvent());
+  }
+
+  Future<String> saveRecent() async {
+    var holder = controller.currentItem.holder as ImageEditionBaseHolder;
+    String value = await holder.saveToResult();
+    var recentController = Get.find<RecentController>();
+    var filtersHolder = controller.filtersHolder;
+    recentController.onImageEditionUsed(
+      controller.originFile.path,
+      value,
+      filtersHolder.filterOperator.currentFilter,
+      filtersHolder.adjustOperator.adjustList
+          .map((e) => RecentAdjustData()
+            ..mAdjustFunction = e.function
+            ..value = e.value)
+          .toList(),
+      filtersHolder.cropOperator.getFinalRect(),
+      [],
+    );
+    return value;
   }
 
   saveToAlbum() async {
@@ -126,25 +155,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       String path = (effectHolder.resultFile ?? effectHolder.originFile).path;
       await GallerySaver.saveImage(path.replaceFirst('.jpg', '.png'), albumName: saveAlbumName);
     } else {
-      var holder = controller.currentItem.holder as ImageEditionBaseHolder;
-      holder.saveToResult().then((value) async {
-        var recentController = Get.find<RecentController>();
-        var filtersHolder = controller.filtersHolder;
-        recentController.onImageEditionUsed(
-          controller.originFile.path,
-          value,
-          filtersHolder.filterOperator.currentFilter,
-          filtersHolder.adjustOperator.adjustList
-                  .map((e) => RecentAdjustData()
-                    ..mAdjustFunction = e.function
-                    ..value = e.value)
-                  .toList() ??
-              [],
-          [],
-        );
-        hideLoading();
-        await GallerySaver.saveImage(value, albumName: saveAlbumName);
-      });
+      String value = await saveRecent();
+      await GallerySaver.saveImage(value, albumName: saveAlbumName);
     }
     await hideLoading();
     Events.styleImageEditionCompleteSave(source: controller.source, type: 'image');
@@ -225,6 +237,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   shareOut() async {
+    showLoading();
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
     var userManager = AppDelegate().getManager<UserManager>();
     var uint8list;
@@ -248,6 +261,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       var s = await holder.saveToResult();
       uint8list = await File(s).readAsBytes();
     }
+    hideLoading();
     ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "image_edition", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
         onShareSuccess: (platform) {
       Events.styleFilterCompleteShare(source: widget.source, platform: platform, type: 'image');
@@ -259,6 +273,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   void dispose() {
     Get.delete<ImageEditionController>();
     timer.cancel();
+    onLimitDialogCancelListener.cancel();
+    onRightTitleSwitchEvent.cancel();
     super.dispose();
   }
 
@@ -494,7 +510,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       canReset = false;
     } else {
       if (controller.currentItem.function == ImageEditionFunction.adjust) {
-        canReset = false;
+        canReset = controller.filtersHolder.adjustOperator.diffWithOri();
       } else {
         canReset = (controller.currentItem.holder as ImageEditionBaseHolder).canReset;
       }

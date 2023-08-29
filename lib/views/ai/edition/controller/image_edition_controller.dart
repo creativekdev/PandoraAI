@@ -15,6 +15,7 @@ import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
+import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
@@ -30,7 +31,12 @@ class ImageEditionController extends GetxController {
   final String source;
   final String? initKey;
   final ImageEditionFunction initFunction;
+  final List<RecentAdjustData> recentAdjust;
+  final FilterEnum recentFilter;
+  final Rect recentCropRect;
+
   late String _originPath;
+
   late AppState state;
   late Size imageContainerSize;
   Size _showImageSize = Size.zero;
@@ -67,6 +73,8 @@ class ImageEditionController extends GetxController {
     EventBusHelper().eventBus.fire(OnEditionRightTabSwitchEvent(data: func.function.title()));
     update();
   }
+
+  EditionItem? _lastItem;
 
   List<EditionItem> items = [];
 
@@ -108,6 +116,9 @@ class ImageEditionController extends GetxController {
     required this.photoType,
     required this.recentItemList,
     required this.imageContainerSize,
+    required this.recentFilter,
+    required this.recentAdjust,
+    required this.recentCropRect,
   }) {
     _originPath = originPath;
     _backgroundCardSize = Rect.zero;
@@ -117,8 +128,12 @@ class ImageEditionController extends GetxController {
 
   @override
   void onInit() {
-    super.onInit();
-    filtersHolder = FiltersHolder(parent: this)..onInit();
+    filtersHolder = FiltersHolder(
+      parent: this,
+      filter: recentFilter,
+      adjust: recentAdjust,
+      crop: recentCropRect,
+    )..onInit();
     var removeBgHolder = RemoveBgHolder(parent: this)..onInit();
     items = [
       EditionItem()
@@ -146,7 +161,7 @@ class ImageEditionController extends GetxController {
       );
     }
     currentItem = items.pick((t) => t.function == initFunction) ?? items.first;
-    filtersHolder.setOriginFilePath(_originPath).then((value) {
+    filtersHolder.setOriginFilePath(_originPath, conf: true).then((value) {
       var rect = ImageUtils.getTargetCoverRect(imageContainerSize, Size(filtersHolder.shownImage!.width.toDouble(), filtersHolder.shownImage!.height.toDouble()));
       showImageSize = rect.size;
       backgroundCardSize = rect;
@@ -154,6 +169,7 @@ class ImageEditionController extends GetxController {
     if (initFunction == ImageEditionFunction.removeBg) {
       removeBgHolder.setOriginFilePath(_originPath);
     }
+    super.onInit();
   }
 
   @override
@@ -179,19 +195,19 @@ class ImageEditionController extends GetxController {
     var image = await SyncFileImage(file: originFile).getImage();
     final imageSize = Size(ScreenUtil.screenSize.width,
         ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140) + ScreenUtil.getBottomPadding(Get.context!)));
+    var holder = currentItem.holder as RemoveBgHolder;
     await Navigator.push(
       Get.context!,
       NoAnimRouter(
         ImRemoveBgScreen(
           bottomPadding: bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
-          filePath: _originPath,
+          filePath: holder.originFilePath??_originPath,
           imageRatio: image.image.width / image.image.height,
           imageHeight: image.image.height.toDouble(),
           imageWidth: image.image.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
             var imageInfo = await SyncFileImage(file: File(path)).getImage();
-            var holder = currentItem.holder as RemoveBgHolder;
-            holder.ratio = imageInfo.image.width / imageInfo.image.height;
+            holder.config.ratio = imageInfo.image.width / imageInfo.image.height;
             holder.removedImage = File(path);
             holder.imageUiFront = await getImage(File(path));
             var imageFront = await getLibImage(holder.imageUiFront!);
@@ -258,8 +274,17 @@ class ImageEditionController extends GetxController {
     });
   }
 
+  switchBack(BuildContext context) async {
+    if (_lastItem == null) {
+      Navigator.of(context).pop();
+    } else {
+      currentItem = _lastItem!;
+    }
+  }
+
   onRightTabClick(BuildContext context, EditionItem e) async {
     var bool = await preSwitch(context, e, currentItem);
+    _lastItem = currentItem;
     if (bool) {
       currentItem = e;
     }
@@ -272,21 +297,11 @@ class ImageEditionController extends GetxController {
           await (target.holder as FiltersHolder).buildThumbnails();
         }
         return true;
-      }
-    }
-    if (target.function == currentItem.function) {
-      if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
-        startRemoveBg();
-      }
-      return false;
-    }
-    if (target.function == ImageEditionFunction.removeBg) {
-      var holder = target.holder as RemoveBgHolder;
-      if (holder.removedImage != null) {
-        var bool = await showEnsureToSwitchRemoveBg(context);
-        if (bool == null || bool == false) {
-          return false;
+      } else {
+        if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
+          startRemoveBg();
         }
+        return false;
       }
     }
     if (target.function == ImageEditionFunction.effect) {
@@ -306,13 +321,13 @@ class ImageEditionController extends GetxController {
       var oldController = currentItem.holder as TransferBaseController;
       String oldPath = (oldController.resultFile ?? oldController.originFile).path;
       var targetHolder = target.holder as ImageEditionBaseHolder;
-      String? targetPath = targetHolder.originFilePath;
-      if (oldPath == targetPath) {
+      if (oldPath == targetHolder.originFilePath || oldPath == targetHolder.resultFilePath) {
         //没切换file，不需要做任何处理
         return true;
       }
+      // bool needRemove = await needRemoveBg(context, target);
       state.showLoading();
-      await targetHolder.setOriginFilePath(oldPath);
+      await targetHolder.setOriginFilePath(oldPath, conf: true);
       backgroundCardSize = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble()));
       showImageSize = backgroundCardSize.size;
       state.hideLoading();
@@ -329,9 +344,13 @@ class ImageEditionController extends GetxController {
       String? targetPath = targetHolder.originFilePath;
       if (filePath == targetPath) {
         state.hideLoading();
+        if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
+          startRemoveBg();
+        }
         return true;
       } else {
-        await targetHolder.setOriginFilePath(filePath);
+        bool needRemove = await needRemoveBg(context, target);
+        await targetHolder.setOriginFilePath(filePath, conf: needRemove);
         var targetCoverRect = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble()));
         showImageSize = targetCoverRect.size;
         backgroundCardSize = targetCoverRect;
@@ -342,6 +361,20 @@ class ImageEditionController extends GetxController {
       }
       return true;
     }
+  }
+
+  Future<bool> needRemoveBg(BuildContext context, EditionItem target) async {
+    bool needRemove = true;
+    if (target.function == ImageEditionFunction.removeBg) {
+      var holder = target.holder as RemoveBgHolder;
+      if (holder.removedImage != null) {
+        var bool = await showEnsureToSwitchRemoveBg(context);
+        if (bool == null || bool == false) {
+          needRemove = false;
+        }
+      }
+    }
+    return needRemove;
   }
 
   Widget buildShownImage(Size size) {

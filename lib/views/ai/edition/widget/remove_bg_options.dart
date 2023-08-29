@@ -18,16 +18,12 @@ class RemoveBgOptions extends StatelessWidget {
   final double bottomPadding;
   final double switchButtonPadding;
 
-  // late BuildContext _currentContext;
-
   @override
   Widget build(BuildContext context) {
-    // _currentContext = context;
-    controller.preBackgroundData = controller?.selectData ?? controller.preBackgroundData;
-
+    controller.preBackgroundData = controller.config.selectData ?? controller.preBackgroundData;
     return BackgroundPickerBar(
       preBackgroundData: controller.preBackgroundData,
-      imageRatio: controller.ratio,
+      imageRatio: controller.config.ratio,
       onPick: (BackgroundData data, bool isPopMerge) async {
         controller.onSavedBackground(data, isPopMerge);
       },

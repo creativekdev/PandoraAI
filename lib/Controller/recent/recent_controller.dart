@@ -182,6 +182,7 @@ class RecentController extends GetxController {
     String? resultPath,
     FilterEnum filter,
     List<RecentAdjustData> adjusts,
+    Rect cropRect,
     List<RecentEffectItem> items,
   ) {
     var record = RecentImageEditionEntity()
@@ -190,6 +191,7 @@ class RecentController extends GetxController {
       ..originFilePath = originPath
       ..filePath = resultPath
       ..filter = filter
+      ..cropRect = cropRect
       ..adjustData = adjusts;
     imageEditionRecordHolder.record(imageEditionList, record);
     sortList();
