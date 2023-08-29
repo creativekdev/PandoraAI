@@ -14,6 +14,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../app/user/user_manager.dart';
 import '../input/input_screen.dart';
+import 'discovery_list_controller.dart';
 
 class DiscoveryDetailController extends GetxController {
   DiscoveryListEntity discoveryEntity;
@@ -33,8 +34,10 @@ class DiscoveryDetailController extends GetxController {
   CacheManager cacheManager = AppDelegate().getManager();
   Rx<bool> likeLocalAddAlready = false.obs;
   Rx<bool> liked = false.obs;
+  DiscoveryListController listController = Get.find();
+  bool? listLiked;
 
-  DiscoveryDetailController({required this.discoveryEntity});
+  DiscoveryDetailController({required this.discoveryEntity, this.listLiked});
 
   bool _isRequesting = false;
   Rx<int> loadingCommentId = 0.obs;
@@ -164,7 +167,11 @@ class DiscoveryDetailController extends GetxController {
   void onInit() {
     super.onInit();
     resources = discoveryEntity.resourceList();
-    liked.value = discoveryEntity.likeId != null;
+    if (listLiked != null) {
+      liked.value = listLiked!;
+    } else {
+      liked.value = discoveryEntity.likeId != null;
+    }
     api = AppApi().bindController(this);
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? true) {
@@ -205,25 +212,29 @@ class DiscoveryDetailController extends GetxController {
       }
     });
     onDiscoveryLikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryLikeEvent>().listen((event) {
-      if (discoveryEntity.id == event.data!.key) {
-        if (likeLocalAddAlready.value) {
-          likeLocalAddAlready.value = false;
-        } else {
-          discoveryEntity.likes++;
+      if (likeLocalAddAlready.value) {
+        if (discoveryEntity.id == event.data!.key) {
+          if (likeLocalAddAlready.value) {
+            likeLocalAddAlready.value = false;
+          } else {
+            discoveryEntity.likes++;
+          }
+          discoveryEntity.likeId = event.data!.value;
+          update();
         }
-        discoveryEntity.likeId = event.data!.value;
-        update();
       }
     });
     onDiscoveryUnlikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryUnlikeEvent>().listen((event) {
-      if (discoveryEntity.id == event.data) {
-        if (likeLocalAddAlready.value) {
-          likeLocalAddAlready.value = false;
-        } else {
-          discoveryEntity.likes--;
+      if (likeLocalAddAlready.value) {
+        if (discoveryEntity.id == event.data) {
+          if (likeLocalAddAlready.value) {
+            likeLocalAddAlready.value = false;
+          } else {
+            discoveryEntity.likes--;
+          }
+          discoveryEntity.likeId = null;
+          update();
         }
-        discoveryEntity.likeId = null;
-        update();
       }
     });
     onCreateCommentListener = EventBusHelper().eventBus.on<OnCreateCommentEvent>().listen((event) {

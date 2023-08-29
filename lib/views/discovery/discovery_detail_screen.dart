@@ -69,12 +69,14 @@ class DiscoveryDetailScreen extends StatefulWidget {
   DiscoveryListEntity discoveryEntity;
   String prePage;
   bool autoComment;
+  bool? liked;
 
   DiscoveryDetailScreen({
     Key? key,
     required this.discoveryEntity,
     required this.prePage,
     this.autoComment = false,
+    this.liked,
   }) : super(key: key);
 
   @override
@@ -98,6 +100,7 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
     source = prePage + '-discovery';
     controller = Get.put(DiscoveryDetailController(
       discoveryEntity: widget.discoveryEntity.copy(),
+      listLiked: widget.liked,
     ));
     delay(() {
       logLoading();
