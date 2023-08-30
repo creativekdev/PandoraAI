@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -145,6 +145,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             backgroundColor: ColorConstant.BackgroundColor,
             body: SafeArea(
                 child: LoadingOverlay(
+                    opacity: 0,
                     isLoading: isLoading,
                     child: SingleChildScrollView(
                       child: Container(
