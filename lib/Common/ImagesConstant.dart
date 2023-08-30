@@ -1,6 +1,5 @@
-
 @Deprecated("use Images.dart")
-class ImagesConstant{
+class ImagesConstant {
   static const ic_login_cartoon = "assets/images/ic_login_cartoon.png";
   static const ic_signup_cartoon = "assets/images/ic_signup_cartoon.png";
   static const ic_background = "assets/images/ic_background.png";

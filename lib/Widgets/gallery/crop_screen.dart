@@ -18,7 +18,7 @@ class CropScreen extends StatefulWidget {
     Brightness brightness = Brightness.dark,
   }) async {
     return Navigator.of(context).push<XFile>(MaterialPageRoute(
-      settings: RouteSettings(name: '/CropScreen'),
+        settings: RouteSettings(name: '/CropScreen'),
         builder: (_) => CropScreen(
               image: image,
               brightness: brightness,

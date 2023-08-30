@@ -33,7 +33,6 @@ class _PrintQuatityItemState extends State<PrintQuatityItem> {
             .intoGestureDetector(onTap: () {
           widget.onSubTap();
         }),
-
         TitleTextWidget(
           widget.quantity,
           ColorConstant.White,

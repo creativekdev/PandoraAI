@@ -304,5 +304,4 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
       },
     );
   }
-
 }

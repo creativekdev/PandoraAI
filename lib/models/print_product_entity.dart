@@ -4,142 +4,142 @@ import 'dart:convert';
 
 @JsonSerializable()
 class PrintProductEntity {
-	late PrintProductData data;
+  late PrintProductData data;
 
-	PrintProductEntity();
+  PrintProductEntity();
 
-	factory PrintProductEntity.fromJson(Map<String, dynamic> json) => $PrintProductEntityFromJson(json);
+  factory PrintProductEntity.fromJson(Map<String, dynamic> json) => $PrintProductEntityFromJson(json);
 
-	Map<String, dynamic> toJson() => $PrintProductEntityToJson(this);
+  Map<String, dynamic> toJson() => $PrintProductEntityToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }
 
 @JsonSerializable()
 class PrintProductData {
-	late List<PrintProductDataRows> rows;
+  late List<PrintProductDataRows> rows;
 
-	PrintProductData();
+  PrintProductData();
 
-	factory PrintProductData.fromJson(Map<String, dynamic> json) => $PrintProductDataFromJson(json);
+  factory PrintProductData.fromJson(Map<String, dynamic> json) => $PrintProductDataFromJson(json);
 
-	Map<String, dynamic> toJson() => $PrintProductDataToJson(this);
+  Map<String, dynamic> toJson() => $PrintProductDataToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }
 
 @JsonSerializable()
 class PrintProductDataRows {
-	late String id;
-	late String title;
-	late String description;
-	late String descriptionHtml;
-	late String onlineStorePreviewUrl;
-	late PrintProductDataRowsFeaturedImage featuredImage;
-	late String status;
-	late PrintProductDataRowsVariants variants;
+  late String id;
+  late String title;
+  late String description;
+  late String descriptionHtml;
+  late String onlineStorePreviewUrl;
+  late PrintProductDataRowsFeaturedImage featuredImage;
+  late String status;
+  late PrintProductDataRowsVariants variants;
 
-	PrintProductDataRows();
+  PrintProductDataRows();
 
-	factory PrintProductDataRows.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsFromJson(json);
+  factory PrintProductDataRows.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsFromJson(json);
 
-	Map<String, dynamic> toJson() => $PrintProductDataRowsToJson(this);
+  Map<String, dynamic> toJson() => $PrintProductDataRowsToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }
 
 @JsonSerializable()
 class PrintProductDataRowsFeaturedImage {
-	late String originalSrc;
+  late String originalSrc;
 
-	PrintProductDataRowsFeaturedImage();
+  PrintProductDataRowsFeaturedImage();
 
-	factory PrintProductDataRowsFeaturedImage.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsFeaturedImageFromJson(json);
+  factory PrintProductDataRowsFeaturedImage.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsFeaturedImageFromJson(json);
 
-	Map<String, dynamic> toJson() => $PrintProductDataRowsFeaturedImageToJson(this);
+  Map<String, dynamic> toJson() => $PrintProductDataRowsFeaturedImageToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }
 
 @JsonSerializable()
 class PrintProductDataRowsVariants {
-	late List<PrintProductDataRowsVariantsEdges> edges;
+  late List<PrintProductDataRowsVariantsEdges> edges;
 
-	PrintProductDataRowsVariants();
+  PrintProductDataRowsVariants();
 
-	factory PrintProductDataRowsVariants.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsVariantsFromJson(json);
+  factory PrintProductDataRowsVariants.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsVariantsFromJson(json);
 
-	Map<String, dynamic> toJson() => $PrintProductDataRowsVariantsToJson(this);
+  Map<String, dynamic> toJson() => $PrintProductDataRowsVariantsToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }
 
 @JsonSerializable()
 class PrintProductDataRowsVariantsEdges {
-	late PrintProductDataRowsVariantsEdgesNode node;
+  late PrintProductDataRowsVariantsEdgesNode node;
 
-	PrintProductDataRowsVariantsEdges();
+  PrintProductDataRowsVariantsEdges();
 
-	factory PrintProductDataRowsVariantsEdges.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsVariantsEdgesFromJson(json);
+  factory PrintProductDataRowsVariantsEdges.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsVariantsEdgesFromJson(json);
 
-	Map<String, dynamic> toJson() => $PrintProductDataRowsVariantsEdgesToJson(this);
+  Map<String, dynamic> toJson() => $PrintProductDataRowsVariantsEdgesToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }
 
 @JsonSerializable()
 class PrintProductDataRowsVariantsEdgesNode {
-	late String price;
-	late String title;
-	late int weight;
-	late int inventoryQuantity;
-	dynamic image;
-	late List<PrintProductDataRowsVariantsEdgesNodeSelectedOptions> selectedOptions;
-	late String id;
+  late String price;
+  late String title;
+  late int weight;
+  late int inventoryQuantity;
+  dynamic image;
+  late List<PrintProductDataRowsVariantsEdgesNodeSelectedOptions> selectedOptions;
+  late String id;
 
-	PrintProductDataRowsVariantsEdgesNode();
+  PrintProductDataRowsVariantsEdgesNode();
 
-	factory PrintProductDataRowsVariantsEdgesNode.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsVariantsEdgesNodeFromJson(json);
+  factory PrintProductDataRowsVariantsEdgesNode.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsVariantsEdgesNodeFromJson(json);
 
-	Map<String, dynamic> toJson() => $PrintProductDataRowsVariantsEdgesNodeToJson(this);
+  Map<String, dynamic> toJson() => $PrintProductDataRowsVariantsEdgesNodeToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }
 
 @JsonSerializable()
 class PrintProductDataRowsVariantsEdgesNodeSelectedOptions {
-	late String name;
-	late String value;
+  late String name;
+  late String value;
 
-	PrintProductDataRowsVariantsEdgesNodeSelectedOptions();
+  PrintProductDataRowsVariantsEdgesNodeSelectedOptions();
 
-	factory PrintProductDataRowsVariantsEdgesNodeSelectedOptions.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsVariantsEdgesNodeSelectedOptionsFromJson(json);
+  factory PrintProductDataRowsVariantsEdgesNodeSelectedOptions.fromJson(Map<String, dynamic> json) => $PrintProductDataRowsVariantsEdgesNodeSelectedOptionsFromJson(json);
 
-	Map<String, dynamic> toJson() => $PrintProductDataRowsVariantsEdgesNodeSelectedOptionsToJson(this);
+  Map<String, dynamic> toJson() => $PrintProductDataRowsVariantsEdgesNodeSelectedOptionsToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }

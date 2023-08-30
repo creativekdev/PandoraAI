@@ -339,13 +339,7 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
 // Convert the HSL color back to RGB
 
 // Set the new color for the pixel
-          res_image.setPixelRgba(
-            x,
-            y,
-            color.red.clamp(0, 255),
-            color.green.clamp(0, 255),
-            color.blue.clamp(0, 255),
-          );
+          res_image.setPixelRgba(x, y, color.red.clamp(0, 255), color.green.clamp(0, 255), color.blue.clamp(0, 255), alpha);
         }
       }
 
@@ -365,7 +359,7 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
           Color color = hsv.toColor();
 
-          res_image.setPixelRgba(x, y, (color.red + 25).round().clamp(0, 255), (color.green + 20).round().clamp(0, 255), color.blue);
+          res_image.setPixelRgba(x, y, (color.red + 25).round().clamp(0, 255), (color.green + 20).round().clamp(0, 255), color.blue, alpha);
         }
       }
       break;
@@ -383,43 +377,104 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
 
           hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
           Color color = hsv.toColor();
-          res_image.setPixelRgba(x, y, color.red, (color.green + 20).round().clamp(0, 255), (color.blue + 25).round().clamp(0, 255));
+          res_image.setPixelRgba(x, y, color.red, (color.green + 20).round().clamp(0, 255), (color.blue + 25).round().clamp(0, 255), alpha);
         }
       }
       break;
     case FilterEnum.DRA:
 // Apply the dramatic filter
-      imgLib.contrast(res_image, 120);
-      break;
-    case FilterEnum.DRW:
-// Apply the dramatic warm filter
-      imgLib.contrast(res_image, 120);
+      imgLib.contrast(res_image, 110);
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
 
-// Modify the pixel values to create the dramatic warm effect
-          final red = imgLib.getRed(pixel);
-          final green = imgLib.getGreen(pixel);
-          final blue = imgLib.getBlue(pixel);
+          // Modify the pixel values to create the dramatic warm effect
+          int red = imgLib.getRed(pixel);
+          int green = imgLib.getGreen(pixel);
+          int blue = imgLib.getBlue(pixel);
+          int alpha = imgLib.getAlpha(pixel);
+          if (imgLib.getAlpha(pixel) < 100) {
+            continue;
+          }
+          if (red < 50)
+            red = (red + (20 - red * 20 / 50)).toInt();
+          else if (red > 205) red = (red - (20 - (255 - red) * 20 / 50)).toInt();
+          if (green < 50)
+            green = (green + (20 - green * 20 / 50)).toInt();
+          else if (green > 205) green = (green - (20 - (255 - green) * 20 / 50)).toInt();
+          if (blue < 50)
+            blue = (blue + (20 - blue * 20 / 50)).toInt();
+          else if (blue > 205) blue = (blue - (20 - (255 - blue) * 20 / 50)).toInt();
+          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
-          res_image.setPixelRgba(x, y, (red + 25).clamp(0, 255).toInt(), (green + 20).clamp(0, 255).toInt(), blue);
+          hsv = hsv.withSaturation((hsv.saturation * 0.8).clamp(0, 1));
+          Color color = hsv.toColor();
+          res_image.setPixelRgba(x, y, (color.red).round().clamp(0, 255), (color.green).round().clamp(0, 255), (color.blue).round().clamp(0, 255), alpha);
         }
       }
       break;
-    case FilterEnum.DRC:
-// Apply the dramatic cool filter
-      imgLib.contrast(res_image, 120);
+    case FilterEnum.DRW:
+// Apply the dramatic warm filter
+      imgLib.contrast(res_image, 110);
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
 
-// Modify the pixel values to create the dramatic cool effect
-          final red = imgLib.getRed(pixel);
-          final green = imgLib.getGreen(pixel);
-          final blue = imgLib.getBlue(pixel);
+          // Modify the pixel values to create the dramatic warm effect
+          int red = imgLib.getRed(pixel);
+          int green = imgLib.getGreen(pixel);
+          int blue = imgLib.getBlue(pixel);
+          int alpha = imgLib.getAlpha(pixel);
+          if (imgLib.getAlpha(pixel) < 100) {
+            continue;
+          }
+          if (red < 50)
+            red = (red + (20 - red * 20 / 50)).toInt();
+          else if (red > 205) red = (red - (20 - (255 - red) * 20 / 50)).toInt();
+          if (green < 50)
+            green = (green + (20 - green * 20 / 50)).toInt();
+          else if (green > 205) green = (green - (20 - (255 - green) * 20 / 50)).toInt();
+          if (blue < 50)
+            blue = (blue + (20 - blue * 20 / 50)).toInt();
+          else if (blue > 205) blue = (blue - (20 - (255 - blue) * 20 / 50)).toInt();
+          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
-          res_image.setPixelRgba(x, y, red, (green + 20).clamp(0, 255).toInt(), (blue + 25).clamp(0, 255).toInt());
+          hsv = hsv.withSaturation((hsv.saturation * 0.8).clamp(0, 1));
+          Color color = hsv.toColor();
+          res_image.setPixelRgba(x, y, (color.red + 25).round().clamp(0, 255), (color.green + 25).round().clamp(0, 255), (color.blue).round().clamp(0, 255), alpha);
+        }
+      }
+
+      break;
+    case FilterEnum.DRC:
+// Apply the dramatic cool filter
+      imgLib.contrast(res_image, 110);
+      for (int x = 0; x < res_image.width; x++) {
+        for (int y = 0; y < res_image.height; y++) {
+          final pixel = res_image.getPixel(x, y);
+
+          // Modify the pixel values to create the dramatic warm effect
+          int red = imgLib.getRed(pixel);
+          int green = imgLib.getGreen(pixel);
+          int blue = imgLib.getBlue(pixel);
+          int alpha = imgLib.getAlpha(pixel);
+          if (imgLib.getAlpha(pixel) < 100) {
+            continue;
+          }
+          if (red < 50)
+            red = (red + (20 - red * 20 / 50)).toInt();
+          else if (red > 205) red = (red - (20 - (255 - red) * 20 / 50)).toInt();
+          if (green < 50)
+            green = (green + (20 - green * 20 / 50)).toInt();
+          else if (green > 205) green = (green - (20 - (255 - green) * 20 / 50)).toInt();
+          if (blue < 50)
+            blue = (blue + (20 - blue * 20 / 50)).toInt();
+          else if (blue > 205) blue = (blue - (20 - (255 - blue) * 20 / 50)).toInt();
+          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
+
+          hsv = hsv.withSaturation((hsv.saturation * 0.8).clamp(0, 1));
+          Color color = hsv.toColor();
+          res_image.setPixelRgba(x, y, (color.red).round().clamp(0, 255), (color.green + 20).round().clamp(0, 255), (color.blue + 25).round().clamp(0, 255), alpha);
         }
       }
       break;
@@ -427,10 +482,11 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
+          final alpha = imgLib.getAlpha(pixel);
 
 // Convert the pixel to grayscale
           final luminance = imgLib.getLuminance(pixel);
-          final modifiedPixel = imgLib.getColor(luminance, luminance, luminance);
+          final modifiedPixel = imgLib.getColor(luminance, luminance, luminance, alpha);
 
           res_image.setPixel(x, y, modifiedPixel);
         }
@@ -446,12 +502,13 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           final red = imgLib.getRed(pixel);
           final green = imgLib.getGreen(pixel);
           final blue = imgLib.getBlue(pixel);
+          final alpha = imgLib.getAlpha(pixel);
 
           final modifiedRed = (red * 0.7).clamp(0, 255).toInt(); // Decrease red channel intensity
           final modifiedGreen = (green * 0.7).clamp(0, 255).toInt(); // Decrease green channel intensity
           final modifiedBlue = (blue * 0.9).clamp(0, 255).toInt(); // Decrease blue channel intensity
 
-          final modifiedPixel = imgLib.getColor(modifiedRed, modifiedGreen, modifiedBlue);
+          final modifiedPixel = imgLib.getColor(modifiedRed, modifiedGreen, modifiedBlue, alpha);
           res_image.setPixel(x, y, modifiedPixel);
         }
       }
@@ -461,10 +518,11 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
+          final alpha = imgLib.getAlpha(pixel);
 
 // Convert the pixel to grayscale
           final luminance = imgLib.getLuminance(pixel);
-          final modifiedPixel = imgLib.getColor(luminance, luminance, luminance);
+          final modifiedPixel = imgLib.getColor(luminance, luminance, luminance, alpha);
 
           res_image.setPixel(x, y, modifiedPixel);
         }
@@ -478,12 +536,14 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
+          final alpha = imgLib.getAlpha(pixel);
           final red = imgLib.getRed(pixel);
           final green = imgLib.getGreen(pixel);
           final blue = imgLib.getBlue(pixel);
           int k;
           for (k = 0; k < group.length; k++) {
             final pixel2 = group[k];
+            final a = imgLib.getAlpha(pixel2);
             final r = imgLib.getRed(pixel2);
             final g = imgLib.getGreen(pixel2);
             final b = imgLib.getBlue(pixel2);
@@ -491,11 +551,12 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
             int dg = g - green;
             int db = b - blue;
             if ((dr * dr + dg * dg + db * db) < 6000) {
+              int aa = (alpha * cnt[k] + a) ~/ (cnt[k] + 1);
               int rr = (red * cnt[k] + r) ~/ (cnt[k] + 1);
               int gg = (green * cnt[k] + g) ~/ (cnt[k] + 1);
               int bb = (blue * cnt[k] + b) ~/ (cnt[k] + 1);
 
-              group[k] = imgLib.getColor(rr, gg, bb);
+              group[k] = imgLib.getColor(rr, gg, bb, aa);
               cnt[k]++;
               break;
             }
@@ -509,6 +570,7 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final int pixel = res_image.getPixel(x, y);
+          final alpha = imgLib.getAlpha(pixel);
           int mink = 0;
           for (int k = 0; k < group.length; k++) {
             final r1 = imgLib.getRed(pixel);
@@ -533,7 +595,7 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           final green = imgLib.getGreen(group[mink]);
           final blue = imgLib.getBlue(group[mink]);
 
-          final modifiedPixel = imgLib.getColor(red, green, blue);
+          final modifiedPixel = imgLib.getColor(red, green, blue, alpha);
           res_image.setPixel(x, y, modifiedPixel);
         }
       }
@@ -581,7 +643,7 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
           // hsv = hsv.withSaturation((data.value * data.multiple + 100) * hsv.saturation / 100);
           // hsv = hsv.withSaturation(0.99);
           Color color = hsv.toColor();
-          image.setPixelRgba(x, y, color.red, color.green, color.blue);
+          image.setPixelRgba(x, y, color.red, color.green, color.blue, alpha);
         }
       }
       break;

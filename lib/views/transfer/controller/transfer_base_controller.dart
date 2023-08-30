@@ -66,7 +66,6 @@ abstract class TransferBaseController<ResultType> extends GetxController {
     _originalPath = path;
     originFile = File(_originalPath);
     resultMap.clear();
-    selectedEffect = null;
     update();
   }
 

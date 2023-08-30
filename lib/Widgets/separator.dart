@@ -27,8 +27,7 @@ class Separator extends StatelessWidget {
           boxWidth = degree;
           dashWidth = degree;
           dashHeight = dashSize;
-          dashCount =
-              (constraints.constrainHeight() / (space / 2 + dashSize)).floor();
+          dashCount = (constraints.constrainHeight() / (space / 2 + dashSize)).floor();
         } else {
           boxWidth = constraints.constrainWidth();
           dashWidth = dashSize;

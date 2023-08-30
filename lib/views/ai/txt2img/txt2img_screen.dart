@@ -418,77 +418,72 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                       ],
                     ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
                     SizedBox(height: 12),
-                    GetBuilder<UploadImageController>(
-                      builder: (uploadController) => DottedBorder(
-                              radius: Radius.circular($(6)),
-                              color: ColorConstant.White,
-                              strokeWidth: 1.5,
-                              dashPattern: [5, 5],
-                              child: (controller.initFile == null || TextUtil.isEmpty(uploadController.imageUrl(controller.initFile!).value)
-                                  ? Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          Images.ic_ai_ground_upload,
-                                          width: $(20),
-                                        ),
-                                        SizedBox(width: $(4)),
-                                        Text(
-                                          S.of(context).upload_image,
-                                          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-                                        ),
-                                      ],
-                                    ).intoContainer(
-                                      padding: EdgeInsets.symmetric(vertical: $(50)),
-                                      width: double.maxFinite,
-                                    )
-                                  : Stack(
-                                      children: [
-                                        CachedNetworkImageUtils.custom(
-                                            context: context, imageUrl: uploadController.imageUrl(controller.initFile!).value, height: $(160), fit: BoxFit.contain),
-                                        Positioned(
-                                          child: Icon(
-                                            Icons.close,
-                                            size: $(17),
-                                            color: ColorConstant.White,
-                                          )
-                                              .intoContainer(
-                                                  padding: EdgeInsets.all($(5)),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(16),
-                                                    color: Color(0x99000000),
-                                                  ))
-                                              .intoGestureDetector(onTap: () {
-                                            uploadController.imageUrl(controller.initFile!).value = '';
-                                            controller.initFile = null;
-                                            uploadController.update();
-                                            controller.update();
-                                          }),
-                                          top: 2,
-                                          right: 2,
+                    DottedBorder(
+                            radius: Radius.circular($(6)),
+                            color: ColorConstant.White,
+                            strokeWidth: 1.5,
+                            dashPattern: [5, 5],
+                            child: (controller.initFile == null
+                                ? Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        Images.ic_ai_ground_upload,
+                                        width: $(20),
+                                      ),
+                                      SizedBox(width: $(4)),
+                                      Text(
+                                        S.of(context).upload_image,
+                                        style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
+                                      ),
+                                    ],
+                                  ).intoContainer(
+                                    padding: EdgeInsets.symmetric(vertical: $(50)),
+                                    width: double.maxFinite,
+                                  )
+                                : Stack(
+                                    children: [
+                                      Image.file(controller.initFile!, height: $(160), fit: BoxFit.contain),
+                                      Positioned(
+                                        child: Icon(
+                                          Icons.close,
+                                          size: $(17),
+                                          color: ColorConstant.White,
                                         )
-                                      ],
-                                    ).intoContainer(
-                                      width: double.maxFinite,
-                                      height: $(160),
-                                      color: Colors.transparent,
-                                      alignment: Alignment.center,
-                                    )))
-                          .intoGestureDetector(onTap: () {
-                        PickAlbumScreen.pickImage(context, count: 1, switchAlbum: true).then((value) async {
-                          if (value != null && value.isNotEmpty) {
-                            File? source = await value.first.file;
-                            if (source != null) {
-                              CacheManager cacheImage = AppDelegate().getManager();
-                              var path = await ImageUtils.onImagePick(source.path, cacheImage.storageOperator.recordTxt2imgDir.path);
-                              controller.initFile = File(path);
-                            }
+                                            .intoContainer(
+                                                padding: EdgeInsets.all($(5)),
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(16),
+                                                  color: Color(0x99000000),
+                                                ))
+                                            .intoGestureDetector(onTap: () {
+                                          controller.initFile = null;
+                                          controller.update();
+                                        }),
+                                        top: 2,
+                                        right: 2,
+                                      )
+                                    ],
+                                  ).intoContainer(
+                                    width: double.maxFinite,
+                                    height: $(160),
+                                    color: Colors.transparent,
+                                    alignment: Alignment.center,
+                                  )))
+                        .intoGestureDetector(onTap: () {
+                      PickAlbumScreen.pickImage(context, count: 1, switchAlbum: true).then((value) async {
+                        if (value != null && value.isNotEmpty) {
+                          File? source = await value.first.file;
+                          if (source != null) {
+                            CacheManager cacheImage = AppDelegate().getManager();
+                            var path = await ImageUtils.onImagePick(source.path, cacheImage.storageOperator.recordTxt2imgDir.path);
+                            controller.initFile = File(path);
+                            controller.update();
                           }
-                        });
-                      }),
-                      init: txt2imgController.uploadImageController,
-                    ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
+                        }
+                      });
+                    }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
                     SizedBox(height: $(80) + ScreenUtil.getBottomPadding(context)),
                   ],
                 ),

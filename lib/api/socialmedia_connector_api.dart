@@ -13,7 +13,7 @@ import 'package:common_utils/common_utils.dart';
 class SocialMediaConnectorApi extends RetryAbleRequester {
   UserManager userManager = AppDelegate().getManager();
 
-  SocialMediaConnectorApi():super(client: DioNode().client);
+  SocialMediaConnectorApi() : super(client: DioNode().client);
 
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {

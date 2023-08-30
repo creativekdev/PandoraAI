@@ -84,7 +84,7 @@ class Auth {
       'instagram_manage_insights',
       'pages_read_engagement',
       'instagram_manage_comments',
-    ],loginBehavior: LoginBehavior.nativeOnly);
+    ], loginBehavior: LoginBehavior.nativeOnly);
 
     if (loginResult.status == LoginStatus.success) {
       // Create a credential from the access token

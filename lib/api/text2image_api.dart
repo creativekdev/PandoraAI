@@ -46,6 +46,7 @@ class Text2ImageApi extends RetryAbleRequester {
     int height = 512,
     int seed = -1,
     int steps = 20,
+    onFailed,
   }) async {
     var params = <String, dynamic>{
       'prompt': prompt,
@@ -59,7 +60,7 @@ class Text2ImageApi extends RetryAbleRequester {
       params['init_images'] = [initImage];
       api = '/sdapi/v1/img2img';
     }
-    var baseEntity = await post(api, params: params);
+    var baseEntity = await post(api, params: params, onFailed: onFailed);
     Txt2imgResultEntity? result = jsonConvert.convert<Txt2imgResultEntity>(baseEntity?.data);
     if (result == null) {
       return null;

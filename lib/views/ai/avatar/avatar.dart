@@ -41,9 +41,7 @@ class Avatar {
 
   static open(BuildContext context, {required String source}) {
     UserManager userManager = AppDelegate().getManager();
-    userManager.doOnLogin(context,
-        logPreLoginAction: 'pre_open_avatar_list',
-        callback: () {
+    userManager.doOnLogin(context, logPreLoginAction: 'pre_open_avatar_list', callback: () {
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -56,9 +54,7 @@ class Avatar {
   static create(BuildContext context, {required String name, required String style, AppState? state, required Function onCancel, required String source}) async {
     UserManager userManager = AppDelegate().getManager();
     AvatarAiManager aiManager = AppDelegate().getManager();
-    userManager.doOnLogin(context,
-        logPreLoginAction: 'pre_create_avatar',
-        callback: () async {
+    userManager.doOnLogin(context, logPreLoginAction: 'pre_create_avatar', callback: () async {
       await state?.showLoading();
       await aiManager.listAllAvatarAi();
       await state?.hideLoading();

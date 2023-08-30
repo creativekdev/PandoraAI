@@ -102,6 +102,8 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
           imageHeight: shownImage!.height.toDouble(),
           imageWidth: shownImage!.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
+            parent.filtersHolder.cropOperator.currentItem = null;
+            parent.filtersHolder.cropOperator.cropData = Rect.zero;
             removedImage = File(path);
             var imageInfo = await SyncFileImage(file: removedImage!).getImage();
             config.ratio = imageInfo.image.width / imageInfo.image.height;
@@ -303,14 +305,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       var list = await new Executor().execute(arg1: shownImage!, fun1: encodePngThread);
       await File(newPath).writeAsBytes(list);
       resultFilePath = newPath;
-      if (!TextUtil.isEmpty(waitToDelete)) {
-        File(waitToDelete!).exists().then((value) {
-          if (value) {
-            File(waitToDelete).delete();
-          }
-        });
-      }
-      return resultFilePath!;
+      return resultFilePath;
     }
   }
 }
