@@ -50,6 +50,7 @@ class _CropScreenState extends AppState<CropScreen> {
   @override
   void initState() {
     super.initState();
+    this.canCancelOnLoading = false;
     image = widget.image;
     brightness = widget.brightness;
     delay(() {
@@ -70,7 +71,7 @@ class _CropScreenState extends AppState<CropScreen> {
       appBar: AppNavigationBar(
         backgroundColor: brightness == Brightness.dark ? ColorConstant.BackgroundColor : Colors.white,
         brightness: brightness,
-        trailing: TitleTextWidget(S.of(context).ok, brightness == Brightness.dark ? ColorConstant.White : Colors.black, FontWeight.w500, $(16)).intoGestureDetector(onTap: () {
+        trailing: TitleTextWidget(S.of(context).ok1, brightness == Brightness.dark ? ColorConstant.White : Colors.black, FontWeight.w500, $(16)).intoGestureDetector(onTap: () {
           showLoading().whenComplete(() {
             cropController.crop();
           });
@@ -80,7 +81,7 @@ class _CropScreenState extends AppState<CropScreen> {
           ? Container()
           : Crop(
               image: imageList!,
-              initialArea: Rect.fromLTWH(imageSize!.width / 4, imageSize!.height / 4, imageSize!.width / 2, imageSize!.width / 2),
+              initialArea: Rect.fromLTWH(0, 0, imageSize!.width, imageSize!.height),
               controller: cropController,
               onCropped: (bytes) {
                 onCroped(bytes);
@@ -104,6 +105,7 @@ class _CropScreenState extends AppState<CropScreen> {
       await file.writeAsBytes(bytes);
       hideLoading().whenComplete(() {
         Navigator.of(context).pop(XFile(filePath));
+        this.canCancelOnLoading = true;
       });
     });
   }
