@@ -4,54 +4,54 @@ import 'dart:convert';
 
 @JsonSerializable()
 class ShippingMethodEntity {
-	@JSONField(name: "shipping_rate_data")
-	late ShippingMethodShippingRateData shippingRateData;
+  @JSONField(name: "shipping_rate_data")
+  late ShippingMethodShippingRateData shippingRateData;
 
-	ShippingMethodEntity();
+  ShippingMethodEntity();
 
-	factory ShippingMethodEntity.fromJson(Map<String, dynamic> json) => $ShippingMethodEntityFromJson(json);
+  factory ShippingMethodEntity.fromJson(Map<String, dynamic> json) => $ShippingMethodEntityFromJson(json);
 
-	Map<String, dynamic> toJson() => $ShippingMethodEntityToJson(this);
+  Map<String, dynamic> toJson() => $ShippingMethodEntityToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }
 
 @JsonSerializable()
 class ShippingMethodShippingRateData {
-	late String type;
-	@JSONField(name: "fixed_amount")
-	late ShippingMethodShippingRateDataFixedAmount fixedAmount;
-	@JSONField(name: "display_name")
-	late String displayName;
+  late String type;
+  @JSONField(name: "fixed_amount")
+  late ShippingMethodShippingRateDataFixedAmount fixedAmount;
+  @JSONField(name: "display_name")
+  late String displayName;
 
-	ShippingMethodShippingRateData();
+  ShippingMethodShippingRateData();
 
-	factory ShippingMethodShippingRateData.fromJson(Map<String, dynamic> json) => $ShippingMethodShippingRateDataFromJson(json);
+  factory ShippingMethodShippingRateData.fromJson(Map<String, dynamic> json) => $ShippingMethodShippingRateDataFromJson(json);
 
-	Map<String, dynamic> toJson() => $ShippingMethodShippingRateDataToJson(this);
+  Map<String, dynamic> toJson() => $ShippingMethodShippingRateDataToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }
 
 @JsonSerializable()
 class ShippingMethodShippingRateDataFixedAmount {
-	late int amount;
-	late String currency;
+  late int amount;
+  late String currency;
 
-	ShippingMethodShippingRateDataFixedAmount();
+  ShippingMethodShippingRateDataFixedAmount();
 
-	factory ShippingMethodShippingRateDataFixedAmount.fromJson(Map<String, dynamic> json) => $ShippingMethodShippingRateDataFixedAmountFromJson(json);
+  factory ShippingMethodShippingRateDataFixedAmount.fromJson(Map<String, dynamic> json) => $ShippingMethodShippingRateDataFixedAmountFromJson(json);
 
-	Map<String, dynamic> toJson() => $ShippingMethodShippingRateDataFixedAmountToJson(this);
+  Map<String, dynamic> toJson() => $ShippingMethodShippingRateDataFixedAmountToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }

@@ -180,7 +180,6 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     EventBusHelper().eventBus.fire(OnPaySuccessEvent());
     await userManager.refreshUser();
     Navigator.pop(context, true);
-
   }
 
   void onCreditCardModelChange(CreditCardModel? creditCardModel) {

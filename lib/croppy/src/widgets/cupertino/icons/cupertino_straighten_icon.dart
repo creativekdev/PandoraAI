@@ -39,51 +39,18 @@ class _CupertinoStraightenIconPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Path path_1 = Path();
     path_1.moveTo(0, size.height * 0.4997562);
-    path_1.cubicTo(
-        0,
-        size.height * 0.4786881,
-        size.width * 0.01249107,
-        size.height * 0.4610493,
-        size.width * 0.02748035,
-        size.height * 0.4610493);
+    path_1.cubicTo(0, size.height * 0.4786881, size.width * 0.01249107, size.height * 0.4610493, size.width * 0.02748035, size.height * 0.4610493);
     path_1.lineTo(size.width * 0.9725179, size.height * 0.4610493);
-    path_1.cubicTo(size.width * 0.9875088, size.height * 0.4610493, size.width,
-        size.height * 0.4786881, size.width, size.height * 0.4997562);
-    path_1.cubicTo(
-        size.width,
-        size.height * 0.5208262,
-        size.width * 0.9875088,
-        size.height * 0.5389532,
-        size.width * 0.9725179,
-        size.height * 0.5389532);
+    path_1.cubicTo(size.width * 0.9875088, size.height * 0.4610493, size.width, size.height * 0.4786881, size.width, size.height * 0.4997562);
+    path_1.cubicTo(size.width, size.height * 0.5208262, size.width * 0.9875088, size.height * 0.5389532, size.width * 0.9725179, size.height * 0.5389532);
     path_1.lineTo(size.width * 0.02748035, size.height * 0.5389532);
-    path_1.cubicTo(size.width * 0.01249107, size.height * 0.5389532, 0,
-        size.height * 0.5208262, 0, size.height * 0.4997562);
+    path_1.cubicTo(size.width * 0.01249107, size.height * 0.5389532, 0, size.height * 0.5208262, 0, size.height * 0.4997562);
     path_1.close();
     path_1.moveTo(size.width * 0.5003563, size.height * 0.9995133);
-    path_1.cubicTo(
-        size.width * 0.6991445,
-        size.height * 0.9995133,
-        size.width * 0.8643804,
-        size.height * 0.7726625,
-        size.width * 0.8643804,
-        size.height * 0.4997562);
-    path_1.cubicTo(size.width * 0.8643804, size.height * 0.2263602,
-        size.width * 0.6987863, 0, size.width * 0.4999982, 0);
-    path_1.cubicTo(
-        size.width * 0.3008563,
-        0,
-        size.width * 0.1363311,
-        size.height * 0.2263602,
-        size.width * 0.1363311,
-        size.height * 0.4997562);
-    path_1.cubicTo(
-        size.width * 0.1363311,
-        size.height * 0.7726625,
-        size.width * 0.3012133,
-        size.height * 0.9995133,
-        size.width * 0.5003563,
-        size.height * 0.9995133);
+    path_1.cubicTo(size.width * 0.6991445, size.height * 0.9995133, size.width * 0.8643804, size.height * 0.7726625, size.width * 0.8643804, size.height * 0.4997562);
+    path_1.cubicTo(size.width * 0.8643804, size.height * 0.2263602, size.width * 0.6987863, 0, size.width * 0.4999982, 0);
+    path_1.cubicTo(size.width * 0.3008563, 0, size.width * 0.1363311, size.height * 0.2263602, size.width * 0.1363311, size.height * 0.4997562);
+    path_1.cubicTo(size.width * 0.1363311, size.height * 0.7726625, size.width * 0.3012133, size.height * 0.9995133, size.width * 0.5003563, size.height * 0.9995133);
     path_1.close();
 
     Paint paint1Fill = Paint()..style = PaintingStyle.fill;
@@ -92,6 +59,5 @@ class _CupertinoStraightenIconPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_CupertinoStraightenIconPainter oldDelegate) =>
-      oldDelegate.color != color;
+  bool shouldRepaint(_CupertinoStraightenIconPainter oldDelegate) => oldDelegate.color != color;
 }

@@ -3,8 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-const kCupertinoImageCropperPageTransitionDuration =
-    Duration(milliseconds: 300);
+const kCupertinoImageCropperPageTransitionDuration = Duration(milliseconds: 300);
 
 class CupertinoImageCropperWithHeroRoute<T> extends PageRoute<T> {
   CupertinoImageCropperWithHeroRoute({
@@ -30,9 +29,7 @@ class CupertinoImageCropperWithHeroRoute<T> extends PageRoute<T> {
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
-        final opacity = animation.status == AnimationStatus.forward
-            ? animation.value
-            : pow(animation.value, 3.0).toDouble();
+        final opacity = animation.status == AnimationStatus.forward ? animation.value : pow(animation.value, 3.0).toDouble();
 
         return Opacity(
           opacity: opacity,
@@ -47,8 +44,7 @@ class CupertinoImageCropperWithHeroRoute<T> extends PageRoute<T> {
   bool get maintainState => true;
 
   @override
-  Duration get transitionDuration =>
-      kCupertinoImageCropperPageTransitionDuration;
+  Duration get transitionDuration => kCupertinoImageCropperPageTransitionDuration;
 
   @override
   bool get opaque => false;

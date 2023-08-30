@@ -41,11 +41,7 @@ class _InstaLoginScreenState extends State<InstaLoginScreen> {
               if (isDone) {
                 instagram.getUserProfile().then((isDone) async {
                   print('${instagram.username} logged in!');
-                  Navigator.pop(context, {
-                    'token': instagram.authorizationCode.toString(),
-                    'name': instagram.username.toString(),
-                    'accessToken': instagram.accessToken.toString()
-                  });
+                  Navigator.pop(context, {'token': instagram.authorizationCode.toString(), 'name': instagram.username.toString(), 'accessToken': instagram.accessToken.toString()});
                 });
               }
             });

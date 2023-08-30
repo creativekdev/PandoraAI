@@ -4,12 +4,11 @@ import 'package:cartoonizer/generated/json/generate_limit_entity.g.dart';
 
 @JsonSerializable()
 class GenerateLimitEntity {
+  @JSONField(name: "daily_limit")
+  late int dailyLimit;
+  @JSONField(name: "used_count")
+  late int usedCount;
 
-	@JSONField(name: "daily_limit")
-	late int dailyLimit;
-	@JSONField(name: "used_count")
-	late int usedCount;
-  
   GenerateLimitEntity();
 
   factory GenerateLimitEntity.fromJson(Map<String, dynamic> json) => $GenerateLimitEntityFromJson(json);

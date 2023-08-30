@@ -9,5 +9,5 @@ abstract class BaseFilterOperator<T> {
 
   onInit(T recent);
 
-  dispose(){}
+  dispose() {}
 }

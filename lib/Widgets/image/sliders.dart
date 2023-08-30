@@ -85,7 +85,7 @@ class CustomSlider extends StatelessWidget {
           Align(child: sliderBar, alignment: FractionalOffset(isVertical ? 0.5 : value, isVertical ? 1 - value : 0.5)),
         ],
         // ).intoContainer(width: isVertical ? max(sliderBar?.size.width ?? 0, width) : height, height: isVertical ? height : null),
-      ).intoContainer(width: width,height: height),
+      ).intoContainer(width: width, height: height),
       onTapDown: (details) {
         updateDx(getPoint(context, details.globalPosition));
       },

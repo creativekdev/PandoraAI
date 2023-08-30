@@ -4,17 +4,17 @@ import 'dart:convert';
 
 @JsonSerializable()
 class MsgCountEntity {
-	late String action;
-	late int count;
+  late String action;
+  late int count;
 
-	MsgCountEntity();
+  MsgCountEntity();
 
-	factory MsgCountEntity.fromJson(Map<String, dynamic> json) => $MsgCountEntityFromJson(json);
+  factory MsgCountEntity.fromJson(Map<String, dynamic> json) => $MsgCountEntityFromJson(json);
 
-	Map<String, dynamic> toJson() => $MsgCountEntityToJson(this);
+  Map<String, dynamic> toJson() => $MsgCountEntityToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }

@@ -141,9 +141,7 @@ class Filter {
         int r = ImageProcessor.getR(pixel);
         int g = ImageProcessor.getG(pixel);
         int b = ImageProcessor.getB(pixel);
-        if (r < lowerBlackThreshold &&
-            g < lowerBlackThreshold &&
-            b < lowerBlackThreshold) {
+        if (r < lowerBlackThreshold && g < lowerBlackThreshold && b < lowerBlackThreshold) {
           contrastAdjusted.setPixel(x, y, imgLib.getColor(0, 0, 0));
         }
       }
@@ -159,6 +157,7 @@ class Filter {
 
     return contrastAdjusted;
   }
+
   static Future<imgLib.Image> ImFilter(String filter, imgLib.Image _image) async {
     //uncomment when image_picker is installed
     imgLib.Image res_image;
@@ -326,7 +325,6 @@ class Filter {
             int green = imgLib.getGreen(pixel);
             int blue = imgLib.getBlue(pixel);
             int alpha = imgLib.getAlpha(pixel);
-
 
             HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 

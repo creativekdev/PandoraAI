@@ -118,10 +118,10 @@ class SearchBarState extends State<SearchBar> {
               children: [
                 searchIcon == null
                     ? Icon(
-                  Icons.search,
-                  size: $(20),
-                  color: Colors.grey,
-                )
+                        Icons.search,
+                        size: $(20),
+                        color: Colors.grey,
+                      )
                     : searchIcon!,
                 Container(
                   width: $(6),
@@ -169,16 +169,16 @@ class SearchBarState extends State<SearchBar> {
               offstage: !showClear,
               child: clearIcon == null
                   ? IconButton(
-                icon: new Icon(Icons.cancel),
-                color: Colors.grey,
-                iconSize: $(21),
-                onPressed: () {
-                  _onClearClick();
-                },
-              )
+                      icon: new Icon(Icons.cancel),
+                      color: Colors.grey,
+                      iconSize: $(21),
+                      onPressed: () {
+                        _onClearClick();
+                      },
+                    )
                   : clearIcon!.intoGestureDetector(onTap: () {
-                _onClearClick();
-              })),
+                      _onClearClick();
+                    })),
         ],
       ),
       ignoring: !enable,

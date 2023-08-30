@@ -16,8 +16,7 @@ class ConsumableStore {
   }
 
   static Future<List<String>> load() async {
-    return (await SharedPreferences.getInstance()).getStringList(_kPrefKey) ??
-        [];
+    return (await SharedPreferences.getInstance()).getStringList(_kPrefKey) ?? [];
   }
 
   static Future<void> _doSave(String id) async {

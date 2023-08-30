@@ -42,23 +42,11 @@ class _CupertinoAspectRatioIconPainter extends CustomPainter {
     path_1.moveTo(0, size.height * 0.3825297);
     path_1.lineTo(0, size.height * 0.3049383);
     path_1.lineTo(size.width * 0.6569159, size.height * 0.3049383);
-    path_1.cubicTo(
-        size.width * 0.7260426,
-        size.height * 0.3049383,
-        size.width * 0.7625123,
-        size.height * 0.3510590,
-        size.width * 0.7625123,
-        size.height * 0.4378742);
+    path_1.cubicTo(size.width * 0.7260426, size.height * 0.3049383, size.width * 0.7625123, size.height * 0.3510590, size.width * 0.7625123, size.height * 0.4378742);
     path_1.lineTo(size.width * 0.7625123, size.height);
     path_1.lineTo(size.width * 0.7018669, size.height);
     path_1.lineTo(size.width * 0.7018669, size.height * 0.4465557);
-    path_1.cubicTo(
-        size.width * 0.7018669,
-        size.height * 0.4064035,
-        size.width * 0.6836320,
-        size.height * 0.3825297,
-        size.width * 0.6526731,
-        size.height * 0.3825297);
+    path_1.cubicTo(size.width * 0.7018669, size.height * 0.4064035, size.width * 0.6836320, size.height * 0.3825297, size.width * 0.6526731, size.height * 0.3825297);
     path_1.lineTo(size.width * 0.5203563, size.height * 0.3825297);
     path_1.lineTo(size.width * 0.5203563, size.height);
     path_1.lineTo(size.width * 0.4597109, size.height);
@@ -66,27 +54,13 @@ class _CupertinoAspectRatioIconPainter extends CustomPainter {
     path_1.close();
     path_1.moveTo(size.width * 0.1331641, size.height * 0.9994611);
     path_1.lineTo(size.width * 0.8668363, size.height * 0.9994611);
-    path_1.cubicTo(size.width * 0.9558958, size.height * 0.9994611, size.width,
-        size.height * 0.9435715, size.width, size.height * 0.8317980);
+    path_1.cubicTo(size.width * 0.9558958, size.height * 0.9994611, size.width, size.height * 0.9435715, size.width, size.height * 0.8317980);
     path_1.lineTo(size.width, size.height * 0.1687471);
-    path_1.cubicTo(
-        size.width,
-        size.height * 0.05697244,
-        size.width * 0.9558958,
-        size.height * 0.0005425947,
-        size.width * 0.8668363,
-        size.height * 0.0005425947);
+    path_1.cubicTo(size.width, size.height * 0.05697244, size.width * 0.9558958, size.height * 0.0005425947, size.width * 0.8668363, size.height * 0.0005425947);
     path_1.lineTo(size.width * 0.1331641, size.height * 0.0005425947);
-    path_1.cubicTo(size.width * 0.04452932, size.height * 0.0005425947, 0,
-        size.height * 0.05697244, 0, size.height * 0.1687471);
+    path_1.cubicTo(size.width * 0.04452932, size.height * 0.0005425947, 0, size.height * 0.05697244, 0, size.height * 0.1687471);
     path_1.lineTo(0, size.height * 0.8317980);
-    path_1.cubicTo(
-        0,
-        size.height * 0.9435715,
-        size.width * 0.04452932,
-        size.height * 0.9994611,
-        size.width * 0.1331641,
-        size.height * 0.9994611);
+    path_1.cubicTo(0, size.height * 0.9435715, size.width * 0.04452932, size.height * 0.9994611, size.width * 0.1331641, size.height * 0.9994611);
     path_1.close();
 
     Paint paint1Fill = Paint()..style = PaintingStyle.fill;
@@ -95,6 +69,5 @@ class _CupertinoAspectRatioIconPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_CupertinoAspectRatioIconPainter oldDelegate) =>
-      oldDelegate.color != color;
+  bool shouldRepaint(_CupertinoAspectRatioIconPainter oldDelegate) => oldDelegate.color != color;
 }
