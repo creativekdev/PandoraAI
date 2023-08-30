@@ -33,7 +33,8 @@ import 'package:flutter/cupertino.dart';
 /// [shouldPopAfterCrop] defines whether the page should be popped after the
 /// image has been cropped. If you want to control how the page is popped, set
 /// this to false and pop the page yourself using the [Navigator].
-Future<CropImageResult?> showCupertinoImageCropper(BuildContext context, {
+Future<CropImageResult?> showCupertinoImageCropper(
+  BuildContext context, {
   required ImageProvider imageProvider,
   CroppableImageData? initialData,
   ARCroppableImagePostProcessResultFn? postProcessFn,
@@ -62,12 +63,11 @@ Future<CropImageResult?> showCupertinoImageCropper(BuildContext context, {
       cropShapeFn: cropPathFn,
       allowedAspectRatios: allowedAspectRatios,
       enabledTransformations: enabledTransformations,
-      builder: (context, controller) =>
-          CupertinoImageCropperPage(
-            heroTag: heroTag,
-            controller: controller,
-            shouldPopAfterCrop: shouldPopAfterCrop,
-          ),
+      builder: (context, controller) => CupertinoImageCropperPage(
+        heroTag: heroTag,
+        controller: controller,
+        shouldPopAfterCrop: shouldPopAfterCrop,
+      ),
     );
   }
 

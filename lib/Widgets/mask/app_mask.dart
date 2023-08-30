@@ -109,6 +109,7 @@ class BezierMaskClipper extends CustomClipper<Path> {
     return true;
   }
 }
+
 class CircleMaskClipper extends CustomClipper<Path> {
   double x;
   double y;

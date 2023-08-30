@@ -406,9 +406,9 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
             },
           );
         }).then((value) {
-          if(value == null) {
-            Events.avatarPhotoCancelClick();
-          }
+      if (value == null) {
+        Events.avatarPhotoCancelClick();
+      }
     });
   }
 

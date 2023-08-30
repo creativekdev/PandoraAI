@@ -8,7 +8,6 @@ class MetagramFollowersScreen extends StatefulWidget {
 }
 
 class _MetagramFollowersScreenState extends State<MetagramFollowersScreen> {
-
   @override
   Widget build(BuildContext context) {
     return const Placeholder();

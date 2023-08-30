@@ -1,13 +1,6 @@
 import 'package:cartoonizer/common/importFile.dart';
 
-Widget SimpleTextInputWidget(
-    String hintText,
-    Color color,
-    FontWeight fontWeight,
-    double size,
-    TextInputAction textInputAction,
-    TextInputType textInputType,
-    bool isPassword,
+Widget SimpleTextInputWidget(String hintText, Color color, FontWeight fontWeight, double size, TextInputAction textInputAction, TextInputType textInputType, bool isPassword,
     TextEditingController textEditingController) {
   return Container(
     width: double.maxFinite,

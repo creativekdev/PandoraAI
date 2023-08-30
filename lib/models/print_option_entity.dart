@@ -9,8 +9,7 @@ class PrintOptionEntity {
 
   PrintOptionEntity();
 
-  factory PrintOptionEntity.fromJson(Map<String, dynamic> json) =>
-      $PrintOptionEntityFromJson(json);
+  factory PrintOptionEntity.fromJson(Map<String, dynamic> json) => $PrintOptionEntityFromJson(json);
 
   Map<String, dynamic> toJson() => $PrintOptionEntityToJson(this);
 
@@ -62,8 +61,7 @@ class PrintOptionData {
 
   PrintOptionData();
 
-  factory PrintOptionData.fromJson(Map<String, dynamic> json) =>
-      $PrintOptionDataFromJson(json);
+  factory PrintOptionData.fromJson(Map<String, dynamic> json) => $PrintOptionDataFromJson(json);
 
   Map<String, dynamic> toJson() => $PrintOptionDataToJson(this);
 
@@ -81,8 +79,7 @@ class PrintOptionDataCanvaSize {
 
   PrintOptionDataCanvaSize();
 
-  factory PrintOptionDataCanvaSize.fromJson(Map<String, dynamic> json) =>
-      $PrintOptionDataCanvaSizeFromJson(json);
+  factory PrintOptionDataCanvaSize.fromJson(Map<String, dynamic> json) => $PrintOptionDataCanvaSizeFromJson(json);
 
   Map<String, dynamic> toJson() => $PrintOptionDataCanvaSizeToJson(this);
 
@@ -101,8 +98,7 @@ class PrintOptionDataS3Files {
 
   PrintOptionDataS3Files();
 
-  factory PrintOptionDataS3Files.fromJson(Map<String, dynamic> json) =>
-      $PrintOptionDataS3FilesFromJson(json);
+  factory PrintOptionDataS3Files.fromJson(Map<String, dynamic> json) => $PrintOptionDataS3FilesFromJson(json);
 
   Map<String, dynamic> toJson() => $PrintOptionDataS3FilesToJson(this);
 

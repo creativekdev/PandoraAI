@@ -5,7 +5,6 @@ import 'package:cartoonizer/Widgets/mask/app_mask.dart';
 
 import 'anotherme.dart';
 
-
 class TransResultAnimScreen extends StatefulWidget {
   File origin;
   File result;
@@ -108,13 +107,13 @@ class TransProgressScreenShotWidget extends StatelessWidget {
           height: height,
         ).hero(tag: AnotherMe.takeItemTag),
         TransProgressImage(
-            child: Image.file(
-              result,
-              fit: BoxFit.cover,
-              width: width,
-              height: height,
-            ),
-            progress: progress)
+                child: Image.file(
+                  result,
+                  fit: BoxFit.cover,
+                  width: width,
+                  height: height,
+                ),
+                progress: progress)
             .hero(tag: result.path),
       ],
     ).intoContainer(

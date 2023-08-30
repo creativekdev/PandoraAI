@@ -2,8 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/common/importFile.dart';
 
-class EditProfileScreenController extends GetxController{
-
+class EditProfileScreenController extends GetxController {
   final imageUrl = "".obs;
   updateImageUrl(String url) => imageUrl.value = url;
 

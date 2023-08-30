@@ -283,7 +283,7 @@ class _CreditCardFormState extends State<CreditCardForm> {
                       ),
                       decoration: widget.cvvCodeDecoration,
                       keyboardType: TextInputType.number,
-                      textInputAction : TextInputAction.next,
+                      textInputAction: TextInputAction.next,
                       autofillHints: const <String>[AutofillHints.creditCardSecurityCode],
                       onChanged: (String text) {
                         setState(() {

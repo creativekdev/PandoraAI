@@ -14,18 +14,13 @@ import 'dart:ffi' as ffi;
 ///
 class CroppyFfiBindings {
   /// Holds the symbol lookup function.
-  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-      _lookup;
+  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
-  CroppyFfiBindings(ffi.DynamicLibrary dynamicLibrary)
-      : _lookup = dynamicLibrary.lookup;
+  CroppyFfiBindings(ffi.DynamicLibrary dynamicLibrary) : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
-  CroppyFfiBindings.fromLookup(
-      ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-          lookup)
-      : _lookup = lookup;
+  CroppyFfiBindings.fromLookup(ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup) : _lookup = lookup;
 
   Aabb2 fit_polygon_in_quad(
     ffi.Pointer<ffi.Double> points,
@@ -37,11 +32,8 @@ class CroppyFfiBindings {
     );
   }
 
-  late final _fit_polygon_in_quadPtr = _lookup<
-          ffi.NativeFunction<Aabb2 Function(ffi.Pointer<ffi.Double>, ffi.Int)>>(
-      'fit_polygon_in_quad');
-  late final _fit_polygon_in_quad = _fit_polygon_in_quadPtr
-      .asFunction<Aabb2 Function(ffi.Pointer<ffi.Double>, int)>(isLeaf: true);
+  late final _fit_polygon_in_quadPtr = _lookup<ffi.NativeFunction<Aabb2 Function(ffi.Pointer<ffi.Double>, ffi.Int)>>('fit_polygon_in_quad');
+  late final _fit_polygon_in_quad = _fit_polygon_in_quadPtr.asFunction<Aabb2 Function(ffi.Pointer<ffi.Double>, int)>(isLeaf: true);
 
   Aabb2 fit_polygon_in_quad_on_resize(
     ffi.Pointer<ffi.Double> points,
@@ -63,14 +55,9 @@ class CroppyFfiBindings {
     );
   }
 
-  late final _fit_polygon_in_quad_on_resizePtr = _lookup<
-      ffi.NativeFunction<
-          Aabb2 Function(ffi.Pointer<ffi.Double>, ffi.Int, ffi.Double, ffi.Bool,
-              ffi.Bool, ffi.Bool, ffi.Bool)>>('fit_polygon_in_quad_on_resize');
-  late final _fit_polygon_in_quad_on_resize =
-      _fit_polygon_in_quad_on_resizePtr.asFunction<
-          Aabb2 Function(
-              ffi.Pointer<ffi.Double>, int, double, bool, bool, bool, bool)>();
+  late final _fit_polygon_in_quad_on_resizePtr =
+      _lookup<ffi.NativeFunction<Aabb2 Function(ffi.Pointer<ffi.Double>, ffi.Int, ffi.Double, ffi.Bool, ffi.Bool, ffi.Bool, ffi.Bool)>>('fit_polygon_in_quad_on_resize');
+  late final _fit_polygon_in_quad_on_resize = _fit_polygon_in_quad_on_resizePtr.asFunction<Aabb2 Function(ffi.Pointer<ffi.Double>, int, double, bool, bool, bool, bool)>();
 }
 
 final class Vector2 extends ffi.Struct {
