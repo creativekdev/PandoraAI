@@ -131,7 +131,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
 
   Future<String> saveRecent() async {
     var holder = controller.currentItem.holder as ImageEditionBaseHolder;
-    String value = await holder.saveToResult();
+    String value = await holder.saveToResult(force: true);
     var recentController = Get.find<RecentController>();
     String originPath = controller.originFile.path;
     if (controller.currentItem.holder is RemoveBgHolder) {
@@ -184,7 +184,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       effectKey = baseController.selectedEffect?.key ?? '';
     } else if (controller.currentItem.holder is ImageEditionBaseHolder) {
       var holder = controller.currentItem.holder as ImageEditionBaseHolder;
-      resultPath = await holder.saveToResult();
+      resultPath = await holder.saveToResult(force: true);
     }
     if (TextUtil.isEmpty(resultPath)) {
       return;
@@ -228,7 +228,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       resultPath = (baseController.resultFile ?? baseController.originFile).path;
     } else if (controller.currentItem.holder is ImageEditionBaseHolder) {
       var holder = controller.currentItem.holder as ImageEditionBaseHolder;
-      resultPath = await holder.saveToResult();
+      resultPath = await holder.saveToResult(force: true);
     }
     hideLoading();
     File? file = null;
