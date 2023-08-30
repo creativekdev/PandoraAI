@@ -78,5 +78,5 @@ abstract class ImageEditionBaseHolder {
 
   onResetClick() {}
 
-  Future<String> saveToResult();
+  Future<String> saveToResult({force = false});
 }

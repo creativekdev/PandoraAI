@@ -143,10 +143,10 @@ class FiltersHolder extends ImageEditionBaseHolder {
   }
 
   @override
-  Future<String> saveToResult() async {
+  Future<String> saveToResult({force = false}) async {
     String waitToDelete = resultFilePath;
     var key = getConfigKey();
-    if (key == initHash) {
+    if (key == initHash && !force) {
       return '';
     }
     var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';
@@ -204,9 +204,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -230,9 +227,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -248,9 +242,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -271,9 +262,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -290,9 +278,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -308,9 +293,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -326,9 +308,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -345,9 +324,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
         for (int y = 0; y < res_image.height; y++) {
 // Get the pixel color at (x, y)
           int pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 // Extract the red, green, and blue channels from the pixel
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
@@ -379,9 +355,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
         for (int y = 0; y < res_image.height; y++) {
 // Get the pixel color at (x, y)
           int pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 // Extract the red, green, and blue channels from the pixel
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
@@ -401,9 +374,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
         for (int y = 0; y < res_image.height; y++) {
 // Get the pixel color at (x, y)
           int pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 // Extract the red, green, and blue channels from the pixel
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
@@ -427,9 +397,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 
 // Modify the pixel values to create the dramatic warm effect
           final red = imgLib.getRed(pixel);
@@ -446,9 +413,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 
 // Modify the pixel values to create the dramatic cool effect
           final red = imgLib.getRed(pixel);
@@ -463,9 +427,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 
 // Convert the pixel to grayscale
           final luminance = imgLib.getLuminance(pixel);
@@ -480,9 +441,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 
 // Modify the pixel values to create the Silverstone effect
           final red = imgLib.getRed(pixel);
@@ -503,9 +461,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 
 // Convert the pixel to grayscale
           final luminance = imgLib.getLuminance(pixel);
@@ -523,9 +478,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           final red = imgLib.getRed(pixel);
           final green = imgLib.getGreen(pixel);
           final blue = imgLib.getBlue(pixel);
@@ -557,9 +509,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final int pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int mink = 0;
           for (int k = 0; k < group.length; k++) {
             final r1 = imgLib.getRed(pixel);
@@ -614,9 +563,6 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
       for (var y = 0; y < image.height; ++y) {
         for (var x = 0; x < image.width; ++x) {
           final pixel = image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
           int blue = imgLib.getBlue(pixel);
@@ -659,16 +605,13 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
         for (var x = 0; x < image.width; ++x) {
           final pixel = image.getPixel(x, y);
           int alpha = imgLib.getAlpha(pixel);
-          if (alpha < 255) {
-            continue;
-          }
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
           int blue = imgLib.getBlue(pixel);
           HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
           hsv = hsv.withHue((hsv.hue + data.value * data.multiple) % 360);
           Color color = hsv.toColor();
-          image.setPixelRgba(x, y, color.red, color.green, color.blue);
+          image.setPixelRgba(x, y, color.red, color.green, color.blue, alpha);
         }
       }
       break;

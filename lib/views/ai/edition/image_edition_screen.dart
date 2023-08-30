@@ -263,7 +263,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
     } else {
       var holder = controller.currentItem.holder as ImageEditionBaseHolder;
-      var s = await holder.saveToResult();
+      var s = await holder.saveToResult(force: true);
       uint8list = await File(s).readAsBytes();
     }
     hideLoading();

@@ -293,7 +293,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   }
 
   @override
-  Future<String> saveToResult() async {
+  Future<String> saveToResult({force = false}) async {
     String? waitToDelete = resultFilePath;
     var key = EncryptUtil.encodeMd5('${config.toString()}');
     var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';
