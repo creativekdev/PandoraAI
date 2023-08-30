@@ -200,9 +200,6 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
       String r;
       if (xFile != null) {
         r = xFile.path;
-        // } else {
-        //   r = value.xFile.path;
-        // }
         controller.photoType = value.source;
         var p = await ImageUtils.onImagePick(r, cacheManager.storageOperator.recordAiColoringDir.path);
         controller.changeOriginFile(context, File(p));
