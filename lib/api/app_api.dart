@@ -150,8 +150,19 @@ class AppApi extends RetryAbleRequester {
     if (category != null) {
       map['category'] = category;
     }
-    var baseEntity = await get('/social_post/all', params: map);
-    return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
+    var baseEntity = await get('/social_post/all', params: map, options: Options(responseType: ResponseType.stream));
+    if (baseEntity == null) {
+      return null;
+    } else {
+      var stream = await (baseEntity.data as ResponseBody).stream.toList();
+      final result = BytesBuilder();
+      for (Uint8List subList in stream) {
+        result.add(subList);
+      }
+      String s = Utf8Decoder().convert(result.takeBytes());
+      var json = jsonDecode(s);
+      return jsonConvert.convert<PageEntity>(json['data']);
+    }
   }
 
   Future<DiscoveryListEntity?> getDiscoveryDetail(

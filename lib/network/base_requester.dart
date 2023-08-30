@@ -126,6 +126,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     bool preHandleRequest = true,
     Function(Response? response)? onFailed,
     bool needRetry = true,
+    options,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -135,6 +136,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
         path,
         queryParameters: params,
         onReceiveProgress: onReceiveProgress,
+        options: options,
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {

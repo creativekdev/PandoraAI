@@ -66,28 +66,6 @@ class ClipDropApi extends RetryAbleRequester {
         result.add(subList);
       }
       await File(resultPath).writeAsBytes(result.takeBytes(), flush: true);
-      // Uint8List takeBytes = result.takeBytes();
-      // var imageInfo = await SyncMemoryImage(list: takeBytes).getImage();
-      // var image = await getLibImage(imageInfo.image);
-      // for (var x = 0; x < image.width; x++) {
-      //   for (var y = 0; y < image.height; y++) {
-      //     var pixel = image.getPixel(x, y);
-      //     var alpha = imgLib.getAlpha(pixel);
-      //     if (alpha <= 20) {
-      //       alpha = 0;
-      //     } else if (alpha < 255 && alpha > 20) {
-      //       pixel = ImageProcessor.argbToRgb(pixel);
-      //       alpha = 255;
-      //     }
-      //     var red = imgLib.getRed(pixel);
-      //     var green = imgLib.getGreen(pixel);
-      //     var blue = imgLib.getBlue(pixel);
-      //     var fromRgb = imgLib.Color.fromRgba(red, green, blue, alpha);
-      //     image.setPixel(x, y, fromRgb);
-      //   }
-      // }
-      // var list = await new Executor().execute(arg1: image, fun1: encodePngThread);
-      // await File(resultPath).writeAsBytes(list, flush: true);
       return resultPath;
     } else {
       return null;

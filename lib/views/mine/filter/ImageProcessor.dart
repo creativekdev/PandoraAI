@@ -29,6 +29,14 @@ class ImageProcessor {
     return imgLib.getAlpha(pixel);
   }
 
+  static setARGB(int pixel, int a, int r, int g, int b) {
+    var setAlpha = imgLib.setAlpha(pixel, a);
+    var setRed = imgLib.setRed(setAlpha, r);
+    var setGreen = imgLib.setGreen(setRed, g);
+    var setBlue = imgLib.setBlue(setGreen, b);
+    return setBlue;
+  }
+
   static setRGB(int pixel, int r, int g, int b) {
     if (r > 255)
       r = 255;
@@ -39,8 +47,7 @@ class ImageProcessor {
     if (b > 255)
       b = 255;
     else if (b < 0) b = 0;
-
-    return (pixel & 0xFF000000) | ((b << 16) & 0x00FF0000) | ((g << 8) & 0x0000FF00) | ((r) & 0x000000FF);
+    return setARGB(pixel, imgLib.getAlpha(pixel), r, g, b);
   }
 
   static convolution(imgLib.Image image, List<int> kernel) {
@@ -54,9 +61,6 @@ class ImageProcessor {
         valr = valb = valg = 0;
         for (int c = 0; c < 9; c++) {
           int pixel = image.getPixel(i + di[c], j + dj[c]);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           valr = valr + getR(pixel) * kernel[c];
           valg = valg + getG(pixel) * kernel[c];
           valb = valb + getB(pixel) * kernel[c];
