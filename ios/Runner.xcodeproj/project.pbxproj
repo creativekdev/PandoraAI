@@ -10,7 +10,7 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		26E5E08F27E33864004E2A95 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 26E5E08E27E33864004E2A95 /* GoogleService-Info.plist */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
-		73438A4E28E46B0A005AD60F /* ImageNotification.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 73438A4728E46B0A005AD60F /* ImageNotification.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		73438A4E28E46B0A005AD60F /* ImageNotification.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 73438A4728E46B0A005AD60F /* ImageNotification.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		73E198B22918EB370005CF98 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73438A4928E46B0A005AD60F /* NotificationService.swift */; };
 		73E198B32918EB3C0005CF98 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73438A4928E46B0A005AD60F /* NotificationService.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
@@ -32,15 +32,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		73438A2D28E4485B005AD60F /* Embed App Extensions */ = {
+		73438A2D28E4485B005AD60F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				73438A4E28E46B0A005AD60F /* ImageNotification.appex in Embed App Extensions */,
+				73438A4E28E46B0A005AD60F /* ImageNotification.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
@@ -225,7 +225,7 @@
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				330D853D564B0D925306D2D3 /* [firebase_crashlytics] Crashlytics Upload Symbols */,
-				73438A2D28E4485B005AD60F /* Embed App Extensions */,
+				73438A2D28E4485B005AD60F /* Embed Foundation Extensions */,
 				CCD7B4038F46132CEC7F64FB /* [CP] Embed Pods Frameworks */,
 				002AA91FA1412CA04CDF5810 /* [CP] Copy Pods Resources */,
 			);
@@ -245,6 +245,7 @@
 		97C146E61CF9000F007C117D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1340;
 				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "";
