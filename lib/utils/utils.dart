@@ -242,12 +242,13 @@ Future<Uint8List> imageCompressWithList(Uint8List image) async {
   return Uint8List.fromList(uint8list.toList());
 }
 
-Future<Uint8List> cropFile(ui.Image srcImage, Rect rect) async {
+// add default color is white
+Future<Uint8List> cropFile(ui.Image srcImage, Rect rect, {Color color = Colors.white}) async {
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder, Rect.fromPoints(Offset.zero, Offset(rect.width, rect.height)));
 
   final paint = Paint()
-    ..color = Colors.white
+    ..color = color
     ..style = PaintingStyle.fill;
 
   canvas.drawImageRect(srcImage, rect, Rect.fromLTRB(0, 0, rect.width, rect.height), paint);

@@ -44,7 +44,6 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   GlobalKey<DrawableOptState> optKey = GlobalKey<DrawableOptState>();
   UserManager userManager = AppDelegate().getManager();
-  double screenShotScale = 1;
 
   @override
   void initState() {
@@ -68,7 +67,6 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
       descriptionHeight = $(96) + ScreenUtil.getBottomPadding(context);
       width = ScreenUtil.screenSize.width - $(30);
       height = ScreenUtil.screenSize.height - kNavBarPersistentHeight - ScreenUtil.getStatusBarHeight() - descriptionHeight;
-      screenShotScale = $(384) / width * (384 / $(384));
       setState(() {});
       if (widget.record != null) {
         delay(() {
@@ -104,7 +102,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
   }
 
   toResultWithoutCheck() {
-    drawableController.getImage(screenShotScale: screenShotScale).then((value) async {
+    drawableController.getImage(screenShotScale: 3.0).then((value) async {
       var key = EncryptUtil.encodeMd5(DrawableRecord(activePens: drawableController.activePens).toString());
       var uploadPath = cacheManager.storageOperator.recordAiDrawDir.path + key + '.jpg';
       var uploadFile = File(uploadPath);
@@ -137,15 +135,6 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
       );
       hideLoading();
     });
-  }
-
-  @override
-  void didUpdateWidget(covariant AiDrawableScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    descriptionHeight = $(96) + ScreenUtil.getBottomPadding(context);
-    width = ScreenUtil.screenSize.width;
-    height = ScreenUtil.screenSize.height - kNavBarPersistentHeight - ScreenUtil.getStatusBarHeight() - descriptionHeight;
-    screenShotScale = $(384) / width * (384 / $(384));
   }
 
   @override

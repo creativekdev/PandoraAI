@@ -7,7 +7,6 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/gallery/crop_screen.dart';
-import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/switch_image_card.dart';
@@ -201,12 +200,10 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
       String r;
       if (xFile != null) {
         r = xFile.path;
-      } else {
-        r = value.xFile.path;
+        controller.photoType = value.source;
+        var p = await ImageUtils.onImagePick(r, cacheManager.storageOperator.recordAiColoringDir.path);
+        controller.changeOriginFile(context, File(p));
       }
-      controller.photoType = value.source;
-      var p = await ImageUtils.onImagePick(r, cacheManager.storageOperator.recordAiColoringDir.path);
-      controller.changeOriginFile(context, File(p));
     });
   }
 

@@ -1,14 +1,14 @@
 import 'dart:io';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:camera/camera.dart';
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:crop_your_image/crop_your_image.dart';
 
 class CropScreen extends StatefulWidget {
@@ -50,18 +50,15 @@ class _CropScreenState extends AppState<CropScreen> {
   @override
   void initState() {
     super.initState();
+    this.canCancelOnLoading = false;
     image = widget.image;
     brightness = widget.brightness;
     delay(() {
       showLoading().whenComplete(() {
         SyncFileImage(file: File(image.path)).getImage().then((value) async {
           imageSize = Size(value.image.width.toDouble(), value.image.height.toDouble());
-          var bytes = await value.image.toByteData(format: ImageByteFormat.png);
-          hideLoading().whenComplete(() {
-            setState(() {
-              imageList = bytes!.buffer.asUint8List();
-            });
-          });
+          imageList = await cropFile(value.image, ui.Rect.fromLTWH(0, 0, value.image.width.toDouble(), value.image.height.toDouble()));
+          setState(() {});
         });
       });
     });
@@ -74,7 +71,7 @@ class _CropScreenState extends AppState<CropScreen> {
       appBar: AppNavigationBar(
         backgroundColor: brightness == Brightness.dark ? ColorConstant.BackgroundColor : Colors.white,
         brightness: brightness,
-        trailing: TitleTextWidget(S.of(context).ok, brightness == Brightness.dark ? ColorConstant.White : Colors.black, FontWeight.w500, $(16)).intoGestureDetector(onTap: () {
+        trailing: TitleTextWidget(S.of(context).ok1, brightness == Brightness.dark ? ColorConstant.White : Colors.black, FontWeight.w500, $(16)).intoGestureDetector(onTap: () {
           showLoading().whenComplete(() {
             cropController.crop();
           });
@@ -84,11 +81,17 @@ class _CropScreenState extends AppState<CropScreen> {
           ? Container()
           : Crop(
               image: imageList!,
-              initialArea: Rect.fromLTWH(imageSize!.width / 4, imageSize!.height / 4, imageSize!.width / 2, imageSize!.width / 2),
+              initialArea: Rect.fromLTWH(0, 0, imageSize!.width, imageSize!.height),
               controller: cropController,
               onCropped: (bytes) {
                 onCroped(bytes);
-              }),
+              },
+              onStatusChanged: (CropStatus status) {
+                if (status == CropStatus.ready) {
+                  hideLoading().whenComplete(() {});
+                }
+              },
+            ),
     );
   }
 
@@ -102,6 +105,7 @@ class _CropScreenState extends AppState<CropScreen> {
       await file.writeAsBytes(bytes);
       hideLoading().whenComplete(() {
         Navigator.of(context).pop(XFile(filePath));
+        this.canCancelOnLoading = true;
       });
     });
   }
