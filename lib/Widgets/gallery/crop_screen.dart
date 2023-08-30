@@ -1,14 +1,14 @@
 import 'dart:io';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:camera/camera.dart';
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:crop_your_image/crop_your_image.dart';
 
 class CropScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class CropScreen extends StatefulWidget {
     Brightness brightness = Brightness.dark,
   }) async {
     return Navigator.of(context).push<XFile>(MaterialPageRoute(
-      settings: RouteSettings(name: '/CropScreen'),
+        settings: RouteSettings(name: '/CropScreen'),
         builder: (_) => CropScreen(
               image: image,
               brightness: brightness,
@@ -56,12 +56,8 @@ class _CropScreenState extends AppState<CropScreen> {
       showLoading().whenComplete(() {
         SyncFileImage(file: File(image.path)).getImage().then((value) async {
           imageSize = Size(value.image.width.toDouble(), value.image.height.toDouble());
-          var bytes = await value.image.toByteData(format: ImageByteFormat.png);
-          hideLoading().whenComplete(() {
-            setState(() {
-              imageList = bytes!.buffer.asUint8List();
-            });
-          });
+          imageList = await cropFile(value.image, ui.Rect.fromLTWH(0, 0, value.image.width.toDouble(), value.image.height.toDouble()));
+          setState(() {});
         });
       });
     });
@@ -88,7 +84,13 @@ class _CropScreenState extends AppState<CropScreen> {
               controller: cropController,
               onCropped: (bytes) {
                 onCroped(bytes);
-              }),
+              },
+              onStatusChanged: (CropStatus status) {
+                if (status == CropStatus.ready) {
+                  hideLoading().whenComplete(() {});
+                }
+              },
+            ),
     );
   }
 
