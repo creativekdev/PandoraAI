@@ -59,7 +59,7 @@ class Txt2imgController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    uploadImageController = UploadImageController();
+    uploadImageController = Get.find();
     rootBundle.loadString('assets/images/prompts.txt').then((value) {
       var split = value.split('\n');
       List<int> posList = [];
@@ -132,12 +132,21 @@ class Txt2imgController extends GetxController {
       }
     }
     var rootPath = cacheManager.storageOperator.recordTxt2imgDir.path;
+    String? initUrl;
+    if (initFile != null) {
+      initUrl = await uploadImageController.upload(file: initFile!);
+    }
     var result = await api.text2image(
       prompt: text,
       directoryPath: rootPath,
-      initImage: initFile == null ? null : uploadImageController.imageUrl(initFile!).value,
+      initImage: initUrl,
       width: imageScale.width,
       height: imageScale.height,
+      onFailed: (response) {
+        if (initFile != null) {
+          uploadImageController.deleteUploadData(initFile!);
+        }
+      },
     );
 
     if (result != null) {
