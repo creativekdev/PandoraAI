@@ -126,6 +126,39 @@ extension FilterEnumEx on FilterEnum {
 
 @deprecated
 class Filter {
+  imgLib.Image applyDramaticFilter(imgLib.Image inputImage) {
+    // Increase contrast by applying a simple linear contrast adjustment
+    double alpha = 1.5;
+    double beta = -50;
+    imgLib.Image contrastAdjusted = imgLib.copyResize(inputImage, width: inputImage.width, height: inputImage.height);
+    imgLib.adjustColor(contrastAdjusted, contrast: alpha, brightness: beta);
+
+    // Crush blacks by thresholding the dark regions
+    int lowerBlackThreshold = 50;
+    for (int y = 0; y < contrastAdjusted.height; y++) {
+      for (int x = 0; x < contrastAdjusted.width; x++) {
+        final pixel = contrastAdjusted.getPixel(x, y);
+        int r = ImageProcessor.getR(pixel);
+        int g = ImageProcessor.getG(pixel);
+        int b = ImageProcessor.getB(pixel);
+        if (r < lowerBlackThreshold &&
+            g < lowerBlackThreshold &&
+            b < lowerBlackThreshold) {
+          contrastAdjusted.setPixel(x, y, imgLib.getColor(0, 0, 0));
+        }
+      }
+    }
+
+    // Dull highlights by decreasing the brightness of bright regions
+    imgLib.invert(contrastAdjusted);
+    // imgLib.adjustBrightness(contrastAdjusted, -50);
+    imgLib.invert(contrastAdjusted);
+
+    // Reduce saturation
+    imgLib.adjustColor(contrastAdjusted, saturation: -0.3);
+
+    return contrastAdjusted;
+  }
   static Future<imgLib.Image> ImFilter(String filter, imgLib.Image _image) async {
     //uncomment when image_picker is installed
     imgLib.Image res_image;
@@ -293,6 +326,8 @@ class Filter {
             int green = imgLib.getGreen(pixel);
             int blue = imgLib.getBlue(pixel);
             int alpha = imgLib.getAlpha(pixel);
+
+
             HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
             hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
@@ -335,7 +370,10 @@ class Filter {
             final red = imgLib.getRed(pixel);
             final green = imgLib.getGreen(pixel);
             final blue = imgLib.getBlue(pixel);
+            int alpha = imgLib.getAlpha(pixel);
+            HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
+            hsv = hsv.withSaturation((hsv.saturation * 0.5).clamp(0, 1));
             res_image.setPixelRgba(x, y, (red + 25).clamp(0, 255).toInt(), (green + 20).clamp(0, 255).toInt(), blue);
           }
         }
@@ -351,7 +389,10 @@ class Filter {
             final red = imgLib.getRed(pixel);
             final green = imgLib.getGreen(pixel);
             final blue = imgLib.getBlue(pixel);
+            int alpha = imgLib.getAlpha(pixel);
+            HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
+            hsv = hsv.withSaturation((hsv.saturation * 0.5).clamp(0, 1));
             res_image.setPixelRgba(x, y, red, (green + 20).clamp(0, 255).toInt(), (blue + 25).clamp(0, 255).toInt());
           }
         }
