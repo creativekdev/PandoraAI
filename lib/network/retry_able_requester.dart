@@ -28,6 +28,7 @@ abstract class RetryAbleRequester extends BaseRequester {
     bool needRetry = true,
     bool canClickRetry = false,
     Function(Response? response)? onFailed,
+    options,
   }) async {
     Completer<BaseEntity?> completer = Completer();
     _ReqAction? action;
@@ -40,6 +41,7 @@ abstract class RetryAbleRequester extends BaseRequester {
         onReceiveProgress: onReceiveProgress,
         preHandleRequest: preHandleRequest,
         needRetry: needRetry,
+        options: options,
         onFailed: (response) {
           if (needRetry) {
             _onFailedCall(response, canClickRetry).then((value) {

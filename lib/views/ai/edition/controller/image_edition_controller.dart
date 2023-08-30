@@ -342,6 +342,7 @@ class ImageEditionController extends GetxController {
       var oldHolder = currentItem.holder as ImageEditionBaseHolder;
       String filePath = await oldHolder.saveToResult();
       if (TextUtil.isEmpty(filePath)) {
+        state.hideLoading();
         return true;
       }
       var targetHolder = target.holder as ImageEditionBaseHolder;

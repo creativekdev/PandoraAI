@@ -91,13 +91,25 @@ class FiltersHolder extends ImageEditionBaseHolder {
     if (shownImage == null) {
       return;
     }
-    var targetCoverRect = ImageUtils.getTargetCoverRect(Size(shownImage!.width.toDouble(), shownImage!.height.toDouble()), Size(60, 60));
-    imgLib.Image cropedImage =
-        imgLib.copyCrop(shownImage!, targetCoverRect.left.toInt(), targetCoverRect.top.toInt(), targetCoverRect.width.toInt(), targetCoverRect.height.toInt());
-    imgLib.Image resizedImage = imgLib.copyResize(cropedImage, width: 60, height: 60);
+    var targetCoverRect = ImageUtils.getTargetCoverRect(
+        Size(shownImage!.width.toDouble(), shownImage!.height.toDouble()),
+        Size(60, 60));
+    imgLib.Image cropedImage = imgLib.copyCrop(
+        shownImage!,
+        targetCoverRect.left.toInt(),
+        targetCoverRect.top.toInt(),
+        targetCoverRect.width.toInt(),
+        targetCoverRect.height.toInt());
+    imgLib.Image resizedImage =
+        imgLib.copyResize(cropedImage, width: 60, height: 60);
     for (var value in filterOperator.filters) {
       thumbnails[value] = Uint8List.fromList(
-        imgLib.encodePng(await executor.execute(arg1: value, arg2: adjustOperator.adjustList, arg3: resizedImage, arg4: Rect.zero, fun4: _buildImage)),
+        imgLib.encodePng(await executor.execute(
+            arg1: value,
+            arg2: adjustOperator.adjustList,
+            arg3: resizedImage,
+            arg4: Rect.zero,
+            fun4: _buildImage)),
       );
       update();
     }
@@ -109,11 +121,18 @@ class FiltersHolder extends ImageEditionBaseHolder {
     }
     var shownRect = cropOperator.getShownRect(originSize);
     if (shownRect.isEmpty) {
-      parent.backgroundCardSize = Rect.fromLTWH(0, 0, parent.showImageSize.width, parent.showImageSize.height);
+      parent.backgroundCardSize = Rect.fromLTWH(
+          0, 0, parent.showImageSize.width, parent.showImageSize.height);
     } else {
-      parent.backgroundCardSize = ImageUtils.getTargetCoverRect(parent.imageContainerSize, shownRect.size);
+      parent.backgroundCardSize = ImageUtils.getTargetCoverRect(
+          parent.imageContainerSize, shownRect.size);
     }
-    var cancelable = executor.execute(arg1: filterOperator.currentFilter, arg2: adjustOperator.adjustList, arg3: _originImageData, arg4: shownRect, fun4: _buildImage);
+    var cancelable = executor.execute(
+        arg1: filterOperator.currentFilter,
+        arg2: adjustOperator.adjustList,
+        arg3: _originImageData,
+        arg4: shownRect,
+        fun4: _buildImage);
     var time = taskExecutor.insert(cancelable);
     var start = DateTime.now().millisecondsSinceEpoch;
     cancelable.then((value) {
@@ -135,18 +154,24 @@ class FiltersHolder extends ImageEditionBaseHolder {
         return copy;
       }
     }).toList();
-    var result = await executor.execute(arg1: filterOperator.currentFilter, arg2: adjustList, arg3: originImage, arg4: cropOperator.getFinalRect(), fun4: _buildImage);
-    var list = await new Executor().execute(arg1: result, fun1: encodePngThread);
+    var result = await executor.execute(
+        arg1: filterOperator.currentFilter,
+        arg2: adjustList,
+        arg3: originImage,
+        arg4: cropOperator.getFinalRect(),
+        fun4: _buildImage);
+    var list =
+        await new Executor().execute(arg1: result, fun1: encodePngThread);
     var uint8list = Uint8List.fromList(list);
     await File(path).writeAsBytes(uint8list);
     return path;
   }
 
   @override
-  Future<String> saveToResult() async {
+  Future<String> saveToResult({force = false}) async {
     String waitToDelete = resultFilePath;
     var key = getConfigKey();
-    if (key == initHash) {
+    if (key == initHash && !force) {
       return '';
     }
     var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';
@@ -168,13 +193,22 @@ class FiltersHolder extends ImageEditionBaseHolder {
 
   String getInitKey() {
     return EncryptUtil.encodeMd5(
-      originFilePath! + FilterAdjustUtils.createAdjusts().map((e) => e.getProgress().toStringAsFixed(1)).toList().join(',') + FilterEnum.NOR.name + (Rect.zero.toString() ?? ''),
+      originFilePath! +
+          FilterAdjustUtils.createAdjusts()
+              .map((e) => e.getProgress().toStringAsFixed(1))
+              .toList()
+              .join(',') +
+          FilterEnum.NOR.name +
+          (Rect.zero.toString() ?? ''),
     );
   }
 
   String getConfigKey() {
     return EncryptUtil.encodeMd5(originFilePath! +
-        adjustOperator.adjustList.map((e) => e.getProgress().toStringAsFixed(1)).toList().join(',') +
+        adjustOperator.adjustList
+            .map((e) => e.getProgress().toStringAsFixed(1))
+            .toList()
+            .join(',') +
         filterOperator.currentFilter.name +
         (cropOperator.cropData?.toString() ?? ''));
   }
@@ -184,9 +218,11 @@ List<int> encodePngThread(imgLib.Image imageBytes, TypeSendPort port) {
   return imgLib.encodePng(imageBytes);
 }
 
-Future<imgLib.Image> _buildImage(FilterEnum filter, List<AdjustData> datas, imgLib.Image _image, Rect cropRect, TypeSendPort port) async {
+Future<imgLib.Image> _buildImage(FilterEnum filter, List<AdjustData> datas,
+    imgLib.Image _image, Rect cropRect, TypeSendPort port) async {
   if (!cropRect.isEmpty) {
-    _image = imgLib.copyCrop(_image, cropRect.left.toInt(), cropRect.top.toInt(), cropRect.width.toInt(), cropRect.height.toInt());
+    _image = imgLib.copyCrop(_image, cropRect.left.toInt(),
+        cropRect.top.toInt(), cropRect.width.toInt(), cropRect.height.toInt());
   }
   var filterResult = await _dimFilter(filter, _image);
   return await _imAdjust(datas, filterResult);
@@ -196,7 +232,8 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
   if (filter == FilterEnum.NOR) {
     return _image;
   }
-  imgLib.Image res_image = imgLib.copyCrop(_image, 0, 0, _image.width, _image.height);
+  imgLib.Image res_image =
+      imgLib.copyCrop(_image, 0, 0, _image.width, _image.height);
   switch (filter) {
     case FilterEnum.NOR:
       break;
@@ -204,9 +241,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -230,9 +264,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -248,9 +279,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -271,9 +299,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -290,9 +315,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -308,9 +330,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -326,9 +345,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int i = 0; i < res_image.width; i++) {
         for (int j = 0; j < res_image.height; j++) {
           var pixel = res_image.getPixel(i, j);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int r = ImageProcessor.getR(pixel);
           int g = ImageProcessor.getG(pixel);
           int b = ImageProcessor.getB(pixel);
@@ -345,9 +361,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
         for (int y = 0; y < res_image.height; y++) {
 // Get the pixel color at (x, y)
           int pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 // Extract the red, green, and blue channels from the pixel
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
@@ -355,7 +368,8 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           int alpha = imgLib.getAlpha(pixel);
 
 // Apply the vivid effect by increasing the saturation
-          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
+          HSVColor hsv =
+              HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
           hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
           Color color = hsv.toColor();
@@ -379,20 +393,19 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
         for (int y = 0; y < res_image.height; y++) {
 // Get the pixel color at (x, y)
           int pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 // Extract the red, green, and blue channels from the pixel
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
           int blue = imgLib.getBlue(pixel);
           int alpha = imgLib.getAlpha(pixel);
-          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
+          HSVColor hsv =
+              HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
           hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
           Color color = hsv.toColor();
 
-          res_image.setPixelRgba(x, y, (color.red + 25).round().clamp(0, 255), (color.green + 20).round().clamp(0, 255), color.blue);
+          res_image.setPixelRgba(x, y, (color.red + 25).round().clamp(0, 255),
+              (color.green + 20).round().clamp(0, 255), color.blue);
         }
       }
       break;
@@ -401,19 +414,22 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
         for (int y = 0; y < res_image.height; y++) {
 // Get the pixel color at (x, y)
           int pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 // Extract the red, green, and blue channels from the pixel
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
           int blue = imgLib.getBlue(pixel);
           int alpha = imgLib.getAlpha(pixel);
-          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
+          HSVColor hsv =
+              HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
           hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
           Color color = hsv.toColor();
-          res_image.setPixelRgba(x, y, color.red, (color.green + 20).round().clamp(0, 255), (color.blue + 25).round().clamp(0, 255));
+          res_image.setPixelRgba(
+              x,
+              y,
+              color.red,
+              (color.green + 20).round().clamp(0, 255),
+              (color.blue + 25).round().clamp(0, 255));
         }
       }
       break;
@@ -432,17 +448,29 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           if (imgLib.getAlpha(pixel) < 100) {
             continue;
           }
-          if(red<50) red = (red + (20-red * 20 / 50)).toInt();
-          else if(red>205) red = (red - (20-(255- red) * 20 / 50)).toInt();
-          if(green<50) green = (green + (20-green * 20 / 50)).toInt();
-          else if(green>205) green = (green - (20-(255- green) * 20 / 50)).toInt();
-          if(blue<50) blue = (blue + (20-blue * 20 / 50)).toInt();
-          else if(blue>205) blue = (blue - (20-(255- blue) * 20 / 50)).toInt();
-          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
+          if (red < 50)
+            red = (red + (20 - red * 20 / 50)).toInt();
+          else if (red > 205)
+            red = (red - (20 - (255 - red) * 20 / 50)).toInt();
+          if (green < 50)
+            green = (green + (20 - green * 20 / 50)).toInt();
+          else if (green > 205)
+            green = (green - (20 - (255 - green) * 20 / 50)).toInt();
+          if (blue < 50)
+            blue = (blue + (20 - blue * 20 / 50)).toInt();
+          else if (blue > 205)
+            blue = (blue - (20 - (255 - blue) * 20 / 50)).toInt();
+          HSVColor hsv =
+              HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
           hsv = hsv.withSaturation((hsv.saturation * 0.8).clamp(0, 1));
           Color color = hsv.toColor();
-          res_image.setPixelRgba(x, y, (color.red).round().clamp(0, 255), (color.green).round().clamp(0, 255), (color.blue).round().clamp(0, 255));
+          res_image.setPixelRgba(
+              x,
+              y,
+              (color.red).round().clamp(0, 255),
+              (color.green).round().clamp(0, 255),
+              (color.blue).round().clamp(0, 255));
         }
       }
       break;
@@ -461,17 +489,29 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           if (imgLib.getAlpha(pixel) < 100) {
             continue;
           }
-          if(red<50) red = (red + (20-red * 20 / 50)).toInt();
-          else if(red>205) red = (red - (20-(255- red) * 20 / 50)).toInt();
-          if(green<50) green = (green + (20-green * 20 / 50)).toInt();
-          else if(green>205) green = (green - (20-(255- green) * 20 / 50)).toInt();
-          if(blue<50) blue = (blue + (20-blue * 20 / 50)).toInt();
-          else if(blue>205) blue = (blue - (20-(255- blue) * 20 / 50)).toInt();
-          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
+          if (red < 50)
+            red = (red + (20 - red * 20 / 50)).toInt();
+          else if (red > 205)
+            red = (red - (20 - (255 - red) * 20 / 50)).toInt();
+          if (green < 50)
+            green = (green + (20 - green * 20 / 50)).toInt();
+          else if (green > 205)
+            green = (green - (20 - (255 - green) * 20 / 50)).toInt();
+          if (blue < 50)
+            blue = (blue + (20 - blue * 20 / 50)).toInt();
+          else if (blue > 205)
+            blue = (blue - (20 - (255 - blue) * 20 / 50)).toInt();
+          HSVColor hsv =
+              HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
           hsv = hsv.withSaturation((hsv.saturation * 0.8).clamp(0, 1));
           Color color = hsv.toColor();
-          res_image.setPixelRgba(x, y, (color.red + 25).round().clamp(0, 255), (color.green + 25).round().clamp(0, 255), (color.blue).round().clamp(0, 255));
+          res_image.setPixelRgba(
+              x,
+              y,
+              (color.red + 25).round().clamp(0, 255),
+              (color.green + 25).round().clamp(0, 255),
+              (color.blue).round().clamp(0, 255));
         }
       }
 
@@ -491,17 +531,29 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           if (imgLib.getAlpha(pixel) < 100) {
             continue;
           }
-          if(red<50) red = (red + (20-red * 20 / 50)).toInt();
-          else if(red>205) red = (red - (20-(255- red) * 20 / 50)).toInt();
-          if(green<50) green = (green + (20-green * 20 / 50)).toInt();
-          else if(green>205) green = (green - (20-(255- green) * 20 / 50)).toInt();
-          if(blue<50) blue = (blue + (20-blue * 20 / 50)).toInt();
-          else if(blue>205) blue = (blue - (20-(255- blue) * 20 / 50)).toInt();
-          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
+          if (red < 50)
+            red = (red + (20 - red * 20 / 50)).toInt();
+          else if (red > 205)
+            red = (red - (20 - (255 - red) * 20 / 50)).toInt();
+          if (green < 50)
+            green = (green + (20 - green * 20 / 50)).toInt();
+          else if (green > 205)
+            green = (green - (20 - (255 - green) * 20 / 50)).toInt();
+          if (blue < 50)
+            blue = (blue + (20 - blue * 20 / 50)).toInt();
+          else if (blue > 205)
+            blue = (blue - (20 - (255 - blue) * 20 / 50)).toInt();
+          HSVColor hsv =
+              HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
           hsv = hsv.withSaturation((hsv.saturation * 0.8).clamp(0, 1));
           Color color = hsv.toColor();
-          res_image.setPixelRgba(x, y, (color.red).round().clamp(0, 255), (color.green + 20).round().clamp(0, 255), (color.blue + 25).round().clamp(0, 255));
+          res_image.setPixelRgba(
+              x,
+              y,
+              (color.red).round().clamp(0, 255),
+              (color.green + 20).round().clamp(0, 255),
+              (color.blue + 25).round().clamp(0, 255));
         }
       }
       break;
@@ -509,13 +561,11 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 
 // Convert the pixel to grayscale
           final luminance = imgLib.getLuminance(pixel);
-          final modifiedPixel = imgLib.getColor(luminance, luminance, luminance);
+          final modifiedPixel =
+              imgLib.getColor(luminance, luminance, luminance);
 
           res_image.setPixel(x, y, modifiedPixel);
         }
@@ -526,20 +576,24 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 
 // Modify the pixel values to create the Silverstone effect
           final red = imgLib.getRed(pixel);
           final green = imgLib.getGreen(pixel);
           final blue = imgLib.getBlue(pixel);
 
-          final modifiedRed = (red * 0.7).clamp(0, 255).toInt(); // Decrease red channel intensity
-          final modifiedGreen = (green * 0.7).clamp(0, 255).toInt(); // Decrease green channel intensity
-          final modifiedBlue = (blue * 0.9).clamp(0, 255).toInt(); // Decrease blue channel intensity
+          final modifiedRed = (red * 0.7)
+              .clamp(0, 255)
+              .toInt(); // Decrease red channel intensity
+          final modifiedGreen = (green * 0.7)
+              .clamp(0, 255)
+              .toInt(); // Decrease green channel intensity
+          final modifiedBlue = (blue * 0.9)
+              .clamp(0, 255)
+              .toInt(); // Decrease blue channel intensity
 
-          final modifiedPixel = imgLib.getColor(modifiedRed, modifiedGreen, modifiedBlue);
+          final modifiedPixel =
+              imgLib.getColor(modifiedRed, modifiedGreen, modifiedBlue);
           res_image.setPixel(x, y, modifiedPixel);
         }
       }
@@ -549,13 +603,11 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
 
 // Convert the pixel to grayscale
           final luminance = imgLib.getLuminance(pixel);
-          final modifiedPixel = imgLib.getColor(luminance, luminance, luminance);
+          final modifiedPixel =
+              imgLib.getColor(luminance, luminance, luminance);
 
           res_image.setPixel(x, y, modifiedPixel);
         }
@@ -569,9 +621,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           final red = imgLib.getRed(pixel);
           final green = imgLib.getGreen(pixel);
           final blue = imgLib.getBlue(pixel);
@@ -603,9 +652,6 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final int pixel = res_image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int mink = 0;
           for (int k = 0; k < group.length; k++) {
             final r1 = imgLib.getRed(pixel);
@@ -623,7 +669,8 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
             int dr2 = r1 - r3;
             int dg2 = g1 - g3;
             int db2 = b1 - b3;
-            if ((dr1 * dr1 + dg1 * dg1 + db1 * db1) < (dr2 * dr2 + dg2 * dg2 + db2 * db2)) mink = k;
+            if ((dr1 * dr1 + dg1 * dg1 + db1 * db1) <
+                (dr2 * dr2 + dg2 * dg2 + db2 * db2)) mink = k;
           }
 // Convert the pixel to grayscale
           final red = imgLib.getRed(group[mink]);
@@ -660,14 +707,12 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
       for (var y = 0; y < image.height; ++y) {
         for (var x = 0; x < image.width; ++x) {
           final pixel = image.getPixel(x, y);
-          if (imgLib.getAlpha(pixel) < 255) {
-            continue;
-          }
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
           int blue = imgLib.getBlue(pixel);
           int alpha = imgLib.getAlpha(pixel);
-          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
+          HSVColor hsv =
+              HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
           var rightRange = 1 - hsv.saturation;
           var leftRange = hsv.saturation;
           var percent = data.value * data.multiple;
@@ -686,7 +731,8 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
       }
       break;
     case AdjustFunction.noise:
-      image = imgLib.noise(image, ((data.value * data.multiple) / 100 * 255).toInt());
+      image = imgLib.noise(
+          image, ((data.value * data.multiple) / 100 * 255).toInt());
       break;
     case AdjustFunction.pixelate:
       image = imgLib.pixelate(image, (data.value * data.multiple).toInt());
@@ -696,7 +742,17 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
       break;
     case AdjustFunction.sharpen:
       if (data.value.toInt() > 0) {
-        final kernel = [-1, -1, -1, -1, 9 + (data.value * data.multiple).toInt() / 100, -1, -1, -1, -1];
+        final kernel = [
+          -1,
+          -1,
+          -1,
+          -1,
+          9 + (data.value * data.multiple).toInt() / 100,
+          -1,
+          -1,
+          -1,
+          -1
+        ];
         image = imgLib.convolution(image, kernel);
       }
       break;
@@ -705,16 +761,14 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
         for (var x = 0; x < image.width; ++x) {
           final pixel = image.getPixel(x, y);
           int alpha = imgLib.getAlpha(pixel);
-          if (alpha < 255) {
-            continue;
-          }
           int red = imgLib.getRed(pixel);
           int green = imgLib.getGreen(pixel);
           int blue = imgLib.getBlue(pixel);
-          HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
+          HSVColor hsv =
+              HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
           hsv = hsv.withHue((hsv.hue + data.value * data.multiple) % 360);
           Color color = hsv.toColor();
-          image.setPixelRgba(x, y, color.red, color.green, color.blue);
+          image.setPixelRgba(x, y, color.red, color.green, color.blue, alpha);
         }
       }
       break;
