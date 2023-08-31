@@ -15,14 +15,25 @@ class FilterOperator extends BaseFilterOperator<FilterEnum> {
     update();
   }
 
-  var scrollController = ItemScrollController();
-  double itemWidth = 0;
+  var scrollController = ScrollController();
+  double offset = 0;
 
-  FilterOperator({required super.parent});
+  FilterOperator({required super.parent}) {
+    scrollController.addListener(() {
+      offset = scrollController.position.pixels;
+    });
+  }
 
   @override
   onInit(FilterEnum recent) {
     filters = FilterAdjustUtils.createFilters();
     _currentFilter = recent;
+  }
+
+  void restorePos() {
+    if (scrollController.positions.isEmpty) {
+      return;
+    }
+    scrollController.jumpTo(offset);
   }
 }

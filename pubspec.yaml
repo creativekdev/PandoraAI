@@ -121,9 +121,9 @@ dependencies:
   ffi: ^2.0.2
   equatable: ^2.0.5
   vector_math: ^2.1.4
-  install_referrer: 1.2.1
+#  android_play_install_referrer: 0.3.0
 dependency_overrides:
-  #  intl: 0.18.1
+#  intl: 0.18.1
 
 dev_dependencies:
   flutter_test:

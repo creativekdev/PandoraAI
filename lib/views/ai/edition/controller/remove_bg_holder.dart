@@ -192,7 +192,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
         }
       }
     }
-    double scale = parent.backgroundCardSize.width / width;
+    double scale = parent.showImageSize.width / width;
 
     return Rect.fromLTWH(
       minX * scale.toDouble(),

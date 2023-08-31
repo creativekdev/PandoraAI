@@ -22,15 +22,6 @@ class FilterOptions extends StatelessWidget {
       return Container();
     }
     var itemWidth = ScreenUtil.getCurrentWidgetSize(context).width / 6.2;
-    delay(() {
-      if (controller.filterOperator.scrollController.isAttached) {
-        var pos = (controller.filterOperator.filters.findPosition((data) => data == controller.filterOperator.currentFilter) ?? 0);
-        if (pos == 0) {
-          return;
-        }
-        controller.filterOperator.scrollController.scrollTo(index: pos - 1, duration: Duration(milliseconds: 300));
-      }
-    });
     return Column(
       children: [
         Row(
@@ -39,20 +30,14 @@ class FilterOptions extends StatelessWidget {
             buildItem(context, 0, itemWidth),
             Container(width: $(1)),
             Expanded(
-                child: ScrollablePositionedList.separated(
-              initialScrollIndex: 0,
-              itemScrollController: controller.filterOperator.scrollController,
-              physics: ClampingScrollPhysics(),
-              padding: EdgeInsets.only(right: $(12)),
-              itemCount: controller.thumbnails.length - 1,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return buildItem(context, index + 1, itemWidth);
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return Container(width: $(0));
-              },
-            )),
+              child: ListView.builder(
+                controller: controller.filterOperator.scrollController,
+                itemBuilder: (context, index) => buildItem(context, index + 1, itemWidth),
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.thumbnails.length - 1,
+                padding: EdgeInsets.only(right: $(12)),
+              ),
+            ),
           ],
         ).intoContainer(height: itemWidth + (12), width: ScreenUtil.screenSize.width),
         Text(

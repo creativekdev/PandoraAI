@@ -51,15 +51,6 @@ class ImageEditionController extends GetxController {
   double bottomHeight = 0;
   double switchButtonBottomToScreen = 0;
 
-  Rect _backgroundCardSize = Rect.zero;
-
-  Rect get backgroundCardSize => _backgroundCardSize;
-
-  set backgroundCardSize(Rect size) {
-    _backgroundCardSize = size;
-    update();
-  }
-
   File get originFile => File(_originPath);
 
   final EffectStyle effectStyle;
@@ -121,7 +112,6 @@ class ImageEditionController extends GetxController {
     required this.recentCropRect,
   }) {
     _originPath = originPath;
-    _backgroundCardSize = Rect.zero;
   }
 
   late FiltersHolder filtersHolder;
@@ -162,11 +152,7 @@ class ImageEditionController extends GetxController {
       );
     }
     currentItem = items.pick((t) => t.function == initFunction) ?? items.first;
-    filtersHolder.setOriginFilePath(_originPath, conf: true).then((value) {
-      var rect = ImageUtils.getTargetCoverRect(imageContainerSize, Size(filtersHolder.shownImage!.width.toDouble(), filtersHolder.shownImage!.height.toDouble()));
-      showImageSize = rect.size;
-      backgroundCardSize = rect;
-    });
+    filtersHolder.setOriginFilePath(_originPath, conf: true);
     if (initFunction == ImageEditionFunction.removeBg) {
       removeBgHolder.setOriginFilePath(_originPath);
     }
@@ -289,14 +275,16 @@ class ImageEditionController extends GetxController {
     var bool = await preSwitch(context, e, currentItem);
     _lastItem = currentItem;
     if (bool) {
-      if (e.holder is TransferBaseController) {
-        var holder = e.holder as TransferBaseController;
-        var value = await SyncFileImage(file: holder.originFile).getImage();
-        calculateBackgroundCardSizeBySize(Size(value.image.width.toDouble(), value.image.height.toDouble()));
-      } else if (e.holder is ImageEditionBaseHolder) {
-        calculateBackgroundCardSize(e.holder);
-      }
       currentItem = e;
+      delay(() {
+        if (e.function == ImageEditionFunction.filter) {
+          filtersHolder.filterOperator.restorePos();
+        } else if (e.function == ImageEditionFunction.adjust) {
+          filtersHolder.adjustOperator.restorePos();
+        } else if (e.function == ImageEditionFunction.crop) {
+          filtersHolder.cropOperator.restorePos();
+        }
+      }, milliseconds: 30);
     }
   }
 
@@ -338,8 +326,6 @@ class ImageEditionController extends GetxController {
       // bool needRemove = await needRemoveBg(context, target);
       state.showLoading();
       await targetHolder.setOriginFilePath(oldPath, conf: true);
-      backgroundCardSize = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble()));
-      showImageSize = backgroundCardSize.size;
       state.hideLoading();
       if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
         return false;
@@ -372,16 +358,6 @@ class ImageEditionController extends GetxController {
       }
       return true;
     }
-  }
-
-  void calculateBackgroundCardSize(ImageEditionBaseHolder targetHolder) {
-    calculateBackgroundCardSizeBySize(Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble()));
-  }
-
-  void calculateBackgroundCardSizeBySize(Size size) {
-    var targetCoverRect = ImageUtils.getTargetCoverRect(imageContainerSize, size);
-    showImageSize = targetCoverRect.size;
-    backgroundCardSize = targetCoverRect;
   }
 
   Future<bool> needRemoveBg(BuildContext context, EditionItem target) async {
@@ -418,6 +394,11 @@ class ImageEditionController extends GetxController {
       image: shownImage!,
       width: w.toDouble(),
       height: h.toDouble(),
+      onResized: (imageRect) {
+        delay(() {
+          showImageSize = imageRect.size;
+        });
+      },
     );
   }
 }
