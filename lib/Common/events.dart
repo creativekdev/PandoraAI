@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:kochava_tracker/kochava_tracker.dart';
@@ -13,7 +15,7 @@ class Events {
   static Future<void> avatarCreate({required String source}) => logEvent("avatar_create", eventValues: {'source': source});
 
   static Future<void> avatarWhatToExpectContinue({required bool isChangeTemplate}) =>
-      logEvent("whattoexpect_continue_click", eventValues: {'is_change_template': isChangeTemplate ? 1 : 0});
+      logEvent("whattoexpect_continue_click", eventValues: {'is_change_template': isChangeTemplate ? "yes" : "no"});
 
   static Future<void> avatarStyleContinue({required String style}) => logEvent('avatarstyle_continue_click', eventValues: {'style': style});
 
@@ -390,21 +392,6 @@ class Events {
   static Future<void> printPayOrderCancel({required String source, required String orderId}) =>
       logEvent('print_order_pay_cancel', eventValues: {'source': source, 'orderId': orderId});
 
-  static Future<void> imEditionLoading({required String source}) => logEvent('image_edition_loading', eventValues: {'source': source});
-
-  static Future<void> imEffectionLoading({required String source}) => logEvent('image_effection_loading', eventValues: {'source': source});
-
-  static Future<void> imEffectionCompleteShare({
-    required String source,
-    required String platform,
-    required String type,
-  }) =>
-      logEvent('image_effection_share', eventValues: {
-        'source': source,
-        'platform': platform,
-        'type': type,
-      });
-
   static Future<void> webviewLoading({required String source}) => logEvent('webview_loading', eventValues: {'source': source});
 }
 
@@ -412,7 +399,13 @@ Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) asy
   SocialUserInfo? user = AppDelegate().getManager<UserManager>().user;
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-  var defaultValues = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
+  var defaultValues = {
+    "app_platform": Platform.operatingSystem,
+    "app_version": packageInfo.version,
+    "app_build": packageInfo.buildNumber,
+    "app_name": APP_NAME,
+    "language": MyApp.currentLocales,
+  };
   if (user != null) {
     defaultValues["user_id"] = user.id.toString();
     defaultValues["user_email"] = user.getShownEmail();

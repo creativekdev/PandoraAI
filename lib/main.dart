@@ -11,6 +11,7 @@ import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/common/apk_download_screen.dart';
@@ -176,7 +177,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<bool?> _checkAppVersion() async {
-    var data = await AppApi.quickResponse().checkAppVersion();
+    var manager = AppDelegate.instance.getManager<UserManager>();
+    if (manager.appVersionData == null) {
+      await manager.refreshUser();
+    }
+    if (manager.appVersionData == null) {
+      return true;
+    }
+    var data = manager.appVersionData!;
     if (data["need_update"] == true) {
       return await Get.dialog<bool>(
         CommonDialog(
@@ -187,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
           content: ClipRRect(
             borderRadius: BorderRadius.circular($(8)),
             child: Column(children: [
-              Image(image: AssetImage(ImagesConstant.ic_update_image)),
+              Image(image: AssetImage(Images.update_image)),
               Padding(
                   padding: EdgeInsets.fromLTRB(20, 8, 20, 16),
                   child: Column(
@@ -212,38 +220,45 @@ class _MyHomePageState extends State<MyHomePage> {
           confirmText: S.of(context).update_now,
           confirmCallback: () async {
             if (Platform.isAndroid) {
-              if (!TextUtil.isEmpty(data['url']?.toString() ?? '') && MyApp.currentLocales == 'zh') {
-                var downloadsDirectory = await getExternalStorageDirectory();
-                var filePath = downloadsDirectory!.path + '/Download/${APP_NAME}_${data['latest_build']}.apk';
-                if (File(filePath).existsSync()) {
-                  installApk(fileName: filePath);
-                } else {
-                  ApkDownloadScreen.start(
-                    context,
-                    url: data['url'],
-                    filePath: filePath,
-                    force: data['force'],
-                  ).then((value) {
-                    if (value ?? false) {
-                      installApk(fileName: filePath);
-                    } else {
-                      if (!data['force']) {
-                        Navigator.of(context).pop();
-                      }
-                    }
-                  });
-                  // CommonExtension().showToast('Start downloading, wait a moment please');
-                  // updateByApk(url: data['url'], name: "${APP_NAME}_${data['latest_build']}.apk");
+              const platform = MethodChannel(PLATFORM_CHANNEL);
+              platform.invokeMethod<bool>("openAppStore").then((value) {
+                if (value == false) {
+                  var url = Config.getStoreLink();
+                  launchURL(url);
                 }
-              } else {
-                const platform = MethodChannel(PLATFORM_CHANNEL);
-                platform.invokeMethod<bool>("openAppStore").then((value) {
-                  if (value == false) {
-                    var url = Config.getStoreLink();
-                    launchURL(url);
-                  }
-                });
-              }
+              });
+              // if (!TextUtil.isEmpty(data['url']?.toString() ?? '') && MyApp.currentLocales == 'zh') {
+              //   var downloadsDirectory = await getExternalStorageDirectory();
+              //   var filePath = downloadsDirectory!.path + '/Download/${APP_NAME}_${data['latest_build']}.apk';
+              //   if (File(filePath).existsSync()) {
+              //     installApk(fileName: filePath);
+              //   } else {
+              //     ApkDownloadScreen.start(
+              //       context,
+              //       url: data['url'],
+              //       filePath: filePath,
+              //       force: data['force'],
+              //     ).then((value) {
+              //       if (value ?? false) {
+              //         installApk(fileName: filePath);
+              //       } else {
+              //         if (!data['force']) {
+              //           Navigator.of(context).pop();
+              //         }
+              //       }
+              //     });
+              //     // CommonExtension().showToast('Start downloading, wait a moment please');
+              //     // updateByApk(url: data['url'], name: "${APP_NAME}_${data['latest_build']}.apk");
+              //   }
+              // } else {
+              //   const platform = MethodChannel(PLATFORM_CHANNEL);
+              //   platform.invokeMethod<bool>("openAppStore").then((value) {
+              //     if (value == false) {
+              //       var url = Config.getStoreLink();
+              //       launchURL(url);
+              //     }
+              //   });
+              // }
             } else {
               var url = Config.getStoreLink();
               launchURL(url);
