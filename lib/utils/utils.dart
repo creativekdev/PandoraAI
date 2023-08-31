@@ -23,6 +23,8 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:worker_manager/worker_manager.dart';
 
+import '../main.dart';
+
 Future<void> loginBack(BuildContext context) async {
   final box = GetStorage();
   String? login_back_page = box.read('login_back_page');
@@ -31,7 +33,14 @@ Future<void> loginBack(BuildContext context) async {
     box.remove('login_back_page');
   } else {
     if (Navigator.canPop(context)) {
-      Navigator.pop(context, true);
+      var histories = MyApp.routeObserver.routeHistory.reversed.toList();
+      for (var i = 0; i < histories.length; i++) {
+        String historyName = histories[i].settings.name!;
+        if (historyName != '/LoginScreen' && historyName != '/SignupScreen' && historyName != '/SocialSignUpScreen') {
+          Navigator.popUntil(context, ModalRoute.withName(historyName));
+          break;
+        }
+      }
     } else {
       Navigator.pushReplacement(
         context,
