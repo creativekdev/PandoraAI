@@ -18,7 +18,6 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
@@ -471,7 +470,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
     } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
       var removeBgHolder = controller.currentItem.holder as RemoveBgHolder;
-      var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : null);
+      var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : removeBgHolder.removedImage);
       if (file != null) {
         SyncFileImage(file: file).getImage().then((value) {
           controller.showImageSize = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;

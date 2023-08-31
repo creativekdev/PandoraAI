@@ -11,7 +11,6 @@ import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
-import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
