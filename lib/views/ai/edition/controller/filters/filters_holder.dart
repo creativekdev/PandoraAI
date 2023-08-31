@@ -108,18 +108,12 @@ class FiltersHolder extends ImageEditionBaseHolder {
       return;
     }
     var shownRect = cropOperator.getShownRect(originSize);
-    if (shownRect.isEmpty) {
-      parent.backgroundCardSize = Rect.fromLTWH(0, 0, parent.showImageSize.width, parent.showImageSize.height);
-    } else {
-      parent.backgroundCardSize = ImageUtils.getTargetCoverRect(parent.imageContainerSize, shownRect.size);
-    }
     var cancelable = executor.execute(arg1: filterOperator.currentFilter, arg2: adjustOperator.adjustList, arg3: _originImageData, arg4: shownRect, fun4: _buildImage);
     var time = taskExecutor.insert(cancelable);
     var start = DateTime.now().millisecondsSinceEpoch;
     cancelable.then((value) {
       taskExecutor.cancelOldTask(time);
       shownImage = value;
-      parent.calculateBackgroundCardSize(this);
       LogUtil.d('spend: ${DateTime.now().millisecondsSinceEpoch - start}');
     });
   }

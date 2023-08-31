@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../Common/importFile.dart';
@@ -11,11 +12,14 @@ class LibImageWidget extends StatelessWidget {
   double width;
   double height;
 
+  Function(Rect imageRect) onResized;
+
   LibImageWidget({
     super.key,
     required this.image,
     required this.width,
     required this.height,
+    required this.onResized,
   });
 
   @override
@@ -25,6 +29,7 @@ class LibImageWidget extends StatelessWidget {
     if (yScale < scale) {
       scale = yScale;
     }
+    onResized.call(ImageUtils.getTargetCoverRect(Size(width, height), Size(image.width.toDouble(), image.height.toDouble())));
     return Container(
       alignment: Alignment.center,
       child: Transform.scale(

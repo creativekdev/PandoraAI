@@ -25,7 +25,13 @@ class CropOperator extends BaseFilterOperator<Rect> {
 
   var scrollController = ScrollController();
 
-  CropOperator({required super.parent});
+  double offset = 0;
+
+  CropOperator({required super.parent}) {
+    scrollController.addListener(() {
+      offset = scrollController.position.pixels;
+    });
+  }
 
   Rect getShownRect(double scale) {
     if (cropData == null || cropData!.isEmpty) {
@@ -56,6 +62,13 @@ class CropOperator extends BaseFilterOperator<Rect> {
     ];
     cropData = recent;
     // currentItem = items.first;
+  }
+
+  void restorePos() {
+    if (scrollController.positions.isEmpty) {
+      return;
+    }
+    scrollController.jumpTo(offset);
   }
 }
 

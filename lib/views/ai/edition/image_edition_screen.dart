@@ -8,6 +8,7 @@ import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/skeletons.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
@@ -420,8 +421,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         BackgroundCard(
             bgColor: Colors.transparent,
             child: SizedBox(
-              width: controller.backgroundCardSize.width,
-              height: controller.backgroundCardSize.height,
+              width: controller.showImageSize.width,
+              height: controller.showImageSize.height,
             )).intoCenter(),
         getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView).intoCenter(),
         Align(
@@ -448,7 +449,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     if (controller.currentItem.function == ImageEditionFunction.effect) {
       var effectController = controller.currentItem.holder as AllTransferController;
       bool needGenerateAgain = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
-      var image = Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
+      var file = controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile;
+      SyncFileImage(file: file).getImage().then((value) {
+        controller.showImageSize = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+      });
+      var image = Image.file(file);
       if (needGenerateAgain) {
         return Stack(
           fit: StackFit.loose,
@@ -465,13 +470,24 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
     } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
       var removeBgHolder = controller.currentItem.holder as RemoveBgHolder;
+      var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : null);
+      if (file != null) {
+        SyncFileImage(file: file).getImage().then((value) {
+          controller.showImageSize = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+        });
+      }
       return controller.showOrigin
           ? Image.file(controller.originFile)
           : removeBgHolder.removedImage == null
               ? Image.file(removeBgHolder.originFile!)
-              : removeBgHolder.buildShownImage(imageSize, controller.backgroundCardSize.size);
+              : removeBgHolder.buildShownImage(imageSize, controller.showImageSize);
     } else {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
+      if (controller.showOrigin) {
+        SyncFileImage(file: baseHolder.originFile!).getImage().then((value) {
+          controller.showImageSize = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+        });
+      }
       return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage(imageSize);
     }
   }

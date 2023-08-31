@@ -7,8 +7,13 @@ import 'base_filter_operator.dart';
 
 class AdjustOperator extends BaseFilterOperator<List<RecentAdjustData>> {
   String _initHash = '';
+  double offset = 0;
 
-  AdjustOperator({required super.parent});
+  AdjustOperator({required super.parent}) {
+    scrollController.addListener(() {
+      offset = scrollController.position.pixels;
+    });
+  }
 
   @override
   onInit(List<RecentAdjustData> recent) {
@@ -52,6 +57,9 @@ class AdjustOperator extends BaseFilterOperator<List<RecentAdjustData>> {
     if (isClick) {
       return;
     }
+    if (scrollController.positions.isEmpty) {
+      return;
+    }
     var pixels = scrollController.position.pixels + 0.000005; //修正误差
     var pos = pixels ~/ itemWidth;
     var d = pixels % itemWidth;
@@ -63,5 +71,12 @@ class AdjustOperator extends BaseFilterOperator<List<RecentAdjustData>> {
       update();
     }
     scrollController.animateTo(pos * itemWidth, duration: Duration(milliseconds: 100), curve: Curves.bounceOut);
+  }
+
+  restorePos() {
+    if (scrollController.positions.isEmpty) {
+      return;
+    }
+    scrollController.jumpTo(offset);
   }
 }
