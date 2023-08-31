@@ -188,6 +188,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       resultPath = await holder.saveToResult(force: true);
     }
     if (TextUtil.isEmpty(resultPath)) {
+      hideLoading();
       return;
     }
     UploadImageController uploadImageController = Get.find();

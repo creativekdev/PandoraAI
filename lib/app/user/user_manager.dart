@@ -34,6 +34,8 @@ class UserManager extends BaseManager {
   bool lastLauncherLoginStatus = false; //true login, false unLogin
   late AppApi api;
 
+  Map? appVersionData;
+
   Map<ConnectorPlatform, List<PlatformConnectionEntity>> get platformConnections {
     Map<ConnectorPlatform, List<PlatformConnectionEntity>> result = {};
     Map<String, dynamic> cache = cacheManager.getJson('${CacheManager.platformConnections}:${_user?.id ?? 'guest'}') ?? {};
@@ -155,6 +157,9 @@ class UserManager extends BaseManager {
   }
 
   Future<OnlineModel> refreshUser({BuildContext? context}) async {
+    if (appVersionData == null) {
+      appVersionData = await AppApi.quickResponse().checkAppVersion();
+    }
     var value = await api.getCurrentUser();
     adConfig = value.adConfig;
     cacheManager.featureOperator.refreshFeature(value.feature);

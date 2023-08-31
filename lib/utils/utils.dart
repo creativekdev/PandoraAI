@@ -141,7 +141,8 @@ Future<File> imageCompressAndGetFile(File file, {int imageSize = 512, int maxFil
 
   CacheManager cacheManager = AppDelegate().getManager();
   var dir = cacheManager.storageOperator.tempDir;
-  var targetPath = dir.absolute.path + "/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
+  String fileType = getFileType(file.path);
+  var targetPath = dir.absolute.path + DateTime.now().millisecondsSinceEpoch.toString() + ".$fileType";
   var imageInfo = await SyncFileImage(file: file).getImage();
   var image = imageInfo.image;
   var wideSide = max(image.width, image.height);
@@ -156,12 +157,30 @@ Future<File> imageCompressAndGetFile(File file, {int imageSize = 512, int maxFil
       minWidth: width,
       minHeight: height,
       quality: quality,
+      format: _getFormat(fileType),
     ))!;
     result = File(re.path);
   } else {
     result = await file.copy(targetPath);
   }
   return result;
+}
+
+CompressFormat _getFormat(String type) {
+  switch (type.toLowerCase()) {
+    case 'jpg':
+    case 'jpeg':
+      return CompressFormat.jpeg;
+    case 'png':
+      return CompressFormat.png;
+    case 'heic':
+    case 'heif':
+      return CompressFormat.heic;
+    case 'webp':
+      return CompressFormat.webp;
+    default:
+      return CompressFormat.png;
+  }
 }
 
 Future<File> imageCompress(

@@ -47,7 +47,7 @@ class AiColoring {
       CommonExtension().showToast('Image not exist');
       return;
     }
-    var path = await ImageUtils.onImagePick(first.path, cacheManager.storageOperator.recordStyleMorphDir.path);
+    var path = await ImageUtils.onImagePick(first.path, cacheManager.storageOperator.recordAiColoringDir.path, compress: true, maxM: 2, size: 2048);
     Events.aiColoringLoading(source: source);
     return Navigator.of(context).push(MaterialPageRoute(
       settings: RouteSettings(name: "/AiColoringScreen"),
