@@ -131,7 +131,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     var holder = controller.currentItem.holder as ImageEditionBaseHolder;
     String value = await holder.saveToResult(force: true);
     var recentController = Get.find<RecentController>();
-    String originPath = controller.originFile.path;
+    String originPath = holder.originFile!.path;
     if (controller.currentItem.holder is RemoveBgHolder) {
       originPath = value;
     }
