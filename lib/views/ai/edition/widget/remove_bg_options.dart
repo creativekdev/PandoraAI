@@ -25,10 +25,10 @@ class RemoveBgOptions extends StatelessWidget {
       preBackgroundData: controller.preBackgroundData,
       imageRatio: controller.config.ratio,
       onPick: (BackgroundData data, bool isPopMerge) async {
-        controller.onSavedBackground(data, isPopMerge);
+        controller.onSavedBackground(data);
       },
       onColorChange: (BackgroundData data) async {
-        controller.onSavedBackground(data, false);
+        controller.onSavedBackground(data);
       },
     ).intoContainer(
       width: double.maxFinite,

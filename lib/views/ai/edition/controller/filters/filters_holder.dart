@@ -68,7 +68,7 @@ class FiltersHolder extends ImageEditionBaseHolder {
       filterOperator.currentFilter = filterOperator.filters.first;
       adjustOperator.onInit([]);
     }
-    return super.setOriginFilePath(path, conf: conf);
+    return await super.setOriginFilePath(path, conf: conf);
   }
 
   @override
@@ -113,7 +113,7 @@ class FiltersHolder extends ImageEditionBaseHolder {
     var start = DateTime.now().millisecondsSinceEpoch;
     cancelable.then((value) {
       taskExecutor.cancelOldTask(time);
-      shownImage = value;
+      setShownImage(value);
       LogUtil.d('spend: ${DateTime.now().millisecondsSinceEpoch - start}');
     });
   }

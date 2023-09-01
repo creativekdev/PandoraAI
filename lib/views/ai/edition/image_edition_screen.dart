@@ -9,7 +9,6 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/skeletons.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/gallery_saver.dart';
@@ -18,7 +17,6 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
@@ -32,7 +30,6 @@ import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.da
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
-import 'package:skeletons/skeletons.dart';
 
 import '../../../Common/Extension.dart';
 import '../../../app/app.dart';
@@ -440,7 +437,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
     } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
       var removeBgHolder = controller.currentItem.holder as RemoveBgHolder;
-      var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : null);
+      var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : removeBgHolder.removedImage);
       if (file != null) {
         SyncFileImage(file: file).getImage().then((value) {
           controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;

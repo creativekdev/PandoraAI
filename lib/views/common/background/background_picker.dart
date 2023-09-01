@@ -194,6 +194,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
               if (isPopMerge) {
                 d = data.copy();
                 if (d != null) {
+                  // todo： 如果有重复不添加
                   dataList.insert(0, d);
                 }
                 setState(() {

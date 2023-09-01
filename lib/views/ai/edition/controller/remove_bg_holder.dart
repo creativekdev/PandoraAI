@@ -15,6 +15,7 @@ import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
 
 import '../../../../Common/event_bus_helper.dart';
+import '../../../../gallery_saver.dart';
 import '../../../common/background/background_picker.dart';
 import '../../../mine/filter/pin_gesture_views.dart';
 
@@ -30,6 +31,7 @@ class RemoveBgConfig {
 
   @override
   String toString() {
+    print('RemoveBgConfig{removedImage: ${removedImage?.path}, selectData: ${selectData?.toString()}, ratio: $ratio, scale: $scale, dx: $dx, dy: $dy}');
     return 'RemoveBgConfig{removedImage: ${removedImage?.path}, selectData: ${selectData?.toString()}, ratio: $ratio, scale: $scale, dx: $dx, dy: $dy}';
   }
 }
@@ -109,7 +111,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
             config.ratio = imageInfo.image.width / imageInfo.image.height;
             imageUiFront = await getImage(File(path));
             imageFront = await getLibImage(imageUiFront!);
-            shownImage = imageFront;
+            setShownImage(imageFront);
             bgController.setBackgroundData(null, Colors.transparent);
           },
           size: imageSize,
@@ -120,22 +122,18 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     );
   }
 
-  onSavedBackground(BackgroundData data, bool isPopMerge) async {
+  onSavedBackground(BackgroundData data) async {
     if (data.color != Colors.transparent) {
       canReset = true;
     }
-    if (isPopMerge) {
-      preBackgroundData = config.selectData ?? preBackgroundData;
+
+    if (data.filePath != null) {
+      File backFile = File(data.filePath!);
+      bgController.setBackgroundData(backFile, null);
     } else {
-      if (data.filePath != null) {
-        File backFile = File(data.filePath!);
-        bgController.setBackgroundData(backFile, null);
-      } else {
-        bgController.setBackgroundData(null, rgbaToAbgr(data.color!));
-      }
-      config.selectData = data;
+      bgController.setBackgroundData(null, rgbaToAbgr(data.color!));
     }
-    delay(() => onProductShowImage());
+    config.selectData = data;
   }
 
   ui.Color rgbaToAbgr(ui.Color rgbaColor) {
@@ -156,21 +154,20 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
     bgController.setBackgroundData(null, Colors.transparent);
-    await onSavedBackground(BackgroundData()..color = Colors.transparent, false);
+    await onSavedBackground(BackgroundData()..color = Colors.transparent);
     if (config.scale != 1 || config.dy != 0 || config.dx != 0) {
       config.scale = 1;
       config.dy = 0;
       config.dx = 0;
     }
     EventBusHelper().eventBus.fire(OnResetScaleEvent());
-    delay(() => onProductShowImage());
     canReset = false;
   }
 
   onProductShowImage() async {
     ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
     if (image != null) {
-      shownImage = await getLibImage(image);
+      setShownImage(await getLibImage(image));
     }
   }
 
@@ -276,9 +273,6 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                   config.scale = newScale;
                   config.dx = newDx;
                   config.dy = newDy;
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
-                  });
                 },
               ),
             ]),
@@ -302,6 +296,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     if (newPath == waitToDelete && File(newPath).existsSync()) {
       return newPath;
     } else {
+      await onProductShowImage();
       var list = await new Executor().execute(arg1: shownImage!, fun1: encodePngThread);
       await File(newPath).writeAsBytes(list);
       resultFilePath = newPath;

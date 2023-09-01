@@ -11,7 +11,6 @@ import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
-import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
@@ -24,7 +23,6 @@ import 'package:image/image.dart' as imgLib;
 
 import '../../../../Widgets/app_navigation_bar.dart';
 import '../../../../utils/utils.dart';
-import 'ie_base_holder.dart';
 
 class ImageEditionController extends GetxController {
   final String photoType;
@@ -81,7 +79,7 @@ class ImageEditionController extends GetxController {
 
   ui.Image? get shownImage => _shownImage;
 
-  setShownImage(imgLib.Image? image, {bool isUpdate = true}) async {
+  setUiShownImage(imgLib.Image? image, {bool isUpdate = true}) async {
     if (image == null) {
       _shownImage = null;
     } else {
@@ -194,7 +192,7 @@ class ImageEditionController extends GetxController {
             holder.removedImage = File(path);
             holder.imageUiFront = await getImage(File(path));
             var imageFront = await getLibImage(holder.imageUiFront!);
-            holder.shownImage = imageFront;
+            await holder.setShownImage(imageFront);
             holder.imageFront = imageFront;
             holder.bgController.setBackgroundData(null, Colors.transparent);
           },
