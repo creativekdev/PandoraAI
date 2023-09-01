@@ -364,6 +364,9 @@ class ImageEditionController extends GetxController {
         return true;
       }
       var needRemove = await needRemoveBg(context, targetHolder);
+      if (!needRemove) {
+        return false;
+      }
       if (targetHolder.originFilePath != oldPath) {
         await targetHolder.setOriginFilePath(oldPath, conf: needRemove);
       }
