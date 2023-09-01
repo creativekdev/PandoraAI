@@ -49,8 +49,7 @@ class ClipDropApi extends RetryAbleRequester {
     libImg.Image image = await getLibImage(await getImage(File(filePath)));
     libImg.JpegEncoder encoder = libImg.JpegEncoder();
     List<int> bytes = encoder.encodeImage(image);
-    List<String> paths = resultPath.split(".");
-    String newFilePath = "${paths.first}.jpg";
+    String newFilePath = "${resultPath}.jpg";
     File file = File(newFilePath);
     await file.writeAsBytes(bytes);
     var formData = FormData();
