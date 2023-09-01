@@ -227,14 +227,15 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Container(
-                      alignment: Alignment.center,
-                      child: Image.file(
-                        key: _personImageKey,
-                        removedImage!,
-                        fit: BoxFit.contain,
+                    if (removedImage != null)
+                      Container(
+                        alignment: Alignment.center,
+                        child: Image.file(
+                          key: _personImageKey,
+                          removedImage!,
+                          fit: BoxFit.contain,
+                        ),
                       ),
-                    ),
                     Obx(
                       () => isShowSquar.value
                           ? UnconstrainedBox(

@@ -189,13 +189,21 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
             setState(() {
               canReset = false;
             });
-            var d;
-            await BackgroundPicker.pickBackground(context, imageRatio: imageRatio, onPick: (data, isPopMerge) {
+            BackgroundData d;
+            await BackgroundPicker.pickBackground(context, imageRatio: imageRatio, onPick: (BackgroundData data, isPopMerge) {
               if (isPopMerge) {
                 d = data.copy();
                 if (d != null) {
-                  // todo： 如果有重复不添加
-                  dataList.insert(0, d);
+                  bool isExist = dataList.exist((t) {
+                    if (d.color != null) {
+                      return d.color == t.color;
+                    } else {
+                      return t.filePath == d.filePath;
+                    }
+                  });
+                  if (!isExist) {
+                    dataList.insert(0, d);
+                  }
                 }
                 setState(() {
                   cacheManager.setBool(CacheManager.isSavedPickHistory, true);
