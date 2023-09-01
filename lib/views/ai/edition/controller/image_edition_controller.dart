@@ -383,7 +383,9 @@ class ImageEditionController extends GetxController {
         return false;
       }
       if (needRemove) {
+        state.showLoading();
         oldPath = await oldHolder.saveToResult(force: true);
+        state.hideLoading();
       }
       if (targetHolder.originFilePath != oldPath) {
         await targetHolder.setOriginFilePath(oldPath, conf: needRemove);
