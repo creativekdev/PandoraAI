@@ -167,7 +167,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   onProductShowImage() async {
     ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
     if (image != null) {
-      setShownImage(await getLibImage(image));
+      await setShownImage(await getLibImage(image));
     }
   }
 
