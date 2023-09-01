@@ -38,7 +38,7 @@ class MsgDiscoveryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var details = getDetails(data);
+    var details = getDetails(data, context);
     return Column(
       children: [
         Row(
@@ -178,11 +178,11 @@ class MsgDiscoveryCard extends StatelessWidget {
     ).intoContainer(color: ColorConstant.BackgroundColor, padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(8)));
   }
 
-  List<String> getDetails(MsgDiscoveryEntity data) {
+  List<String> getDetails(MsgDiscoveryEntity data, BuildContext context) {
     if (tab == MsgTab.like) {
       return ['@${userName}', ' liked your ${data.commentSocialPostId == 0 ? 'post' : 'comment'}'];
     } else {
-      return [data.text];
+      return [data.status == "deleted" ? S.of(context).deleted_comment : data.text];
     }
   }
 }
