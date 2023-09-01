@@ -63,7 +63,7 @@ class FiltersHolder extends ImageEditionBaseHolder {
   Future setOriginFilePath(String? path, {conf}) async {
     //conf is true means load recent config
     if (conf != true) {
-      cropOperator.cropData = null;
+      cropOperator.cropData = Rect.zero;
       cropOperator.currentItem = null;
       filterOperator.currentFilter = filterOperator.filters.first;
       adjustOperator.onInit([]);
@@ -161,16 +161,21 @@ class FiltersHolder extends ImageEditionBaseHolder {
   }
 
   String getInitKey() {
+    var data =
+        originFilePath! + FilterAdjustUtils.createAdjusts().map((e) => e.getProgress().toStringAsFixed(1)).toList().join(',') + FilterEnum.NOR.name + (Rect.zero.toString() ?? '');
+    LogUtil.d('filterKey: $data');
     return EncryptUtil.encodeMd5(
-      originFilePath! + FilterAdjustUtils.createAdjusts().map((e) => e.getProgress().toStringAsFixed(1)).toList().join(',') + FilterEnum.NOR.name + (Rect.zero.toString() ?? ''),
+      data,
     );
   }
 
   String getConfigKey() {
-    return EncryptUtil.encodeMd5(originFilePath! +
+    var data = originFilePath! +
         adjustOperator.adjustList.map((e) => e.getProgress().toStringAsFixed(1)).toList().join(',') +
         filterOperator.currentFilter.name +
-        (cropOperator.cropData?.toString() ?? ''));
+        (cropOperator.cropData.toString() ?? '');
+    LogUtil.d('filterKey: $data');
+    return EncryptUtil.encodeMd5(data);
   }
 }
 

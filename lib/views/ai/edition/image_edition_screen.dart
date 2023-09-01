@@ -253,15 +253,15 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       if (effectHolder.resultFile != null) {
         if (effectHolder.getCategory() == 'cartoonize') {
           uint8list =
-              await ImageUtils.printCartoonizeDrawData(effectHolder.originFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+              await ImageUtils.printCartoonizeDrawData(controller.originFile, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
         } else if (effectHolder.getCategory() == 'stylemorph') {
           uint8list =
-              await ImageUtils.printStyleMorphDrawData(effectHolder.originFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+              await ImageUtils.printStyleMorphDrawData(controller.originFile, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
         } else {
           throw Exception('未定义的effectStyle');
         }
       } else {
-        uint8list = await effectHolder.originFile!.readAsBytes();
+        uint8list = await controller.originFile.readAsBytes();
       }
     } else {
       var holder = controller.currentItem.holder as ImageEditionBaseHolder;
@@ -419,7 +419,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     if (controller.currentItem.function == ImageEditionFunction.effect) {
       var effectController = controller.currentItem.holder as AllTransferController;
       bool needGenerateAgain = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
-      var file = controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile;
+      var file = controller.showOrigin ? controller.originFile : effectController.resultFile ?? effectController.originFile;
       SyncFileImage(file: file).getImage().then((value) {
         controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
       });
@@ -446,19 +446,14 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
         });
       }
-      return controller.showOrigin
-          ? Image.file(controller.originFile)
-          : removeBgHolder.removedImage == null
-              ? Image.file(removeBgHolder.originFile!)
-              : removeBgHolder.buildShownImage(imageSize, controller.showImageSize.value);
+      return controller.showOrigin ? Image.file(controller.originFile) : removeBgHolder.buildShownImage(imageSize, controller.showImageSize.value);
     } else {
-      var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
       if (controller.showOrigin) {
-        SyncFileImage(file: baseHolder.originFile!).getImage().then((value) {
+        SyncFileImage(file: controller.originFile).getImage().then((value) {
           controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
         });
       }
-      return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage(imageSize);
+      return controller.showOrigin ? Image.file(controller.originFile) : controller.buildShownImage(imageSize);
     }
   }
 

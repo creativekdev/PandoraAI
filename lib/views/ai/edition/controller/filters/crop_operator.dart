@@ -14,11 +14,11 @@ class CropOperator extends BaseFilterOperator<Rect> {
     update();
   }
 
-  Rect? _cropData;
+  Rect _cropData = Rect.zero;
 
-  Rect? get cropData => _cropData;
+  Rect get cropData => _cropData;
 
-  set cropData(Rect? data) {
+  set cropData(Rect data) {
     this._cropData = data;
     parent.buildImage();
   }
@@ -34,18 +34,15 @@ class CropOperator extends BaseFilterOperator<Rect> {
   }
 
   Rect getShownRect(double scale) {
-    if (cropData == null || cropData!.isEmpty) {
+    if (cropData.isEmpty) {
       return Rect.zero;
     }
-    var rect = cropData!;
+    var rect = cropData;
     return Rect.fromLTRB(rect.left * scale, rect.top * scale, rect.right * scale, rect.bottom * scale);
   }
 
   Rect getFinalRect() {
-    if (cropData == null) {
-      return Rect.zero;
-    }
-    return cropData!;
+    return cropData;
   }
 
   @override

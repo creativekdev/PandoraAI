@@ -358,10 +358,14 @@ class ImageEditionController extends GetxController {
 
   Future<bool> jumpToRemoveBg(BuildContext context, EditionItem target) async {
     var targetHolder = target.holder as RemoveBgHolder;
-    var needRemove = await needRemoveBg(context, targetHolder);
     if (currentItem.holder is TransferBaseController) {
       var oldHolder = currentItem.holder as TransferBaseController;
       var oldPath = (oldHolder.resultFile ?? oldHolder.originFile).path;
+      if (targetHolder.originFilePath == oldPath || targetHolder.resultFilePath == oldPath) {
+        //没操作过，直接切换
+        return true;
+      }
+      var needRemove = await needRemoveBg(context, targetHolder);
       if (targetHolder.originFilePath != oldPath) {
         await targetHolder.setOriginFilePath(oldPath, conf: needRemove);
       }
@@ -369,6 +373,14 @@ class ImageEditionController extends GetxController {
     } else if (currentItem.holder is FiltersHolder) {
       var oldHolder = currentItem.holder as FiltersHolder;
       var oldPath = oldHolder.originFilePath;
+      if (oldHolder.initHash == oldHolder.getConfigKey() && (targetHolder.originFilePath == oldPath || targetHolder.resultFilePath == oldPath)) {
+        //没操作过，直接切换
+        return true;
+      }
+      var needRemove = await needRemoveBg(context, targetHolder);
+      if (!needRemove) {
+        return false;
+      }
       if (needRemove) {
         oldPath = await oldHolder.saveToResult(force: true);
       }
