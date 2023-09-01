@@ -259,15 +259,18 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
   }
 
   void openImage(BuildContext context, final int index) {
-    if (Platform.isAndroid) {
-      FlutterForbidshot.setAndroidForbidOn();
-    }
     List<String> images = controller.resources
         .filter(
           (t) => t.type == DiscoveryResourceType.image,
         )
         .map((e) => e.url ?? '')
         .toList();
+    if (images.isEmpty) {
+      return;
+    }
+    if (Platform.isAndroid) {
+      FlutterForbidshot.setAndroidForbidOn();
+    }
     Navigator.push(
       context,
       PageRouteBuilder(
