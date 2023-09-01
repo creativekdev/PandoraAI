@@ -1,19 +1,15 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
-import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
-import 'package:image/image.dart' as imgLib;
-import 'package:worker_manager/worker_manager.dart';
+import 'package:image/image.dart' as libImg;
 
 class ClipDropApi extends RetryAbleRequester {
   CacheManager cacheManager = AppDelegate().getManager();
@@ -50,8 +46,15 @@ class ClipDropApi extends RetryAbleRequester {
     if (await File(resultPath).exists()) {
       return resultPath;
     }
+    libImg.Image image = await getLibImage(await getImage(File(filePath)));
+    libImg.JpegEncoder encoder = libImg.JpegEncoder();
+    List<int> bytes = encoder.encodeImage(image);
+    List<String> paths = resultPath.split(".");
+    String newFilePath = "${paths.first}.jpg";
+    File file = File(newFilePath);
+    await file.writeAsBytes(bytes);
     var formData = FormData();
-    formData.files.add(MapEntry('image_file', await MultipartFile.fromFile(filePath)));
+    formData.files.add(MapEntry('image_file', await MultipartFile.fromFile(newFilePath)));
     var baseEntity = await postUpload(
       'https://clipdrop-api.co/remove-background/v1',
       data: formData,
