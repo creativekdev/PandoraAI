@@ -94,7 +94,7 @@ class CropOptions extends StatelessWidget {
           }
         }
         controller.cropOperator.currentItem = selected;
-        controller.cropOperator.cropData = result.transformationsData.cropRect;
+        controller.cropOperator.setCropData(result.transformationsData.cropRect);
         return result;
       },
       currentItem: e,

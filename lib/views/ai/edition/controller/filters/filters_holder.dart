@@ -63,7 +63,7 @@ class FiltersHolder extends ImageEditionBaseHolder {
   Future setOriginFilePath(String? path, {conf}) async {
     //conf is true means load recent config
     if (conf != true) {
-      cropOperator.cropData = Rect.zero;
+      cropOperator.setCropData(Rect.zero, needRebuild: false);
       cropOperator.currentItem = null;
       filterOperator.currentFilter = filterOperator.filters.first;
       adjustOperator.onInit([]);

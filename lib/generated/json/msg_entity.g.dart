@@ -1,6 +1,5 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
-import 'package:cartoonizer/models/enums/msg_type.dart';
 
 MsgEntity $MsgEntityFromJson(Map<String, dynamic> json) {
   final MsgEntity msgEntity = MsgEntity();
@@ -184,6 +183,10 @@ MsgDiscoveryEntity $MsgDiscoveryEntityFromJson(Map<String, dynamic> json) {
   if (city != null) {
     msgDiscoveryEntity.city = city;
   }
+  final String? status = jsonConvert.convert<String>(json['status']);
+  if (status != null) {
+    msgDiscoveryEntity.status = status;
+  }
   final int? likes = jsonConvert.convert<int>(json['likes']);
   if (likes != null) {
     msgDiscoveryEntity.likes = likes;
@@ -221,6 +224,7 @@ Map<String, dynamic> $MsgDiscoveryEntityToJson(MsgDiscoveryEntity entity) {
   data['country'] = entity.country;
   data['region'] = entity.region;
   data['city'] = entity.city;
+  data['status'] = entity.status;
   data['likes'] = entity.likes;
   data['comments'] = entity.comments;
   data['real_likes'] = entity.realLikes;

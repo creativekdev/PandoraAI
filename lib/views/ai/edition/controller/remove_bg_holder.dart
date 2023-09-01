@@ -105,7 +105,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
           imageWidth: shownImage!.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
             parent.filtersHolder.cropOperator.currentItem = null;
-            parent.filtersHolder.cropOperator.cropData = Rect.zero;
+            parent.filtersHolder.cropOperator.setCropData(Rect.zero);
             removedImage = File(path);
             var imageInfo = await SyncFileImage(file: removedImage!).getImage();
             config.ratio = imageInfo.image.width / imageInfo.image.height;
@@ -167,7 +167,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   onProductShowImage() async {
     ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
     if (image != null) {
-      setShownImage(await getLibImage(image));
+      await setShownImage(await getLibImage(image));
     }
   }
 
