@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/msg_entity.g.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
@@ -103,6 +104,7 @@ class MsgDiscoveryEntity {
   String country = '';
   String region = '';
   String city = '';
+  String? status;
   int likes = 0;
   int comments = 0;
   @JSONField(name: 'real_likes')
