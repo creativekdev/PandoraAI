@@ -30,12 +30,12 @@ abstract class ImageEditionBaseHolder {
 
   imgLib.Image? _shownImage;
 
-  set shownImage(imgLib.Image? value) {
+  Future setShownImage(imgLib.Image? value) async {
     if (_shownImage == value) {
       return;
     }
     _shownImage = value;
-    parent.setShownImage(value);
+    await parent.setUiShownImage(value);
   }
 
   imgLib.Image? get shownImage => _shownImage;
@@ -67,7 +67,7 @@ abstract class ImageEditionBaseHolder {
     var targetCoverRect = ImageUtils.getTargetCoverRect(parent.imageContainerSize, Size(libImage.width.toDouble(), libImage.height.toDouble()));
     imgLib.Image resizedImage = imgLib.copyResize(libImage, width: (targetCoverRect.width * 1).toInt(), height: (targetCoverRect.height * 1).toInt());
     originSize = resizedImage.width / libImage.width;
-    shownImage = resizedImage;
+    await setShownImage(resizedImage);
   }
 
   update() {

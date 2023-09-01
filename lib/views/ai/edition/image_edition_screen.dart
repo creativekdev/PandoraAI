@@ -9,7 +9,6 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/skeletons.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/gallery_saver.dart';
@@ -18,7 +17,6 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
@@ -32,7 +30,6 @@ import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.da
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
-import 'package:skeletons/skeletons.dart';
 
 import '../../../Common/Extension.dart';
 import '../../../app/app.dart';
@@ -253,15 +250,15 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       if (effectHolder.resultFile != null) {
         if (effectHolder.getCategory() == 'cartoonize') {
           uint8list =
-              await ImageUtils.printCartoonizeDrawData(effectHolder.originFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+              await ImageUtils.printCartoonizeDrawData(controller.originFile, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
         } else if (effectHolder.getCategory() == 'stylemorph') {
           uint8list =
-              await ImageUtils.printStyleMorphDrawData(effectHolder.originFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+              await ImageUtils.printStyleMorphDrawData(controller.originFile, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
         } else {
           throw Exception('未定义的effectStyle');
         }
       } else {
-        uint8list = await effectHolder.originFile!.readAsBytes();
+        uint8list = await controller.originFile.readAsBytes();
       }
     } else {
       var holder = controller.currentItem.holder as ImageEditionBaseHolder;
@@ -308,37 +305,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           ],
         );
       }),
-    );
-  }
-
-  @override
-  Widget buildLoadingWidget(BuildContext context) {
-    return SkeletonTheme(
-      themeMode: ThemeMode.dark,
-      shimmerGradient: LinearGradient(
-        colors: [
-          Color(0xFFD8E3E7),
-          Color(0xFFC8D5DA),
-          Color(0xFFD8E3E7),
-        ],
-        stops: [0.1, 0.5, 0.9],
-      ),
-      darkShimmerGradient: LinearGradient(
-        colors: [
-          Color(0x22000000),
-          Color(0x44000000),
-          Color(0x66000000),
-          Color(0x44000000),
-          Color(0x22000000),
-        ],
-        stops: [0.0, 0.2, 0.5, 0.8, 1],
-        begin: Alignment(-2.4, -0.2),
-        end: Alignment(2.4, 0.2),
-        tileMode: TileMode.clamp,
-      ),
-      child: SkeletonLoading(
-        style: SkeletonAvatarStyle(width: ScreenUtil.screenSize.width, height: ScreenUtil.screenSize.height),
-      ),
     );
   }
 
@@ -419,12 +385,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        BackgroundCard(
+        Obx(() => BackgroundCard(
             bgColor: Colors.transparent,
             child: SizedBox(
-              width: controller.showImageSize.width,
-              height: controller.showImageSize.height,
-            )).intoCenter(),
+              width: controller.showImageSize.value.width,
+              height: controller.showImageSize.value.height,
+            )).intoCenter()),
         getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView).intoCenter(),
         Align(
           alignment: Alignment.centerRight,
@@ -450,9 +416,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     if (controller.currentItem.function == ImageEditionFunction.effect) {
       var effectController = controller.currentItem.holder as AllTransferController;
       bool needGenerateAgain = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
-      var file = controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile;
+      var file = controller.showOrigin ? controller.originFile : effectController.resultFile ?? effectController.originFile;
       SyncFileImage(file: file).getImage().then((value) {
-        controller.showImageSize = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+        controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
       });
       var image = Image.file(file);
       if (needGenerateAgain) {
@@ -471,25 +437,20 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
     } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
       var removeBgHolder = controller.currentItem.holder as RemoveBgHolder;
-      var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : null);
+      var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : removeBgHolder.removedImage);
       if (file != null) {
         SyncFileImage(file: file).getImage().then((value) {
-          controller.showImageSize = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+          controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
         });
       }
-      return controller.showOrigin
-          ? Image.file(controller.originFile)
-          : removeBgHolder.removedImage == null
-              ? Image.file(removeBgHolder.originFile!)
-              : removeBgHolder.buildShownImage(imageSize, controller.showImageSize);
+      return controller.showOrigin ? Image.file(controller.originFile) : removeBgHolder.buildShownImage(imageSize, controller.showImageSize.value);
     } else {
-      var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
       if (controller.showOrigin) {
-        SyncFileImage(file: baseHolder.originFile!).getImage().then((value) {
-          controller.showImageSize = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+        SyncFileImage(file: controller.originFile).getImage().then((value) {
+          controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
         });
       }
-      return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage(imageSize);
+      return controller.showOrigin ? Image.file(controller.originFile) : controller.buildShownImage(imageSize);
     }
   }
 
