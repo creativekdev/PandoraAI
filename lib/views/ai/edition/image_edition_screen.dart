@@ -312,37 +312,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   @override
-  Widget buildLoadingWidget(BuildContext context) {
-    return SkeletonTheme(
-      themeMode: ThemeMode.dark,
-      shimmerGradient: LinearGradient(
-        colors: [
-          Color(0xFFD8E3E7),
-          Color(0xFFC8D5DA),
-          Color(0xFFD8E3E7),
-        ],
-        stops: [0.1, 0.5, 0.9],
-      ),
-      darkShimmerGradient: LinearGradient(
-        colors: [
-          Color(0x22000000),
-          Color(0x44000000),
-          Color(0x66000000),
-          Color(0x44000000),
-          Color(0x22000000),
-        ],
-        stops: [0.0, 0.2, 0.5, 0.8, 1],
-        begin: Alignment(-2.4, -0.2),
-        end: Alignment(2.4, 0.2),
-        tileMode: TileMode.clamp,
-      ),
-      child: SkeletonLoading(
-        style: SkeletonAvatarStyle(width: ScreenUtil.screenSize.width, height: ScreenUtil.screenSize.height),
-      ),
-    );
-  }
-
-  @override
   Widget buildWidget(BuildContext context) {
     return WillPopScope(
         child: GetBuilder<ImageEditionController>(
@@ -419,12 +388,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        BackgroundCard(
+        Obx(() => BackgroundCard(
             bgColor: Colors.transparent,
             child: SizedBox(
-              width: controller.showImageSize.width,
-              height: controller.showImageSize.height,
-            )).intoCenter(),
+              width: controller.showImageSize.value.width,
+              height: controller.showImageSize.value.height,
+            )).intoCenter()),
         getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView).intoCenter(),
         Align(
           alignment: Alignment.centerRight,
@@ -452,7 +421,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       bool needGenerateAgain = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
       var file = controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile;
       SyncFileImage(file: file).getImage().then((value) {
-        controller.showImageSize = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+        controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
       });
       var image = Image.file(file);
       if (needGenerateAgain) {
@@ -474,19 +443,19 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : null);
       if (file != null) {
         SyncFileImage(file: file).getImage().then((value) {
-          controller.showImageSize = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+          controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
         });
       }
       return controller.showOrigin
           ? Image.file(controller.originFile)
           : removeBgHolder.removedImage == null
               ? Image.file(removeBgHolder.originFile!)
-              : removeBgHolder.buildShownImage(imageSize, controller.showImageSize);
+              : removeBgHolder.buildShownImage(imageSize, controller.showImageSize.value);
     } else {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
       if (controller.showOrigin) {
         SyncFileImage(file: baseHolder.originFile!).getImage().then((value) {
-          controller.showImageSize = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+          controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
         });
       }
       return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage(imageSize);

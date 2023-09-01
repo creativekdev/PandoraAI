@@ -39,14 +39,8 @@ class ImageEditionController extends GetxController {
 
   late AppState state;
   late Size imageContainerSize;
-  Size _showImageSize = Size.zero;
 
-  Size get showImageSize => _showImageSize;
-
-  set showImageSize(Size size) {
-    _showImageSize = size;
-    update();
-  }
+  Rx<Size> showImageSize = Size.zero.obs;
 
   double bottomHeight = 0;
   double switchButtonBottomToScreen = 0;
@@ -303,72 +297,95 @@ class ImageEditionController extends GetxController {
       }
     }
     if (target.function == ImageEditionFunction.effect) {
-      //跳转effect
-      var oldHolder = currentItem.holder as ImageEditionBaseHolder;
-      var targetController = target.holder as TransferBaseController;
-      state.showLoading();
-      String filePath = await oldHolder.saveToResult();
-      state.hideLoading();
-      if (filePath != targetController.originalPath && !TextUtil.isEmpty(filePath)) {
-        await targetController.setOriginPath(filePath);
-      }
-      return true;
+      return await jumpToEffect(context, target);
     }
-    if (currentItem.function == ImageEditionFunction.effect) {
-      //从effect跳出
-      var oldController = currentItem.holder as TransferBaseController;
-      String oldPath = (oldController.resultFile ?? oldController.originFile).path;
-      var targetHolder = target.holder as ImageEditionBaseHolder;
-      if (oldPath == targetHolder.originFilePath || oldPath == targetHolder.resultFilePath) {
-        //没切换file，不需要做任何处理
-        return true;
-      }
-      // bool needRemove = await needRemoveBg(context, target);
-      state.showLoading();
-      await targetHolder.setOriginFilePath(oldPath, conf: true);
-      state.hideLoading();
-      if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
-        return false;
-      }
-      return true;
-    } else {
-      //其他跳转
-      state.showLoading();
-      var oldHolder = currentItem.holder as ImageEditionBaseHolder;
-      String filePath = await oldHolder.saveToResult();
-      if (TextUtil.isEmpty(filePath)) {
-        state.hideLoading();
-        return true;
-      }
-      var targetHolder = target.holder as ImageEditionBaseHolder;
-      String? targetPath = targetHolder.originFilePath;
-      if (filePath == targetPath) {
-        state.hideLoading();
-        if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
-          startRemoveBg();
-        }
-        return true;
-      } else {
-        bool needRemove = await needRemoveBg(context, target);
-        await targetHolder.setOriginFilePath(filePath, conf: needRemove);
-        state.hideLoading();
-      }
-      if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
-        return false;
-      }
-      return true;
+    if (target.function == ImageEditionFunction.filter || target.function == ImageEditionFunction.adjust || target.function == ImageEditionFunction.crop) {
+      return await jumpToFilters(context, target);
     }
+    if (target.function == ImageEditionFunction.removeBg) {
+      return await jumpToRemoveBg(context, target);
+    }
+    return false;
   }
 
-  Future<bool> needRemoveBg(BuildContext context, EditionItem target) async {
+  Future<bool> jumpToEffect(BuildContext context, EditionItem target) async {
+    //跳转effect
+    var targetController = target.holder as TransferBaseController;
+    if (currentItem.holder is FiltersHolder) {
+      var oldHolder = currentItem.holder as FiltersHolder;
+      state.showLoading();
+      String? filePath = await oldHolder.saveToResult();
+      state.hideLoading();
+      if (TextUtil.isEmpty(filePath)) {
+        filePath = oldHolder.originFilePath;
+      }
+      if (TextUtil.isEmpty(filePath)) {
+        return true;
+      }
+      await targetController.setOriginPath(filePath!);
+      return true;
+    } else if (currentItem.holder is RemoveBgHolder) {
+      var oldHolder = currentItem.holder as RemoveBgHolder;
+      state.showLoading();
+      String filePath = await oldHolder.saveToResult();
+      state.hideLoading();
+      await targetController.setOriginPath(filePath);
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> jumpToFilters(BuildContext context, EditionItem target) async {
+    var targetHolder = target.holder as FiltersHolder;
+    if (currentItem.holder is TransferBaseController) {
+      var oldHolder = currentItem.holder as TransferBaseController;
+      var oldPath = (oldHolder.resultFile ?? oldHolder.originFile).path;
+      if (oldPath == targetHolder.originFilePath) {
+        return true;
+      }
+      await targetHolder.setOriginFilePath(oldPath);
+      return true;
+    } else if (currentItem.holder is RemoveBgHolder) {
+      var oldHolder = currentItem.holder as RemoveBgHolder;
+      state.showLoading();
+      String filePath = await oldHolder.saveToResult();
+      state.hideLoading();
+      await targetHolder.setOriginFilePath(filePath);
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> jumpToRemoveBg(BuildContext context, EditionItem target) async {
+    var targetHolder = target.holder as RemoveBgHolder;
+    var needRemove = await needRemoveBg(context, targetHolder);
+    if (currentItem.holder is TransferBaseController) {
+      var oldHolder = currentItem.holder as TransferBaseController;
+      var oldPath = (oldHolder.resultFile ?? oldHolder.originFile).path;
+      if (targetHolder.originFilePath != oldPath) {
+        await targetHolder.setOriginFilePath(oldPath, conf: needRemove);
+      }
+      return true;
+    } else if (currentItem.holder is FiltersHolder) {
+      var oldHolder = currentItem.holder as FiltersHolder;
+      var oldPath = oldHolder.originFilePath;
+      if (needRemove) {
+        oldPath = await oldHolder.saveToResult(force: true);
+      }
+      if (targetHolder.originFilePath != oldPath) {
+        await targetHolder.setOriginFilePath(oldPath, conf: needRemove);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> needRemoveBg(BuildContext context, RemoveBgHolder holder) async {
     bool needRemove = true;
-    if (target.function == ImageEditionFunction.removeBg) {
-      var holder = target.holder as RemoveBgHolder;
-      if (holder.removedImage != null) {
-        var bool = await showEnsureToSwitchRemoveBg(context);
-        if (bool == null || bool == false) {
-          needRemove = false;
-        }
+    if (holder.removedImage != null) {
+      var bool = await showEnsureToSwitchRemoveBg(context);
+      if (bool == null || bool == false) {
+        needRemove = false;
       }
     }
     return needRemove;
@@ -396,7 +413,7 @@ class ImageEditionController extends GetxController {
       height: h.toDouble(),
       onResized: (imageRect) {
         delay(() {
-          showImageSize = imageRect.size;
+          showImageSize.value = imageRect.size;
         });
       },
     );

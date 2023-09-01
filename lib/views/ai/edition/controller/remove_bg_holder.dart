@@ -192,7 +192,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
         }
       }
     }
-    double scale = parent.showImageSize.width / width;
+    double scale = parent.showImageSize.value.width / width;
 
     return Rect.fromLTWH(
       minX * scale.toDouble(),
@@ -296,7 +296,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   @override
   Future<String> saveToResult({force = false}) async {
-    String? waitToDelete = resultFilePath;
+    String waitToDelete = resultFilePath;
     var key = EncryptUtil.encodeMd5('${config.toString()}');
     var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';
     if (newPath == waitToDelete && File(newPath).existsSync()) {
