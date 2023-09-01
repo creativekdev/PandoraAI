@@ -21,7 +21,6 @@ abstract class ImageEditionBaseHolder {
     }
     originFilePath = path;
     await initData();
-    update();
   }
 
   File? get originFile => originFilePath == null ? null : File(originFilePath!);

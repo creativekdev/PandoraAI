@@ -10,6 +10,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:image/image.dart' as libImg;
+import 'package:worker_manager/worker_manager.dart';
 
 class ClipDropApi extends RetryAbleRequester {
   CacheManager cacheManager = AppDelegate().getManager();
@@ -47,8 +48,7 @@ class ClipDropApi extends RetryAbleRequester {
       return resultPath;
     }
     libImg.Image image = await getLibImage(await getImage(File(filePath)));
-    libImg.JpegEncoder encoder = libImg.JpegEncoder();
-    List<int> bytes = encoder.encodeImage(image);
+    List<int> bytes = await new Executor().execute(arg1: image, fun1: _convertToJpg);
     String newFilePath = "${resultPath}.jpg";
     File file = File(newFilePath);
     await file.writeAsBytes(bytes);
@@ -73,4 +73,10 @@ class ClipDropApi extends RetryAbleRequester {
       return null;
     }
   }
+}
+
+Future<List<int>> _convertToJpg(libImg.Image data, TypeSendPort port) async {
+  libImg.JpegEncoder encoder = libImg.JpegEncoder();
+  List<int> bytes = encoder.encodeImage(data);
+  return bytes;
 }

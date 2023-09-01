@@ -62,7 +62,7 @@ class LibImagePainter extends CustomPainter {
 }
 
 Future<ui.Image> toImage(imgLib.Image image) async {
-  return toImageByList(image.data.buffer.asUint8List(), image.width, image.height);
+  return await toImageByList(image.data.buffer.asUint8List(), image.width, image.height);
 }
 
 Future<ui.Image> toImageByList(Uint8List image, width, height) async {

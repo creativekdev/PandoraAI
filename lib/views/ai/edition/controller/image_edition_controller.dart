@@ -186,7 +186,7 @@ class ImageEditionController extends GetxController {
           imageWidth: image.image.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
             filtersHolder.cropOperator.currentItem = null;
-            filtersHolder.cropOperator.cropData = Rect.zero;
+            filtersHolder.cropOperator.setCropData(Rect.zero);
             var imageInfo = await SyncFileImage(file: File(path)).getImage();
             holder.config.ratio = imageInfo.image.width / imageInfo.image.height;
             holder.removedImage = File(path);
@@ -406,7 +406,10 @@ class ImageEditionController extends GetxController {
 
   Widget buildShownImage(Size size) {
     if (shownImage == null) {
-      return Image.file(originFile);
+      return Container(
+        width: size.width,
+        height: size.height,
+      );
     }
     int w = shownImage!.width;
     int h = shownImage!.height;

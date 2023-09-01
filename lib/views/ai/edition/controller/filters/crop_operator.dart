@@ -18,10 +18,18 @@ class CropOperator extends BaseFilterOperator<Rect> {
 
   Rect get cropData => _cropData;
 
-  set cropData(Rect data) {
+  setCropData(Rect data, {bool needRebuild = true}) {
     this._cropData = data;
-    parent.buildImage();
+    if (needRebuild) {
+      parent.buildImage();
+    }
   }
+
+  //
+  // set cropData(Rect data) {
+  //   this._cropData = data;
+  //   parent.buildImage();
+  // }
 
   var scrollController = ScrollController();
 
@@ -57,8 +65,7 @@ class CropOperator extends BaseFilterOperator<Rect> {
       CropConfig(width: 16, height: 9, title: '16:9'),
       CropConfig(width: 9, height: 16, title: '9:16'),
     ];
-    cropData = recent;
-    // currentItem = items.first;
+    setCropData(recent, needRebuild: false);
   }
 
   void restorePos() {
