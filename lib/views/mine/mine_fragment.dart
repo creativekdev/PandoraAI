@@ -73,6 +73,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
     userManager.refreshUser();
     var currentTime = DateTime.now().millisecondsSinceEpoch;
     cacheManager.setInt('${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
+    EventBusHelper().eventBus.fire(OnHomeScrollEvent(data: false));
   }
 
   @override

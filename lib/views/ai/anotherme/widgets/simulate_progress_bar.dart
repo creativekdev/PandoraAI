@@ -184,6 +184,15 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
     } else {
       uploadAnimController.forward();
     }
+    delay(() {
+      if (mounted) {
+        Navigator.of(context).pop(
+          SimulateProgressResult<AccountLimitType>()
+            ..result = false
+            ..error = null,
+        );
+      }
+    }, milliseconds: 60000);
   }
 
   @override
