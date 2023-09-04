@@ -111,7 +111,7 @@ class UploadImageController extends GetxController {
     } else {
       uploadFile = file;
     }
-    var url = await api.uploadToS3(file, true, onSendProgress: onSendProgress);
+    var url = await api.uploadToS3(uploadFile, true, onSendProgress: onSendProgress);
     if (url != null) {
       Rx<String> target;
       if (_urlList[file.path] == null) {
