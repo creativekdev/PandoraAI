@@ -49,7 +49,7 @@ class MyImageCropperPage extends StatelessWidget {
               if (context.mounted && shouldPopAfterCrop) {
                 delay(() {
                   Navigator.of(context).pop(result);
-                }, milliseconds: 100);
+                }, milliseconds: 150);
               }
             }),
           ),
