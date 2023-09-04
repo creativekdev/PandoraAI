@@ -47,7 +47,9 @@ class MyImageCropperPage extends StatelessWidget {
               final result = await controller.crop();
 
               if (context.mounted && shouldPopAfterCrop) {
-                Navigator.of(context).pop(result);
+                delay(() {
+                  Navigator.of(context).pop(result);
+                }, milliseconds: 100);
               }
             }),
           ),
