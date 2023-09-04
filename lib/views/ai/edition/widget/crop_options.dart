@@ -67,10 +67,14 @@ class CropOptions extends StatelessWidget {
   }
 
   crop(BuildContext context, CropConfig e) {
+    if (controller.shownBytes == null) {
+      return;
+    }
     var _cropSettings = CustomCropSettings.initial();
     showCustomImageCropper(
       context,
-      imageProvider: FileImage(controller.originFile!),
+      // imageProvider: FileImage(controller.originFile!),
+      imageProvider: MemoryImage(controller.shownBytes!),
       heroTag: 'image-cropper',
       // initialData: _data[page],
       cropPathFn: _cropSettings.cropShapeFn,
@@ -94,7 +98,15 @@ class CropOptions extends StatelessWidget {
           }
         }
         controller.cropOperator.currentItem = selected;
-        controller.cropOperator.setCropData(result.transformationsData.cropRect);
+        var rect = result.transformationsData.cropRect;
+        var originSize = controller.originSize;
+        var nRect = Rect.fromLTWH(
+          rect.left / originSize,
+          rect.top / originSize,
+          rect.width / originSize,
+          rect.height / originSize,
+        );
+        controller.cropOperator.setCropData(nRect);
         return result;
       },
       currentItem: e,

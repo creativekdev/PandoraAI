@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
@@ -20,6 +21,7 @@ import 'filter_operator.dart';
 class FiltersHolder extends ImageEditionBaseHolder {
   Executor executor = new Executor();
   TaskExecutor taskExecutor = TaskExecutor();
+  TaskExecutor cropImageExecutor = TaskExecutor();
 
   late FilterOperator filterOperator;
   late AdjustOperator adjustOperator;
@@ -41,6 +43,8 @@ class FiltersHolder extends ImageEditionBaseHolder {
   });
 
   String initHash = '';
+
+  Uint8List? shownBytes;
 
   @override
   onInit() {
@@ -113,7 +117,11 @@ class FiltersHolder extends ImageEditionBaseHolder {
     var start = DateTime.now().millisecondsSinceEpoch;
     cancelable.then((value) {
       taskExecutor.cancelOldTask(time);
-      setShownImage(value);
+      setShownImage(value).then((value) {
+        parent.shownImage?.toByteData(format: ImageByteFormat.png).then((value) {
+          shownBytes = value!.buffer.asUint8List();
+        });
+      });
       LogUtil.d('spend: ${DateTime.now().millisecondsSinceEpoch - start}');
     });
   }
