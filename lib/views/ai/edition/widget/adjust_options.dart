@@ -97,6 +97,7 @@ class AdjustOptions extends StatelessWidget {
                       data.value = data.initValue;
                     }
                     // controller.update();
+                    controller.buildCropImage();
                     controller.buildImage();
                   } else {
                     controller.adjustOperator.adjIndex = index;
@@ -138,7 +139,10 @@ class AdjustOptions extends StatelessWidget {
               },
               onEnd: () async {
                 // delay(() => controller.update(), milliseconds: 150);
-                delay(() => controller.buildImage(), milliseconds: 300);
+                delay(() {
+                  controller.buildCropImage();
+                  controller.buildImage();
+                }, milliseconds: 300);
               }),
         ),
         SizedBox(height: 10),

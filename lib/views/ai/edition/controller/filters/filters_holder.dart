@@ -82,6 +82,7 @@ class FiltersHolder extends ImageEditionBaseHolder {
     _originImageData = shownImage;
     buildThumbnails();
     await buildImage();
+    buildCropImage();
   }
 
   @override
@@ -89,6 +90,7 @@ class FiltersHolder extends ImageEditionBaseHolder {
     adjustOperator.onInit([]);
     update();
     buildImage();
+    buildCropImage();
   }
 
   Future buildThumbnails() async {
@@ -117,11 +119,18 @@ class FiltersHolder extends ImageEditionBaseHolder {
     var start = DateTime.now().millisecondsSinceEpoch;
     cancelable.then((value) {
       taskExecutor.cancelOldTask(time);
-      setShownImage(value).then((value) {
-        parent.shownImage?.toByteData(format: ImageByteFormat.png).then((value) {
-          shownBytes = value!.buffer.asUint8List();
-        });
-      });
+      setShownImage(value);
+      LogUtil.d('spend: ${DateTime.now().millisecondsSinceEpoch - start}');
+    });
+  }
+
+  Future buildCropImage() async {
+    var cancelable = executor.execute(arg1: filterOperator.currentFilter, arg2: adjustOperator.adjustList, arg3: _originImageData, fun3: _buildCropOriImage);
+    var time = cropImageExecutor.insert(cancelable);
+    var start = DateTime.now().millisecondsSinceEpoch;
+    cancelable.then((value) {
+      cropImageExecutor.cancelOldTask(time);
+      shownBytes = Uint8List.fromList(value);
       LogUtil.d('spend: ${DateTime.now().millisecondsSinceEpoch - start}');
     });
   }
@@ -191,12 +200,18 @@ List<int> encodePngThread(imgLib.Image imageBytes, TypeSendPort port) {
   return imgLib.encodePng(imageBytes);
 }
 
+Future<List<int>> _buildCropOriImage(FilterEnum filter, List<AdjustData> datas, imgLib.Image _image, TypeSendPort port) async {
+  var filterResult = await _dimFilter(filter, _image);
+  var imageData = _imAdjust(datas, filterResult);
+  return imgLib.encodePng(imageData);
+}
+
 Future<imgLib.Image> _buildImage(FilterEnum filter, List<AdjustData> datas, imgLib.Image _image, Rect cropRect, TypeSendPort port) async {
   if (!cropRect.isEmpty) {
     _image = imgLib.copyCrop(_image, cropRect.left.toInt(), cropRect.top.toInt(), cropRect.width.toInt(), cropRect.height.toInt());
   }
   var filterResult = await _dimFilter(filter, _image);
-  return await _imAdjust(datas, filterResult);
+  return _imAdjust(datas, filterResult);
 }
 
 Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
