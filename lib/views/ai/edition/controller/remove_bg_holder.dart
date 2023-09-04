@@ -15,7 +15,6 @@ import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
 
 import '../../../../Common/event_bus_helper.dart';
-import '../../../../gallery_saver.dart';
 import '../../../common/background/background_picker.dart';
 import '../../../mine/filter/pin_gesture_views.dart';
 
@@ -205,9 +204,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     return alpha == 0;
   }
 
-  Widget buildShownImage(Size size, Size showSize) {
-    // showedSize = showSize;
-    borderRect = getMaxRealImageRect(imageFront?.width ?? 0, imageFront?.height ?? 0, imageFront);
+  Widget buildShownImage(Size size, Rx<Size> showSize) {
     return RepaintBoundary(
       key: globalKey,
       child: Listener(
@@ -218,66 +215,70 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
           isShowSquar.value = false;
         },
         child: ClipRect(
-          child: Container(
-            width: showSize.width,
-            height: showSize.height,
-            child: Stack(alignment: Alignment.center, children: [
-              LoadBgView(width: showSize.width, height: showSize.height),
-              PinGestureView(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    if (removedImage != null)
-                      Container(
-                        alignment: Alignment.center,
-                        child: Image.file(
-                          key: _personImageKey,
-                          removedImage!,
-                          fit: BoxFit.contain,
+          child: Obx(() {
+            // showImageSize的变化重新计算人像的大小
+            borderRect = getMaxRealImageRect(imageFront?.width ?? 0, imageFront?.height ?? 0, imageFront);
+            return Container(
+              width: showSize.value.width,
+              height: showSize.value.height,
+              child: Stack(alignment: Alignment.center, children: [
+                LoadBgView(width: showSize.value.width, height: showSize.value.height),
+                PinGestureView(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (removedImage != null)
+                        Container(
+                          alignment: Alignment.center,
+                          child: Image.file(
+                            key: _personImageKey,
+                            removedImage!,
+                            fit: BoxFit.contain,
+                          ),
                         ),
-                      ),
-                    Obx(
-                      () => isShowSquar.value
-                          ? UnconstrainedBox(
-                              child: Container(
-                                width: showSize.width,
-                                height: showSize.height,
-                                padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
-                                child: CustomPaint(
-                                  painter: GradientBorderPainter(
-                                    width: borderRect.width,
-                                    height: borderRect.height,
-                                    strokeWidth: $(2),
-                                    borderRadius: $(8),
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xFFE31ECD),
-                                        Color(0xFF243CFF),
-                                        Color(0xFFE31ECD),
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
+                      Obx(
+                        () => isShowSquar.value
+                            ? UnconstrainedBox(
+                                child: Container(
+                                  width: showSize.value.width,
+                                  height: showSize.value.height,
+                                  padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
+                                  child: CustomPaint(
+                                    painter: GradientBorderPainter(
+                                      width: borderRect.width,
+                                      height: borderRect.height,
+                                      strokeWidth: $(2),
+                                      borderRadius: $(8),
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xFFE31ECD),
+                                          Color(0xFF243CFF),
+                                          Color(0xFFE31ECD),
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            )
-                          : SizedBox(),
-                    )
-                  ],
+                              )
+                            : SizedBox(),
+                      )
+                    ],
+                  ),
+                  scale: config.scale,
+                  dx: config.dx,
+                  dy: config.dy,
+                  onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                    canReset = true;
+                    config.scale = newScale;
+                    config.dx = newDx;
+                    config.dy = newDy;
+                  },
                 ),
-                scale: config.scale,
-                dx: config.dx,
-                dy: config.dy,
-                onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                  canReset = true;
-                  config.scale = newScale;
-                  config.dx = newDx;
-                  config.dy = newDy;
-                },
-              ),
-            ]),
-          ),
+              ]),
+            );
+          }),
         ),
       ),
     ).intoCenter().intoContainer(width: size.width, height: size.height, alignment: Alignment.center);
