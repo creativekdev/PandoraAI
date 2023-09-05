@@ -401,13 +401,16 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
           });
         };
       } else {
-        action = () {
-          var file = File(controller.transKey!);
+        action = () async {
+          var resultFile = File(controller.transKey!);
+          await showLoading();
+          String? url = await uploadImageController.upload(file: file);
+          hideLoading();
           ShareDiscoveryScreen.push(
             context,
             effectKey: 'Me-taverse',
-            originalUrl: uploadImageController.imageUrl(file).value,
-            image: base64Encode(file.readAsBytesSync()),
+            originalUrl: url,
+            image: base64Encode(resultFile.readAsBytesSync()),
             isVideo: false,
             category: HomeCardType.anotherme,
           ).then((value) {

@@ -432,7 +432,7 @@ class ImageEditionController extends GetxController {
       onResized: (imageRect) {
         delay(() {
           showImageSize.value = imageRect.size;
-        });
+        }, milliseconds: 32);
       },
     );
   }

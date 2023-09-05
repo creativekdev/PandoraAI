@@ -440,14 +440,18 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : removeBgHolder.removedImage);
       if (file != null) {
         SyncFileImage(file: file).getImage().then((value) {
-          controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+          if (controller.showOrigin) {
+            controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+          }
         });
       }
       return controller.showOrigin ? Image.file(controller.originFile) : removeBgHolder.buildShownImage(imageSize, controller.showImageSize.value);
     } else {
       if (controller.showOrigin) {
         SyncFileImage(file: controller.originFile).getImage().then((value) {
-          controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+          if (controller.showOrigin) {
+            controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+          }
         });
       }
       return controller.showOrigin ? Image.file(controller.originFile) : controller.buildShownImage(imageSize);

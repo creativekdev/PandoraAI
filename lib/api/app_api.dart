@@ -85,12 +85,14 @@ class AppApi extends RetryAbleRequester {
   /// get current user info
   Future<OnlineModel> getCurrentUser() async {
     String? token = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.pushToken);
-    var baseEntity = await get('/user/get_login',
-        params: {
-          'device_id': token,
-        },
-        needRetry: false,
-        canClickRetry: false);
+    var map = <String, dynamic>{
+      'device_id': token,
+    };
+    var osVersion = await getOsVersion();
+    if (!TextUtil.isEmpty(osVersion)) {
+      map['os_version'] = osVersion;
+    }
+    var baseEntity = await get('/user/get_login', params: map, needRetry: false, canClickRetry: false);
     if (baseEntity != null) {
       if (baseEntity.data != null) {
         Map<String, dynamic> data = baseEntity.data;
