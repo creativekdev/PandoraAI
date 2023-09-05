@@ -509,7 +509,7 @@ Future<String?> getOsVersion() async {
     osVersionName = androidDeviceInfo.version.sdkInt.toString();
   } else if (Platform.isIOS) {
     var iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
-    osVersionName = iosDeviceInfo.systemName;
+    osVersionName = iosDeviceInfo.systemVersion;
   }
   return osVersionName;
 }
