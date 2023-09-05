@@ -409,6 +409,14 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     );
   }
 
+  syncShowImageSizeInEffect(File file, bool showOrigin) {
+    SyncFileImage(file: file).getImage().then((value) {
+      if (showOrigin == controller.showOrigin) {
+        controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+      }
+    });
+  }
+
   Widget getImageWidget(BuildContext context, ImageEditionController controller) {
     if (controller.currentItem.function == ImageEditionFunction.UNDEFINED) {
       return Container();
@@ -417,9 +425,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       var effectController = controller.currentItem.holder as AllTransferController;
       bool needGenerateAgain = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
       var file = controller.showOrigin ? controller.originFile : effectController.resultFile ?? effectController.originFile;
-      SyncFileImage(file: file).getImage().then((value) {
-        controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
-      });
+      syncShowImageSizeInEffect(file, controller.showOrigin);
       var image = Image.file(file);
       if (needGenerateAgain) {
         return Stack(
