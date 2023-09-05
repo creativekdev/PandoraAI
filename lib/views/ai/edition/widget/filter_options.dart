@@ -80,6 +80,7 @@ class FilterOptions extends StatelessWidget {
           controller.filterOperator.currentFilter = function;
           EventBusHelper().eventBus.fire(OnEditionRightTabSwitchEvent(data: function.title()));
           parentState.showLoading().whenComplete(() {
+            controller.buildCropImage();
             controller.buildImage().then((value) {
               parentState.hideLoading();
             });

@@ -445,7 +445,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           }
         });
       }
-      return controller.showOrigin ? Image.file(controller.originFile) : removeBgHolder.buildShownImage(imageSize, controller.showImageSize.value);
+      // 使用RX变量监听showImageSize的变化
+      return controller.showOrigin ? Image.file(controller.originFile) : removeBgHolder.buildShownImage(imageSize, controller.showImageSize);
     } else {
       if (controller.showOrigin) {
         SyncFileImage(file: controller.originFile).getImage().then((value) {
