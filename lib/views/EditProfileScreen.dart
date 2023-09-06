@@ -35,12 +35,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   UserManager userManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
 
+  String? initName;
+  String? initAvatar;
+
+  bool _notChanged() {
+    return initName == nameController.text && initAvatar == controller.imageUrl.value;
+  }
+
   @override
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'edit_profile_screen');
     thirdpartManager.adsHolder.ignore = true;
     imagePicker = new ImagePicker();
+    initName = userManager.user!.getShownName();
+    initAvatar = userManager.user!.getShownAvatar();
   }
 
   @override
@@ -52,11 +61,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    var scaffold = Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
         blurAble: false,
         backgroundColor: Colors.transparent,
+        backAction: () {
+          if (_notChanged()) {
+            pop();
+          } else {
+            _willPopCallback(context);
+          }
+        },
         middle: TitleTextWidget(
           S.of(context).edit_profile,
           ColorConstant.BtnTextColor,
@@ -184,32 +200,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     height: 4.h,
                                   ),
                                   GestureDetector(
-                                    onTap: () async {
-                                      if (nameController.text.trim().isEmpty) {
-                                        CommonExtension().showToast(S.of(context).name_validation);
-                                      } else {
-                                        FocusManager.instance.primaryFocus?.unfocus();
-                                        controller.changeIsLoading(true);
-                                        var name = nameController.text.toString();
-                                        var avatar = controller.imageUrl.value;
-
-                                        var body = {
-                                          'name': name,
-                                          'avatar': avatar,
-                                        };
-
-                                        final updateProfileResponse = await API.post("/api/user/update", body: body);
-
-                                        if (updateProfileResponse.statusCode == 200) {
-                                          CommonExtension().showToast(S.of(context).update_profile_successfully);
-                                          AppDelegate.instance.getManager<UserManager>().refreshUser();
-                                          Navigator.pop(context, false);
-                                        } else {
-                                          CommonExtension().showToast(S.of(context).commonFailedToast);
-                                        }
-
-                                        controller.changeIsLoading(false);
-                                      }
+                                    onTap: () {
+                                      submitUpdate(context);
                                     },
                                     child: ButtonWidget(S.of(context).update_profile),
                                   ),
@@ -231,6 +223,93 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         },
       ),
     );
+    if (_notChanged()) {
+      return scaffold;
+    }
+    return WillPopScope(
+        child: scaffold,
+        onWillPop: () async {
+          return _willPopCallback(context);
+        });
+  }
+
+  Future<bool> _willPopCallback(BuildContext context) async {
+    showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: $(20)),
+          TitleTextWidget(S.of(context).exit_msg, ColorConstant.White, FontWeight.w600, 18),
+          SizedBox(height: $(15)),
+          TitleTextWidget(S.of(context).exit_msg1, ColorConstant.HintColor, FontWeight.w400, 14),
+          SizedBox(height: $(15)),
+          TitleTextWidget(
+            S.of(context).exit_editing,
+            ColorConstant.White,
+            FontWeight.w600,
+            16,
+          )
+              .intoContainer(
+            margin: EdgeInsets.symmetric(horizontal: $(25)),
+            padding: EdgeInsets.symmetric(vertical: $(10)),
+            width: double.maxFinite,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: ColorConstant.BlueColor),
+          )
+              .intoGestureDetector(onTap: () {
+            Navigator.pop(context, true);
+          }),
+          TitleTextWidget(
+            S.of(context).cancel,
+            ColorConstant.White,
+            FontWeight.w400,
+            16,
+          ).intoPadding(padding: EdgeInsets.only(top: $(15), bottom: $(25))).intoGestureDetector(onTap: () {
+            Navigator.pop(context);
+          }),
+        ],
+      ).intoContainer(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        decoration: BoxDecoration(
+          color: ColorConstant.EffectFunctionGrey,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular($(32)), topRight: Radius.circular($(32))),
+        ),
+      ),
+    ).then((value) {
+      if (value ?? false) {
+        Navigator.pop(context);
+      }
+    });
+    return false;
+  }
+
+  Future<void> submitUpdate(BuildContext context) async {
+    if (nameController.text.trim().isEmpty) {
+      CommonExtension().showToast(S.of(context).name_validation);
+    } else {
+      FocusManager.instance.primaryFocus?.unfocus();
+      controller.changeIsLoading(true);
+      var name = nameController.text.toString();
+      var avatar = controller.imageUrl.value;
+
+      var body = {
+        'name': name,
+        'avatar': avatar,
+      };
+
+      final updateProfileResponse = await API.post("/api/user/update", body: body);
+
+      if (updateProfileResponse.statusCode == 200) {
+        CommonExtension().showToast(S.of(context).update_profile_successfully);
+        AppDelegate.instance.getManager<UserManager>().refreshUser();
+        Navigator.pop(context, false);
+      } else {
+        CommonExtension().showToast(S.of(context).commonFailedToast);
+      }
+
+      controller.changeIsLoading(false);
+    }
   }
 
   Future<SocialUserInfo> _getData() async {

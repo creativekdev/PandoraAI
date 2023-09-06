@@ -29,6 +29,20 @@ class DiscoveryListController extends GetxController {
     update();
   }
 
+  bool _isScrollEnd = false;
+
+  bool get isScrollEnd => _isScrollEnd;
+
+  set isScrollEnd(bool value) {
+    if (_isScrollEnd == value) {
+      return;
+    }
+    _isScrollEnd = value;
+    update();
+  }
+
+  late ScrollController tagController;
+
   List<HomeCardType> tags = [
     HomeCardType.stylemorph,
     HomeCardType.imageEdition,
@@ -82,6 +96,10 @@ class DiscoveryListController extends GetxController {
     super.onInit();
     api = AppApi().bindController(this);
     socialMediaConnectorApi = SocialMediaConnectorApi().bindController(this);
+    tagController = ScrollController();
+    tagController.addListener(() {
+      isScrollEnd = scrollController.position.pixels == scrollController.position.maxScrollExtent;
+    });
     scrollController = ScrollController();
     scrollController.addListener(() {
       if (scrollController.positions.isEmpty) {
@@ -213,6 +231,7 @@ class DiscoveryListController extends GetxController {
   @override
   void dispose() {
     api.unbind();
+    tagController.dispose();
     socialMediaConnectorApi.unbind();
     onLoginEventListener.cancel();
     onLikeEventListener.cancel();

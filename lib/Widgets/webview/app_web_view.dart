@@ -113,6 +113,7 @@ class AppWebViewState extends AppState<AppWebView> {
         },
         middle: Text(
           _title ?? '',
+          style: TextStyle(color: Colors.white),
           softWrap: false,
           overflow: TextOverflow.ellipsis,
         ),

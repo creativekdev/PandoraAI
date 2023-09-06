@@ -64,7 +64,7 @@ launchURL(String url, {bool force = false}) async {
   if (force) {
     await launchUrl(uri);
   } else if (await canLaunchUrl(uri)) {
-    await launchUrl(uri);
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   } else {
     throw 'Could not launch $url';
   }
