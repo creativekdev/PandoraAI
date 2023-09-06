@@ -43,6 +43,9 @@ extension StringEx on String {
     if (effectDataController.data?.hash == null) {
       return this;
     }
+    if (this.contains('hash=')) {
+      return this;
+    }
     if (this.contains("?")) {
       return '${this}&hash=${effectDataController.data?.hash}';
     } else {

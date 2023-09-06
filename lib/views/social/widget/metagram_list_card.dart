@@ -3,6 +3,8 @@ import 'package:cartoonizer/Widgets/image/compareable_image.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
@@ -313,24 +315,31 @@ class CompareImageViewState extends State<CompareImageView> {
 
   late Function onStartDrag;
   late Function onCancelDrag;
+  CacheManager cacheManager = AppDelegate().getManager();
 
   @override
   void initState() {
     super.initState();
     initData();
     height = width;
-    SyncNetworkImage(
-      url: result,
-    ).getImage().then((value) {
-      var scale = value.image.width / value.image.height;
-      if (mounted) {
-        setState(() {
+    var scale = cacheManager.imageScaleOperator.getScale(result);
+    if (scale == null) {
+      SyncCachedNetworkImage(
+        url: result,
+      ).getImage().then((value) {
+        var scale = value.image.width / value.image.height;
+        cacheManager.imageScaleOperator.setScale(result, scale);
+        if (mounted) {
+          setState(() {
+            height = width / scale;
+          });
+        } else {
           height = width / scale;
-        });
-      } else {
-        height = width / scale;
-      }
-    });
+        }
+      });
+    } else {
+      height = width / scale;
+    }
   }
 
   @override
