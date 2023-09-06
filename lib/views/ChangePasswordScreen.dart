@@ -45,12 +45,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         appBar: AppNavigationBar(
           blurAble: false,
           backgroundColor: Colors.transparent,
-          middle: TitleTextWidget(
+          trailing: TitleTextWidget(
             S.of(context).change_password,
             ColorConstant.BtnTextColor,
             FontWeight.w600,
-            FontSizeConstants.topBarTitle,
-          ),
+            $(18),
+          ).intoContainer(alignment: Alignment.center),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -60,10 +60,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   S.of(context).current_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, oPassController),
               SizedBox(height: 1.4.h),
               SimpleTextInputWidget(
-                  S.of(context).new_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, passController),
+                  S.of(context).new_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, true, passController),
               SizedBox(height: 1.4.h),
               SimpleTextInputWidget(
-                  S.of(context).confirm_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, false, cPassController),
+                  S.of(context).confirm_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, true, cPassController),
               SizedBox(height: 5.h),
               GestureDetector(
                 onTap: () async {
@@ -85,11 +85,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       "new_password": passController.text.trim(),
                     };
 
-                    final response = await API.post("/api/user/change_password", body: body).whenComplete(() => {
-                          setState(() {
-                            isLoading = false;
-                          }),
-                        });
+                    final response = await API.post("/api/user/change_password", body: body).whenComplete(() {
+                      setState(() {
+                        isLoading = false;
+                      });
+                    });
                     if (response.statusCode == 200) {
                       CommonExtension().showToast(S.of(context).change_pwd_successfully);
                       AppDelegate.instance.getManager<UserManager>().refreshUser();

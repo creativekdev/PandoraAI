@@ -185,6 +185,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               Listener(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  physics: ClampingScrollPhysics(),
+                  controller: listController.tagController,
                   padding: EdgeInsets.only(left: $(15), right: $(30)),
                   child: Row(
                     children: listController.tags.transfer((e, index) {
@@ -242,7 +244,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                       padding: EdgeInsets.symmetric(vertical: $(5), horizontal: $(6)),
                       color: ColorConstant.BackgroundColor,
                     )
-                    .visibility(visible: !listController.isTagScrolling),
+                    .visibility(visible: !listController.isTagScrolling && !listController.isScrollEnd),
               ),
             ],
           )
