@@ -333,24 +333,33 @@ class ImageEditionController extends GetxController {
         //没操作过，直接切换
         return true;
       }
-      var needRemove = await needRemoveBg(context, targetHolder);
+      bool needRemove;
+      if (!targetHolder.lastRemoveSuccess) {
+        needRemove = true;
+      } else {
+        needRemove = await needRemoveBg(context, targetHolder);
+      }
       if (!needRemove) {
         return false;
       }
-      if (targetHolder.originFilePath != oldPath) {
+      if (targetHolder.originFilePath != oldPath || !targetHolder.lastRemoveSuccess) {
         await targetHolder.setOriginFilePath(oldPath, conf: needRemove);
       }
       return true;
     } else if (currentItem.holder is FiltersHolder) {
       var oldHolder = currentItem.holder as FiltersHolder;
       var oldPath = oldHolder.originFilePath;
-      if (oldHolder.initHash == oldHolder.getConfigKey() && (targetHolder.originFilePath == oldPath || targetHolder.resultFilePath == oldPath)) {
-        if (targetHolder.removedImage == null) {
-          targetHolder.initData();
-        } //没操作过，直接切换
+      var unchanged = oldHolder.initHash == oldHolder.getConfigKey();
+      if (unchanged && ((targetHolder.originFilePath == oldPath || targetHolder.resultFilePath == oldPath) && targetHolder.removedImage != null)) {
+        //没操作过，直接切换
         return true;
       }
-      var needRemove = await needRemoveBg(context, targetHolder);
+      bool needRemove;
+      if (!targetHolder.lastRemoveSuccess) {
+        needRemove = true;
+      } else {
+        needRemove = await needRemoveBg(context, targetHolder);
+      }
       if (!needRemove) {
         return false;
       }
@@ -359,7 +368,7 @@ class ImageEditionController extends GetxController {
         oldPath = await oldHolder.saveToResult(force: true);
         state.hideLoading();
       }
-      if (targetHolder.originFilePath != oldPath) {
+      if (targetHolder.originFilePath != oldPath || !targetHolder.lastRemoveSuccess) {
         await targetHolder.setOriginFilePath(oldPath, conf: needRemove);
       }
       return true;

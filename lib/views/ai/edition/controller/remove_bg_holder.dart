@@ -67,7 +67,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     if (conf != null) {
       needRemove = conf as bool;
     }
-    if (originFilePath == path || !needRemove) {
+    if ((originFilePath == path && lastRemoveSuccess) || !needRemove) {
       return;
     }
     originFilePath = path;
@@ -106,6 +106,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
           imageHeight: shownImage!.height.toDouble(),
           imageWidth: shownImage!.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
+            lastRemoveSuccess = true;
             clear();
             parent.filtersHolder.cropOperator.currentItem = null;
             parent.filtersHolder.cropOperator.setCropData(Rect.zero);
@@ -124,9 +125,11 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       ),
     );
     if (!success) {
+      lastRemoveSuccess = false;
       clear();
     }
   }
+  bool lastRemoveSuccess = false;
 
   onSavedBackground(BackgroundData data) async {
     if (data.color != Colors.transparent) {
