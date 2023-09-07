@@ -1,10 +1,5 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
-import 'package:cartoonizer/common/importFile.dart';
-
-import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
-
-import 'package:cartoonizer/models/discovery_list_entity.dart';
 
 MetagramPageEntity $MetagramPageEntityFromJson(Map<String, dynamic> json) {
   final MetagramPageEntity metagramPageEntity = MetagramPageEntity();

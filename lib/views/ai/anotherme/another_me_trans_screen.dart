@@ -281,7 +281,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               CommonExtension().showVideoSavedOkToast(context);
                               delay(() {
                                 UserManager userManager = AppDelegate.instance.getManager();
-                                userManager.rateNoticeOperator.onSwitch(context);
+                                userManager.rateNoticeOperator.onSwitch(context, false);
                               }, milliseconds: 2000);
                             }
                           });
@@ -298,7 +298,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                           CommonExtension().showImageSavedOkToast(context);
                           delay(() {
                             UserManager userManager = AppDelegate.instance.getManager();
-                            userManager.rateNoticeOperator.onSwitch(context);
+                            userManager.rateNoticeOperator.onSwitch(context, false);
                           }, milliseconds: 2000);
                         }
                       }

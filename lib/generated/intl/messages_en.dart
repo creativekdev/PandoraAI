@@ -534,10 +534,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("?"),
         "quantity": MessageLookupByLibrary.simpleMessage("Quantity"),
+        "rate_average": MessageLookupByLibrary.simpleMessage("Average"),
+        "rate_bad": MessageLookupByLibrary.simpleMessage("Bad"),
         "rate_description": MessageLookupByLibrary.simpleMessage(
-            "If you enjoy using Pandora AI, would you mind taking a moment to rate it?"),
+            "You generate a lot of incredible pictures! Click on the people below to leave your feelings!"),
+        "rate_good": MessageLookupByLibrary.simpleMessage("Good"),
         "rate_pandora_ai":
-            MessageLookupByLibrary.simpleMessage("Rate Pandora AI"),
+            MessageLookupByLibrary.simpleMessage("Do you like Pandora AI?"),
         "rate_us":
             MessageLookupByLibrary.simpleMessage("Rate us on the app store"),
         "rate_us1":

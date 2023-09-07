@@ -437,9 +437,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("数量"),
-        "rate_description":
-            MessageLookupByLibrary.simpleMessage("您的使用体验如何？愿意给我们评分么？"),
-        "rate_pandora_ai": MessageLookupByLibrary.simpleMessage("给我们评分"),
+        "rate_average": MessageLookupByLibrary.simpleMessage("一般"),
+        "rate_bad": MessageLookupByLibrary.simpleMessage("吐个槽"),
+        "rate_description": MessageLookupByLibrary.simpleMessage(
+            "你生成了许多不可思议的图片！点击下方人物，留下您的感受吧！"),
+        "rate_good": MessageLookupByLibrary.simpleMessage("给个好评"),
+        "rate_pandora_ai":
+            MessageLookupByLibrary.simpleMessage("喜欢Pandora AI吗？"),
         "rate_us": MessageLookupByLibrary.simpleMessage("去AppStore给我们评分"),
         "rate_us1": MessageLookupByLibrary.simpleMessage("去PlayStore给我们评分"),
         "reached_limit_content":

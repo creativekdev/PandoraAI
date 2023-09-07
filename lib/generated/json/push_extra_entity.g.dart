@@ -1,6 +1,5 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
-import 'package:cartoonizer/models/enums/home_card_type.dart';
 
 PushModuleExtraEntity $PushModuleExtraEntityFromJson(Map<String, dynamic> json) {
   final PushModuleExtraEntity pushModuleExtraEntity = PushModuleExtraEntity();

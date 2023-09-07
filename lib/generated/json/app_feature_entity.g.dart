@@ -1,6 +1,5 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
-import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 
 AppFeatureEntity $AppFeatureEntityFromJson(Map<String, dynamic> json) {
   final AppFeatureEntity appFeatureEntity = AppFeatureEntity();

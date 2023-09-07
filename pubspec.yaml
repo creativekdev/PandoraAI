@@ -131,6 +131,7 @@ dev_dependencies:
   gallery_saver: any
   firebase_core_platform_interface: 4.8.0
   ffigen: ^8.0.2
+  intl_utils: 2.8.4
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

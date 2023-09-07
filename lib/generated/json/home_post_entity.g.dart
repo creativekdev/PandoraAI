@@ -1,6 +1,6 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
-import 'package:cartoonizer/models/home_post_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/home_post_entity.dart';
 
 HomePostEntity $HomePostEntityFromJson(Map<String, dynamic> json) {
   final HomePostEntity homePostEntity = HomePostEntity();

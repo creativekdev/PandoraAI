@@ -1,6 +1,6 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
-import 'package:cartoonizer/models/get_address_entity.dart';
 import 'package:cartoonizer/models/address_entity.dart';
+import 'package:cartoonizer/models/get_address_entity.dart';
 
 GetAddressEntity $GetAddressEntityFromJson(Map<String, dynamic> json) {
   final GetAddressEntity getAddressEntity = GetAddressEntity();

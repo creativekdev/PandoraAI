@@ -1,6 +1,5 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
-import 'package:cartoonizer/app/user/rate_notice_operator.dart';
 
 UploadRecordEntity $UploadRecordEntityFromJson(Map<String, dynamic> json) {
   final UploadRecordEntity uploadRecordEntity = UploadRecordEntity();

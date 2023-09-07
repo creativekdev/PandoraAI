@@ -2850,21 +2850,51 @@ class S {
     );
   }
 
-  /// `Rate Pandora AI`
+  /// `Do you like Pandora AI?`
   String get rate_pandora_ai {
     return Intl.message(
-      'Rate Pandora AI',
+      'Do you like Pandora AI?',
       name: 'rate_pandora_ai',
       desc: '',
       args: [],
     );
   }
 
-  /// `If you enjoy using Pandora AI, would you mind taking a moment to rate it?`
+  /// `You generate a lot of incredible pictures! Click on the people below to leave your feelings!`
   String get rate_description {
     return Intl.message(
-      'If you enjoy using Pandora AI, would you mind taking a moment to rate it?',
+      'You generate a lot of incredible pictures! Click on the people below to leave your feelings!',
       name: 'rate_description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bad`
+  String get rate_bad {
+    return Intl.message(
+      'Bad',
+      name: 'rate_bad',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Average`
+  String get rate_average {
+    return Intl.message(
+      'Average',
+      name: 'rate_average',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Good`
+  String get rate_good {
+    return Intl.message(
+      'Good',
+      name: 'rate_good',
       desc: '',
       args: [],
     );

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
@@ -16,14 +15,10 @@ import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-import 'package:cartoonizer/models/enums/account_limit_type.dart';
-import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
-import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
-import 'package:cartoonizer/views/payment.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
@@ -384,7 +379,7 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
     CommonExtension().showImageSavedOkToast(context);
     delay(() {
       UserManager userManager = AppDelegate.instance.getManager();
-      userManager.rateNoticeOperator.onSwitch(context);
+      userManager.rateNoticeOperator.onSwitch(context, false);
     }, milliseconds: 2000);
   }
 

@@ -12,16 +12,12 @@ const int hour = minute * 60;
 const int day = hour * 24;
 
 // in production
-const int maxSwitchCount = 1;
-const int maxDuration = 15 * day;
-const int nextActivatePositive = 2160; // 90 * 24; hour
-const int nextActivateNegative = 720; // 30 * 24; hour
+// const int maxDuration = 15 * day;
+// const int nextActivate = 360; // 90 * 24; hour
 
 // in development
-// const int maxSwitchCount = 3;
-// const int maxDuration = 10 * minute;
-// const int nextActivatePositive = 2;
-// const int nextActivateNegative = 1;
+const int maxDuration = 10 * minute;
+const int nextActivate = 2;
 
 class RateNoticeOperator {
   CacheManager cacheManager;
@@ -60,10 +56,15 @@ class RateNoticeOperator {
     return cacheManager.setJson(rateConfigKey, configEntity.toJson());
   }
 
-  bool shouldRate() {
+  bool shouldRate(bool addCount) {
     if (configEntity == null) {
       return false;
     }
+    // 如果是转换，转换次数如果小于2，则不弹
+    if ((configEntity?.switchCount ?? 0) < 2 && addCount) {
+      return false;
+    }
+    // 判断时间是否大于15天
     var currentTime = DateTime.now().millisecondsSinceEpoch;
     if (configEntity!.nextActivateDate != 0) {
       if (configEntity!.nextActivateDate < currentTime) {
@@ -77,20 +78,19 @@ class RateNoticeOperator {
         return true;
       }
     }
-    if (configEntity!.switchCount >= maxSwitchCount) {
-      return true;
-    }
     return false;
   }
 
-  void onSwitch(BuildContext context) {
+  void onSwitch(BuildContext context, bool addCount) {
     if (configEntity == null) return;
     if (configEntity!.nextActivateDate != 0) {
       return;
     }
-    configEntity!.switchCount++;
-    saveConfig(configEntity!);
-    judgeAndShowNotice(context);
+    if (addCount) {
+      configEntity!.switchCount++;
+      saveConfig(configEntity!);
+    }
+    judgeAndShowNotice(context, addCount);
   }
 
   void onBuy(BuildContext context) {
@@ -102,36 +102,29 @@ class RateNoticeOperator {
     configEntity!.nextActivateDate = DateTime.now().millisecondsSinceEpoch - day;
     configEntity!.calculateInNextActivate = false;
     saveConfig(configEntity!);
-    judgeAndShowNotice(context);
+    judgeAndShowNotice(context, false);
   }
 
   bool _dialogShown = false;
 
-  Future<bool> judgeAndShowNotice(BuildContext context) async {
+  Future<bool> judgeAndShowNotice(BuildContext context, bool addCount) async {
     if (_dialogShown) {
       return false;
     }
     LogUtil.v('${configEntity?.print()}', tag: 'rateConfig');
-    if (shouldRate()) {
+    if (shouldRate(addCount)) {
       _dialogShown = true;
       showDialog(
         context: context,
-        barrierDismissible: false,
+        barrierDismissible: true,
         builder: (context) => RateNoticeDialogContent(
           onResult: (value) {
             delay(() {
               _dialogShown = false;
-              if (value) {
-                // 3 month later
-                configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivatePositive)).millisecondsSinceEpoch;
-                configEntity!.switchCount = 0;
-                configEntity!.calculateInNextActivate = true;
-              } else {
-                // 1 month later
-                configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivateNegative)).millisecondsSinceEpoch;
-                configEntity!.switchCount = 0;
-                configEntity!.calculateInNextActivate = false;
-              }
+              // 15天后再次激活
+              configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivate)).millisecondsSinceEpoch;
+              configEntity!.switchCount = 0;
+              configEntity!.calculateInNextActivate = true;
               saveConfig(configEntity!);
             }, milliseconds: 100);
           },

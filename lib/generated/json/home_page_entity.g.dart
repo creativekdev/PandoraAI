@@ -1,8 +1,6 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
-import 'package:cartoonizer/models/home_page_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-
-import 'package:cartoonizer/models/enums/home_card_type.dart';
+import 'package:cartoonizer/models/home_page_entity.dart';
 
 HomePageEntity $HomePageEntityFromJson(Map<String, dynamic> json) {
   final HomePageEntity homePageEntity = HomePageEntity();

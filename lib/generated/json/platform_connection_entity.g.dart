@@ -1,6 +1,5 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
-import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
 
 PlatformConnectionEntity $PlatformConnectionEntityFromJson(Map<String, dynamic> json) {
   final PlatformConnectionEntity platformConnectionEntity = PlatformConnectionEntity();

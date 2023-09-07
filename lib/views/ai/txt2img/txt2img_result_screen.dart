@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
@@ -12,16 +11,11 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/enums/account_limit_type.dart';
-import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_controller.dart';
 import 'package:cartoonizer/views/ai/txt2img/widget/txt2img_opt_container.dart';
-import 'package:cartoonizer/views/ai/txt2img/widget/prompt_border.dart';
-import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
-import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
@@ -142,7 +136,7 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
                             CommonExtension().showImageSavedOkToast(context);
                             delay(() {
                               UserManager userManager = AppDelegate.instance.getManager();
-                              userManager.rateNoticeOperator.onSwitch(context);
+                              userManager.rateNoticeOperator.onSwitch(context, false);
                             }, milliseconds: 2000);
                           } else {
                             CommonExtension().showToast(S.of(context).commonFailedToast);

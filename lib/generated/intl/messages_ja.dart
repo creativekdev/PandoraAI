@@ -465,9 +465,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("プロ"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("数量"),
+        "rate_average": MessageLookupByLibrary.simpleMessage("平均"),
+        "rate_bad": MessageLookupByLibrary.simpleMessage("悪い"),
         "rate_description":
             MessageLookupByLibrary.simpleMessage("ご利用体験はいかがでしたか？評価をいただけますか？"),
-        "rate_pandora_ai": MessageLookupByLibrary.simpleMessage("私たちに評価をください"),
+        "rate_good": MessageLookupByLibrary.simpleMessage("良い"),
+        "rate_pandora_ai":
+            MessageLookupByLibrary.simpleMessage("Pandora AIがお気に入りですか?"),
         "rate_us":
             MessageLookupByLibrary.simpleMessage("AppStoreで評価していただけますか？"),
         "rate_us1":

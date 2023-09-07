@@ -1,8 +1,5 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ai_server_entity.dart';
-import 'package:cartoonizer/main.dart';
-
-import 'package:cartoonizer/utils/utils.dart';
 
 AiServerEntity $AiServerEntityFromJson(Map<String, dynamic> json) {
   final AiServerEntity aiServerEntity = AiServerEntity();

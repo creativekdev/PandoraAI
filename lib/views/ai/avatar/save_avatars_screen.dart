@@ -255,7 +255,7 @@ class _SaveAvatarsScreenState extends AppState<SaveAvatarsScreen> {
             CommonExtension().showImageSavedOkToast(context);
             delay(() {
               UserManager userManager = AppDelegate.instance.getManager();
-              userManager.rateNoticeOperator.onSwitch(context);
+              userManager.rateNoticeOperator.onSwitch(context, false);
             }, milliseconds: 2000);
           });
         });
