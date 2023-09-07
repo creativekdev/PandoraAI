@@ -30,7 +30,7 @@ class RemoveBgConfig {
 
   @override
   String toString() {
-    print('RemoveBgConfig{removedImage: ${removedImage?.path}, selectData: ${selectData?.toString()}, ratio: $ratio, scale: $scale, dx: $dx, dy: $dy}');
+    LogUtil.d('RemoveBgConfig{removedImage: ${removedImage?.path}, selectData: ${selectData?.toString()}, ratio: $ratio, scale: $scale, dx: $dx, dy: $dy}');
     return 'RemoveBgConfig{removedImage: ${removedImage?.path}, selectData: ${selectData?.toString()}, ratio: $ratio, scale: $scale, dx: $dx, dy: $dy}';
   }
 }
@@ -67,7 +67,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     if (conf != null) {
       needRemove = conf as bool;
     }
-    if (originFilePath == path || !needRemove) {
+    if ((originFilePath == path && lastRemoveSuccess) || !needRemove) {
       return;
     }
     originFilePath = path;
@@ -80,9 +80,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     config = RemoveBgConfig();
   }
 
-  @override
-  Future initData() async {
-    await super.initData();
+  clear() {
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
     resultFilePath = '';
@@ -92,8 +90,13 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     config.dy = 0;
     imageFront = null;
     imageUiFront = null;
+  }
+
+  @override
+  Future initData() async {
+    await super.initData();
     final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
-    await Navigator.push(
+    var success = await Navigator.push(
       Get.context!,
       NoAnimRouter(
         ImRemoveBgScreen(
@@ -103,6 +106,8 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
           imageHeight: shownImage!.height.toDouble(),
           imageWidth: shownImage!.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
+            lastRemoveSuccess = true;
+            clear();
             parent.filtersHolder.cropOperator.currentItem = null;
             parent.filtersHolder.cropOperator.setCropData(Rect.zero);
             removedImage = File(path);
@@ -119,7 +124,12 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
         settings: RouteSettings(name: "/ImRemoveBgScreen"),
       ),
     );
+    if (!success) {
+      lastRemoveSuccess = false;
+      clear();
+    }
   }
+  bool lastRemoveSuccess = false;
 
   onSavedBackground(BackgroundData data) async {
     if (data.color != Colors.transparent) {
@@ -204,7 +214,20 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     return alpha == 0;
   }
 
-  Widget buildShownImage(Size size, Rx<Size> showSize) {
+  Widget buildShownImage(Size size, Rx<Size> showSize, Widget generateAgain) {
+    if (removedImage == null) {
+      return Stack(
+        fit: StackFit.loose,
+        children: [
+          Image.file(originFile!),
+          Obx(() => Positioned(
+                child: generateAgain,
+                bottom: 0,
+                left: (parent.showImageSize.value.width - $(150)) / 2,
+              )),
+        ],
+      );
+    }
     return RepaintBoundary(
       key: globalKey,
       child: Listener(
@@ -292,6 +315,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   @override
   Future<String> saveToResult({force = false}) async {
+    if (removedImage == null) {
+      return originFilePath ?? '';
+    }
     String waitToDelete = resultFilePath;
     var key = EncryptUtil.encodeMd5('${config.toString()}');
     var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';

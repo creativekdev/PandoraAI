@@ -165,12 +165,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   file.writeAsBytes(byteData!.buffer.asUint8List());
                 }
                 await Share.shareXFiles([XFile(file.path)], subject: APP_TITLE, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
-                // var appLink = Config.getAppLink();
-                // if (Platform.isIOS) {
-                //   await FlutterShareMe().shareToSystem(msg: appLink);
-                // } else {
-                //   await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
-                // }
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
               }),
               line(context),
@@ -180,8 +174,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   rateApp().then((value) {
                     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                   });
-                  // var url = Config.getStoreLink(toRate: true);
-                  // launchURL(url);
                 },
               ),
               line(context),

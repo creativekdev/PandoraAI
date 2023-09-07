@@ -6,6 +6,7 @@ import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/api/clip_drop_api.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../../Common/importFile.dart';
 import '../../../Widgets/app_navigation_bar.dart';
@@ -153,7 +154,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
         if (removeBgUrl == null) {
           Navigator.of(context).pop(false);
         }
-        setState(() {});
+        safeSetState(() {});
       }
     } else {
       uploadImageController.upload(file: File(widget.filePath)).then((value) async {
@@ -206,7 +207,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                   child: Stack(
                     // alignment: Alignment.topCenter,
                     children: [
-                      if (isLoaded == true) // 显示生成的图片
+                      if (isLoaded == true && !TextUtil.isEmpty(removeBgUrl)) // 显示生成的图片
                         Image.file(
                           File(removeBgUrl!),
                           // width: width,

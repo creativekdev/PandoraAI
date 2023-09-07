@@ -84,7 +84,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     if (listController.isMetagram) {
       headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(6);
     } else {
-      headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(50);
+      headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(58);
     }
   }
 
@@ -157,16 +157,18 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                 width: $(90),
               ),
               labelColor: Colors.white,
-              labelStyle: TextStyle(fontWeight: FontWeight.w500),
+              labelStyle: TextStyle(fontWeight: FontWeight.normal),
               unselectedLabelColor: Colors.grey.shade400,
               unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
               tabs: tabs
                   .map((e) => Text(
                         e,
                         style: TextStyle(fontSize: $(18)),
+                      ).intoContainer(
+                        color: Colors.transparent,
+                        padding: EdgeInsets.only(left: $(0), top: $(8), right: $(0), bottom: $(8)),
                       ))
                   .toList(),
-              padding: EdgeInsets.only(left: $(12), top: $(8), right: $(12), bottom: $(8)),
               controller: tabController,
               onTap: (index) {
                 if (tabController.index != index) {
@@ -223,7 +225,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                       });
                     }),
                   ),
-                ),
+                ).intoContainer(padding: EdgeInsets.only(top: 8)),
                 onPointerDown: (details) {
                   listController.isTagScrolling = true;
                 },
@@ -242,13 +244,14 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                 )
                     .intoContainer(
                       padding: EdgeInsets.symmetric(vertical: $(5), horizontal: $(6)),
+                      margin: EdgeInsets.only(top: 8),
                       color: ColorConstant.BackgroundColor,
                     )
                     .visibility(visible: !listController.isTagScrolling && !listController.isScrollEnd),
               ),
             ],
           )
-              .intoContainer(width: ScreenUtil.screenSize.width, height: $(44), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8)))
+              .intoContainer(width: ScreenUtil.screenSize.width, height: $(52), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8)))
               .visibility(visible: !listController.isMetagram),
         ],
       ),

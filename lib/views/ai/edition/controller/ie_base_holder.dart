@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../../../utils/utils.dart';
@@ -64,7 +65,8 @@ abstract class ImageEditionBaseHolder {
     var libImage = await getLibImage(await getImage(originFile!));
     originRatio = libImage.width / libImage.height;
     var targetCoverRect = ImageUtils.getTargetCoverRect(parent.imageContainerSize, Size(libImage.width.toDouble(), libImage.height.toDouble()));
-    imgLib.Image resizedImage = imgLib.copyResize(libImage, width: (targetCoverRect.width * 1).toInt(), height: (targetCoverRect.height * 1).toInt());
+    imgLib.Image resizedImage = imgLib.copyResize(libImage, width: (targetCoverRect.width * 1.2).toInt(), height: (targetCoverRect.height * 1.2).toInt());
+    LogUtil.d('${resizedImage.width} * ${resizedImage.height}', tag: 'resizedImage');
     originSize = resizedImage.width / libImage.width;
     await setShownImage(resizedImage);
   }

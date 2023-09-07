@@ -432,10 +432,13 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           fit: StackFit.loose,
           children: [
             image,
-            Positioned(
-              child: generateAgainBtn(context),
-              bottom: 0,
-            ),
+            Obx(() => Positioned(
+                  child: generateAgainBtn(context, () {
+                    controller.generate(context, controller.currentItem.holder);
+                  }),
+                  bottom: 0,
+                  left: (controller.showImageSize.value.width - $(150)) / 2,
+                )),
           ],
         );
       } else {
@@ -450,7 +453,14 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         });
       }
       // 使用RX变量监听showImageSize的变化
-      return controller.showOrigin ? Image.file(controller.originFile) : removeBgHolder.buildShownImage(imageSize, controller.showImageSize);
+      return controller.showOrigin
+          ? Image.file(controller.originFile)
+          : removeBgHolder.buildShownImage(
+              imageSize,
+              controller.showImageSize,
+              generateAgainBtn(context, () {
+                controller.removeBgHolder.initData();
+              }));
     } else {
       if (controller.showOrigin) {
         SyncFileImage(file: controller.originFile).getImage().then((value) {
@@ -461,7 +471,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     }
   }
 
-  Widget generateAgainBtn(BuildContext context) {
+  Widget generateAgainBtn(BuildContext context, Function onTap) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -486,10 +496,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
               color: Color(0x33000000),
             ))
         .intoGestureDetector(onTap: () {
-      controller.generate(context, controller.currentItem.holder);
+      onTap.call();
     }).intoContainer(
-      width: ScreenUtil.screenSize.width,
-      alignment: Alignment.center,
       padding: EdgeInsets.symmetric(vertical: $(8)),
     );
   }

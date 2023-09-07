@@ -63,10 +63,16 @@ launchURL(String url, {bool force = false}) async {
   var uri = Uri.parse(url);
   if (force) {
     await launchUrl(uri);
-  } else if (await canLaunchUrl(uri)) {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
   } else {
-    throw 'Could not launch $url';
+    if (await canLaunchUrl(uri)) {
+      if (Platform.isIOS) {
+        await launchUrl(uri, mode: LaunchMode.inAppWebView);
+      } else {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
 

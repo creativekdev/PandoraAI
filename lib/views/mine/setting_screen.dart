@@ -12,9 +12,11 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Widgets/dialog/dialog_widget.dart';
 import '../ChangePasswordScreen.dart';
@@ -83,21 +85,21 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   )
                   .offstage(offstage: userManager.user?.appleId != ""),
               functions(S.of(context).help, onTap: () {
-                AppWebView.open(context, url: HELP_URL, source: 'my_screen');
+                launchURL(HELP_URL);
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).term_condition, onTap: () {
-                AppWebView.open(context, url: TERM_AND_USE, source: 'my_screen');
+                launchURL(TERM_AND_USE);
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).privacy_policy1, onTap: () {
-                AppWebView.open(context, url: USER_PRIVACY, source: 'my_screen');
+                launchURL(USER_PRIVACY);
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
