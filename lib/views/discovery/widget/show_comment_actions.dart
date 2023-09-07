@@ -99,6 +99,6 @@ class _Item extends StatelessWidget {
             height: $(1),
           ),
       ],
-    );
+    ).intoContainer(width: double.maxFinite, color: Colors.transparent);
   }
 }

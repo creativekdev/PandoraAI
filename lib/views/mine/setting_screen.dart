@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -85,21 +87,36 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   )
                   .offstage(offstage: userManager.user?.appleId != ""),
               functions(S.of(context).help, onTap: () {
-                launchURL(HELP_URL);
+                var uri = Uri.parse(HELP_URL);
+                if (Platform.isIOS) {
+                  launchUrl(uri, mode: LaunchMode.inAppWebView);
+                } else {
+                  launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).term_condition, onTap: () {
-                launchURL(TERM_AND_USE);
+                var uri = Uri.parse(TERM_AND_USE);
+                if (Platform.isIOS) {
+                  launchUrl(uri, mode: LaunchMode.inAppWebView);
+                } else {
+                  launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).privacy_policy1, onTap: () {
-                launchURL(USER_PRIVACY);
+                var uri = Uri.parse(USER_PRIVACY);
+                if (Platform.isIOS) {
+                  launchUrl(uri, mode: LaunchMode.inAppWebView);
+                } else {
+                  launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),

@@ -65,11 +65,7 @@ launchURL(String url, {bool force = false}) async {
     await launchUrl(uri);
   } else {
     if (await canLaunchUrl(uri)) {
-      if (Platform.isIOS) {
-        await launchUrl(uri, mode: LaunchMode.inAppWebView);
-      } else {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       throw 'Could not launch $url';
     }
