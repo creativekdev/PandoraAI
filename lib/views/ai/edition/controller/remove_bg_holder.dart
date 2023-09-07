@@ -208,9 +208,18 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     return alpha == 0;
   }
 
-  Widget buildShownImage(Size size, Rx<Size> showSize) {
+  Widget buildShownImage(Size size, Rx<Size> showSize, Widget generateAgain) {
     if (removedImage == null) {
-      return Image.file(originFile!);
+      return Stack(
+        fit: StackFit.loose,
+        children: [
+          Image.file(originFile!),
+          Positioned(
+            child: generateAgain,
+            bottom: 0,
+          ),
+        ],
+      );
     }
     return RepaintBoundary(
       key: globalKey,

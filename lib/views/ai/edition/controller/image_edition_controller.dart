@@ -170,40 +170,6 @@ class ImageEditionController extends GetxController {
     super.dispose();
   }
 
-  startRemoveBg() async {
-    var image = await SyncFileImage(file: originFile).getImage();
-    final imageSize = Size(ScreenUtil.screenSize.width,
-        ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140) + ScreenUtil.getBottomPadding(Get.context!)));
-    var holder = currentItem.holder as RemoveBgHolder;
-    await Navigator.push(
-      Get.context!,
-      NoAnimRouter(
-        ImRemoveBgScreen(
-          bottomPadding: bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
-          filePath: holder.originFilePath ?? _originPath,
-          imageRatio: image.image.width / image.image.height,
-          imageHeight: image.image.height.toDouble(),
-          imageWidth: image.image.width.toDouble(),
-          onGetRemoveBgImage: (String path) async {
-            filtersHolder.cropOperator.currentItem = null;
-            filtersHolder.cropOperator.setCropData(Rect.zero);
-            var imageInfo = await SyncFileImage(file: File(path)).getImage();
-            holder.config.ratio = imageInfo.image.width / imageInfo.image.height;
-            holder.removedImage = File(path);
-            holder.imageUiFront = await getImage(File(path));
-            var imageFront = await getLibImage(holder.imageUiFront!);
-            await holder.setShownImage(imageFront);
-            holder.imageFront = imageFront;
-            holder.bgController.setBackgroundData(null, Colors.transparent);
-          },
-          size: imageSize,
-        ),
-        // opaque: true,
-        settings: RouteSettings(name: "/ImRemoveBgScreen"),
-      ),
-    );
-  }
-
   generate(BuildContext context, TransferBaseController controller) async {
     var needUpload = TextUtil.isEmpty(uploadImageController.imageUrl(controller.originFile).value);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
@@ -361,6 +327,9 @@ class ImageEditionController extends GetxController {
       var oldHolder = currentItem.holder as TransferBaseController;
       var oldPath = (oldHolder.resultFile ?? oldHolder.originFile).path;
       if (targetHolder.originFilePath == oldPath || targetHolder.resultFilePath == oldPath) {
+        if (targetHolder.removedImage == null) {
+          targetHolder.initData();
+        }
         //没操作过，直接切换
         return true;
       }

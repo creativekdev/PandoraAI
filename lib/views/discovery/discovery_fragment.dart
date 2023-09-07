@@ -84,7 +84,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     if (listController.isMetagram) {
       headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(6);
     } else {
-      headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(50);
+      headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(58);
     }
   }
 
@@ -225,7 +225,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                       });
                     }),
                   ),
-                ),
+                ).intoContainer(padding: EdgeInsets.only(top: 8)),
                 onPointerDown: (details) {
                   listController.isTagScrolling = true;
                 },
@@ -244,13 +244,14 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                 )
                     .intoContainer(
                       padding: EdgeInsets.symmetric(vertical: $(5), horizontal: $(6)),
+                      margin: EdgeInsets.only(top: 8),
                       color: ColorConstant.BackgroundColor,
                     )
                     .visibility(visible: !listController.isTagScrolling && !listController.isScrollEnd),
               ),
             ],
           )
-              .intoContainer(width: ScreenUtil.screenSize.width, height: $(44), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8)))
+              .intoContainer(width: ScreenUtil.screenSize.width, height: $(52), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8)))
               .visibility(visible: !listController.isMetagram),
         ],
       ),
