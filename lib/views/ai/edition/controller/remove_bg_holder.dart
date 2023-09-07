@@ -30,7 +30,7 @@ class RemoveBgConfig {
 
   @override
   String toString() {
-    print('RemoveBgConfig{removedImage: ${removedImage?.path}, selectData: ${selectData?.toString()}, ratio: $ratio, scale: $scale, dx: $dx, dy: $dy}');
+    LogUtil.d('RemoveBgConfig{removedImage: ${removedImage?.path}, selectData: ${selectData?.toString()}, ratio: $ratio, scale: $scale, dx: $dx, dy: $dy}');
     return 'RemoveBgConfig{removedImage: ${removedImage?.path}, selectData: ${selectData?.toString()}, ratio: $ratio, scale: $scale, dx: $dx, dy: $dy}';
   }
 }
@@ -80,9 +80,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     config = RemoveBgConfig();
   }
 
-  @override
-  Future initData() async {
-    await super.initData();
+  clear() {
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
     resultFilePath = '';
@@ -92,6 +90,11 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     config.dy = 0;
     imageFront = null;
     imageUiFront = null;
+  }
+
+  @override
+  Future initData() async {
+    await super.initData();
     final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
     await Navigator.push(
       Get.context!,
@@ -103,6 +106,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
           imageHeight: shownImage!.height.toDouble(),
           imageWidth: shownImage!.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
+            clear();
             parent.filtersHolder.cropOperator.currentItem = null;
             parent.filtersHolder.cropOperator.setCropData(Rect.zero);
             removedImage = File(path);
@@ -205,6 +209,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   }
 
   Widget buildShownImage(Size size, Rx<Size> showSize) {
+    if (removedImage == null) {
+      return Image.file(originFile!);
+    }
     return RepaintBoundary(
       key: globalKey,
       child: Listener(

@@ -522,6 +522,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Please login first"),
         "please_select_photos":
             MessageLookupByLibrary.simpleMessage("Please select photos"),
+        "plz_remove_bg_tips": MessageLookupByLibrary.simpleMessage(
+            "Please remove background first"),
         "popular": MessageLookupByLibrary.simpleMessage("Popular"),
         "ppmPro": MessageLookupByLibrary.simpleMessage("Pandora AI Pro"),
         "premium": MessageLookupByLibrary.simpleMessage("Premium"),

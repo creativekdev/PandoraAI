@@ -98,7 +98,7 @@ class DiscoveryListController extends GetxController {
     socialMediaConnectorApi = SocialMediaConnectorApi().bindController(this);
     tagController = ScrollController();
     tagController.addListener(() {
-      isScrollEnd = scrollController.position.pixels == scrollController.position.maxScrollExtent;
+      isScrollEnd = tagController.offset == tagController.position.maxScrollExtent;
     });
     scrollController = ScrollController();
     scrollController.addListener(() {

@@ -5119,6 +5119,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Please remove background first`
+  String get plz_remove_bg_tips {
+    return Intl.message(
+      'Please remove background first',
+      name: 'plz_remove_bg_tips',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

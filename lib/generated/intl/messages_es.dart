@@ -546,6 +546,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Por favor, inicie sesión primero"),
         "please_select_photos": MessageLookupByLibrary.simpleMessage(
             "Por favor, seleccione una imagen"),
+        "plz_remove_bg_tips": MessageLookupByLibrary.simpleMessage(
+            "Por favor, elimine el fondo primero."),
         "popular": MessageLookupByLibrary.simpleMessage("Caliente"),
         "ppmPro": MessageLookupByLibrary.simpleMessage("Pandora AI Pro"),
         "premium": MessageLookupByLibrary.simpleMessage("Versión Pro"),

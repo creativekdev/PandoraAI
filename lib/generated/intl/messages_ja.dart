@@ -455,6 +455,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("最初にログインしてください"),
         "please_select_photos":
             MessageLookupByLibrary.simpleMessage("写真を選択してください"),
+        "plz_remove_bg_tips":
+            MessageLookupByLibrary.simpleMessage("まず背景を削除してください"),
         "popular": MessageLookupByLibrary.simpleMessage("人気のある"),
         "ppmPro": MessageLookupByLibrary.simpleMessage("パンドラAIプロフェッショナルバージョン"),
         "premium": MessageLookupByLibrary.simpleMessage("プロフェッショナルバージョン"),

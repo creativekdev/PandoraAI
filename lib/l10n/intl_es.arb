@@ -505,5 +505,6 @@
   "enter_the_color_value": "Introduzca el valor de color correcto",
   "buy_attr_ai_tools": "Obtenga acceso ilimitado completo a todos los efectos de Pandora AI: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage, etc.",
   "fill_in_address": "Rellene la dirección",
-  "remove_bg_again_tips": "Estás seguro de eliminar el fondo otra vez?"
+  "remove_bg_again_tips": "Estás seguro de eliminar el fondo otra vez?",
+  "plz_remove_bg_tips": "Por favor, elimine el fondo primero."
 }

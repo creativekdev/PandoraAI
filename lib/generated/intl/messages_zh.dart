@@ -427,6 +427,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("请输入邀请码"),
         "please_login_first": MessageLookupByLibrary.simpleMessage("请先登录"),
         "please_select_photos": MessageLookupByLibrary.simpleMessage("请选择图片"),
+        "plz_remove_bg_tips": MessageLookupByLibrary.simpleMessage("请先去除背景"),
         "popular": MessageLookupByLibrary.simpleMessage("热门"),
         "ppmPro": MessageLookupByLibrary.simpleMessage("Pandora AI 专业版"),
         "premium": MessageLookupByLibrary.simpleMessage("专业版"),
