@@ -345,7 +345,9 @@ class ImageEditionController extends GetxController {
       var oldHolder = currentItem.holder as FiltersHolder;
       var oldPath = oldHolder.originFilePath;
       if (oldHolder.initHash == oldHolder.getConfigKey() && (targetHolder.originFilePath == oldPath || targetHolder.resultFilePath == oldPath)) {
-        //没操作过，直接切换
+        if (targetHolder.removedImage == null) {
+          targetHolder.initData();
+        } //没操作过，直接切换
         return true;
       }
       var needRemove = await needRemoveBg(context, targetHolder);

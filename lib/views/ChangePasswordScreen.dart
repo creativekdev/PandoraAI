@@ -92,8 +92,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     });
                     if (response.statusCode == 200) {
                       CommonExtension().showToast(S.of(context).change_pwd_successfully);
-                      AppDelegate.instance.getManager<UserManager>().refreshUser();
-                      Navigator.pop(context);
+                      AppDelegate.instance.getManager<UserManager>().logout();
+                      Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
                     } else {
                       CommonExtension().showToast(json.decode(response.body)['message']);
                     }
