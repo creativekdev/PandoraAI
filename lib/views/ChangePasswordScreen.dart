@@ -87,18 +87,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     };
 
                     final response = await API.post("/api/user/change_password", body: body).whenComplete(() {});
+                    setState(() {
+                      isLoading = false;
+                    });
                     if (response.statusCode == 200) {
                       CommonExtension().showToast(S.of(context).change_pwd_successfully);
                       var userManager = AppDelegate.instance.getManager<UserManager>();
-                      await userManager.login(userManager.user!.getShownEmail(), passController.text.trim());
-                      setState(() {
-                        isLoading = false;
-                      });
-                      Navigator.pop(context);
+                      await userManager.logout();
+                      Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+                      delay(() {
+                        userManager.doOnLogin(Get.context!, logPreLoginAction: 'change_password');
+                      }, milliseconds: 500);
                     } else {
-                      setState(() {
-                        isLoading = false;
-                      });
                       CommonExtension().showToast(json.decode(response.body)['message']);
                     }
                   }
