@@ -1,7 +1,8 @@
 import 'package:cartoonizer/common/importFile.dart';
 
 Widget SimpleTextInputWidget(String hintText, Color color, FontWeight fontWeight, double size, TextInputAction textInputAction, TextInputType textInputType, bool isPassword,
-    TextEditingController textEditingController) {
+    TextEditingController textEditingController,
+    {Function(String text)? onChanged}) {
   return Container(
     width: double.maxFinite,
     padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -14,6 +15,9 @@ Widget SimpleTextInputWidget(String hintText, Color color, FontWeight fontWeight
         child: Center(
           child: TextField(
             controller: textEditingController,
+            onChanged: (text) {
+              onChanged?.call(text);
+            },
             textAlign: TextAlign.start,
             style: TextStyle(
               color: color,
