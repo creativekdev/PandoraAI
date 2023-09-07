@@ -255,7 +255,7 @@ class ImageEditionController extends GetxController {
         return true;
       } else {
         if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
-          (target.holder as RemoveBgHolder).initData();
+          // (target.holder as RemoveBgHolder).initData();
           // startRemoveBg();
         }
         return false;

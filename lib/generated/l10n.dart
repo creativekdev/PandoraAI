@@ -5129,6 +5129,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Halloween`
+  String get Halloween {
+    return Intl.message(
+      'Halloween',
+      name: 'Halloween',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cartoon`
+  String get Cartoon {
+    return Intl.message(
+      'Cartoon',
+      name: 'Cartoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Another World`
+  String get Another_World {
+    return Intl.message(
+      'Another World',
+      name: 'Another_World',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AI Art`
+  String get ai_art {
+    return Intl.message(
+      'AI Art',
+      name: 'ai_art',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

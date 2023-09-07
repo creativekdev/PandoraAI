@@ -24,8 +24,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "AgreeAndContinue":
             MessageLookupByLibrary.simpleMessage("Aceptar y Continuar"),
+        "Another_World": MessageLookupByLibrary.simpleMessage("Another World"),
+        "Cartoon": MessageLookupByLibrary.simpleMessage("Cartoon"),
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "Sus solicitudes diarias han alcanzado su límite, inténtelo de nuevo mañana"),
+        "Halloween": MessageLookupByLibrary.simpleMessage("Halloween"),
         "HaveReport":
             MessageLookupByLibrary.simpleMessage("Ya lo has denunciado"),
         "IHaveReadAndAgreeTo":
@@ -71,6 +74,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Al registrarse, usted acepta"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" Bent Pandora ama."),
+        "ai_art": MessageLookupByLibrary.simpleMessage("AI Art"),
         "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("purga"),
         "ai_draw_hint": MessageLookupByLibrary.simpleMessage(
             "Ingrese algunas indicaciones"),
