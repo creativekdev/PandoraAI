@@ -40,13 +40,12 @@ class RemoveBgOptions extends StatelessWidget {
               margin: EdgeInsets.only(top: 40),
             )
             .ignore(ignoring: controller.removedImage == null),
-        Container(
-          color: Colors.transparent,
-        ).intoGestureDetector(onTap: () {
-          if (controller.removedImage == null) {
+        if (controller.removedImage == null)
+          Container(
+            color: Colors.transparent,
+          ).intoGestureDetector(onTap: () {
             CommonExtension().showToast('Please remove bg first');
-          }
-        }),
+          }),
       ],
     );
   }

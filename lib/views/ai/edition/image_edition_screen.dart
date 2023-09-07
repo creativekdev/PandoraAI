@@ -432,12 +432,13 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           fit: StackFit.loose,
           children: [
             image,
-            Positioned(
-              child: generateAgainBtn(context, () {
-                controller.generate(context, controller.currentItem.holder);
-              }),
-              bottom: 0,
-            ),
+            Obx(() => Positioned(
+                  child: generateAgainBtn(context, () {
+                    controller.generate(context, controller.currentItem.holder);
+                  }),
+                  bottom: 0,
+                  left: (controller.showImageSize.value.width - $(150)) / 2,
+                )),
           ],
         );
       } else {
@@ -497,8 +498,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         .intoGestureDetector(onTap: () {
       onTap.call();
     }).intoContainer(
-      width: ScreenUtil.screenSize.width,
-      alignment: Alignment.center,
       padding: EdgeInsets.symmetric(vertical: $(8)),
     );
   }

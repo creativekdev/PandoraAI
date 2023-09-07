@@ -96,7 +96,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   Future initData() async {
     await super.initData();
     final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
-    await Navigator.push(
+    var success = await Navigator.push(
       Get.context!,
       NoAnimRouter(
         ImRemoveBgScreen(
@@ -123,6 +123,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
         settings: RouteSettings(name: "/ImRemoveBgScreen"),
       ),
     );
+    if (!success) {
+      clear();
+    }
   }
 
   onSavedBackground(BackgroundData data) async {
@@ -214,10 +217,11 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
         fit: StackFit.loose,
         children: [
           Image.file(originFile!),
-          Positioned(
-            child: generateAgain,
-            bottom: 0,
-          ),
+          Obx(() => Positioned(
+                child: generateAgain,
+                bottom: 0,
+                left: (parent.showImageSize.value.width - $(150)) / 2,
+              )),
         ],
       );
     }
