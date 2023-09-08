@@ -1,10 +1,11 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/auth/auth.dart';
 import 'package:cartoonizer/Widgets/auth/auth_api.dart';
 import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/webview/app_web_view.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -20,6 +21,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../ForgotPasswordScreen.dart';
 import '../SignupScreen.dart';
@@ -266,7 +268,12 @@ class _LoginScreenState extends AppState<LoginScreen> {
                           style: TextStyle(color: ColorConstant.BlueColor),
                           recognizer: agreementTap
                             ..onTap = () {
-                              AppWebView.open(context, url: USER_PRIVACY, source: 'login_screen');
+                              var uri = Uri.parse(USER_PRIVACY);
+                              if (Platform.isIOS) {
+                                launchUrl(uri, mode: LaunchMode.inAppWebView);
+                              } else {
+                                launchUrl(uri, mode: LaunchMode.externalApplication);
+                              }
                             }),
                       TextSpan(text: S.of(context).and, style: TextStyle(color: ColorConstant.White)),
                       TextSpan(
@@ -274,7 +281,12 @@ class _LoginScreenState extends AppState<LoginScreen> {
                           style: TextStyle(color: ColorConstant.BlueColor),
                           recognizer: termTap
                             ..onTap = () {
-                              AppWebView.open(context, url: TERM_AND_USE, source: 'login_source');
+                              var uri = Uri.parse(TERM_AND_USE);
+                              if (Platform.isIOS) {
+                                launchUrl(uri, mode: LaunchMode.inAppWebView);
+                              } else {
+                                launchUrl(uri, mode: LaunchMode.externalApplication);
+                              }
                             }),
                     ]),
                     maxLines: 3,

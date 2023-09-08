@@ -12,7 +12,6 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -85,6 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: Obx(
         () => LoadingOverlay(
           isLoading: controller.isLoading.value,
+          opacity: 0,
           child: SingleChildScrollView(
             child: Column(
               children: [

@@ -12,12 +12,21 @@ import '../../models/enums/home_card_type.dart';
 import 'home_detail_controller.dart';
 
 class HomeDetailScreen extends StatefulWidget {
-  const HomeDetailScreen({Key? key, required this.posts, required this.source, required this.title, required this.index, required this.titleName}) : super(key: key);
+  const HomeDetailScreen({
+    Key? key,
+    required this.posts,
+    required this.source,
+    required this.title,
+    required this.index,
+    required this.titleName,
+    required this.records,
+  }) : super(key: key);
   final List<DiscoveryListEntity> posts;
   final String title;
   final String source;
   final int index;
   final String titleName;
+  final int records;
 
   @override
   State<HomeDetailScreen> createState() => _HomeDetailScreenState();
@@ -29,7 +38,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
   @override
   void initState() {
     super.initState();
-    controller = HomeDetailController(index: widget.index, posts: widget.posts, categoryVaule: widget.title);
+    controller = HomeDetailController(index: widget.index, posts: widget.posts, categoryVaule: widget.title, records: widget.records);
   }
 
   @override
@@ -69,7 +78,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
                     itemCount: controller.posts?.length ?? 0,
                     scrollDirection: Axis.vertical,
                     onPageChanged: (index) {
-                      controller.index = index;
+                      controller.getNewIndex(index);
                     },
                   ),
                 );
