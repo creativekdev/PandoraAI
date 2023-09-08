@@ -55,7 +55,7 @@ class DrawableController {
   _DrawableState? state;
   Color _background = Colors.white;
   Color paintColor = Colors.black;
-  Color eraserColor = Colors.transparent;
+  Color eraserColor = Colors.white;
   Color floodFillColor = Colors.red;
 
   double _eraserWidth = 30;

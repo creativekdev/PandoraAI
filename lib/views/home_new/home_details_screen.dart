@@ -14,11 +14,13 @@ class HomeDetailsScreen extends StatefulWidget {
     required this.category,
     this.posts,
     required this.title,
+    required this.records,
   }) : super(key: key);
   final String source;
   final String category;
   final List<DiscoveryListEntity>? posts;
   final String title;
+  final int records;
 
   @override
   State<HomeDetailsScreen> createState() => _HomeDetailScreenState();
@@ -32,6 +34,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
     super.initState();
     controller.posts = widget.posts;
     controller.category = widget.category;
+    controller.records = widget.records;
   }
 
   @override
@@ -74,6 +77,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
                             title: widget.category,
                             source: widget.source,
                             index: index,
+                            records: widget.records,
                             titleName: widget.title,
                           )));
                 });

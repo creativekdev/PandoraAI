@@ -176,6 +176,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                       category: category,
                       source: "home_page",
                       title: title,
+                      records: e.records ?? 0,
                     ),
                   ),
                 );
@@ -189,6 +190,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                           title: category,
                           index: index,
                           titleName: title,
+                          records: e.records ?? 0,
                         )));
               },
               galleries: e,

@@ -56,6 +56,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
       setState(() {
         postsLength = homePostEntity?.data.records ?? 0;
         socialPost = homePostEntity?.data.rows ?? [];
+        widget.galleries?.socialPosts = socialPost!;
         isLoading = false;
       });
     } else {
