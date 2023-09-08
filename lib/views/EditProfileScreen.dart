@@ -12,12 +12,13 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:common_utils/common_utils.dart';
+import 'package:image/image.dart' as libImg;
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../common/Extension.dart';
+import '../utils/utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -394,12 +395,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   uploadImage() async {
     controller.changeIsLoading(true);
-    String f_name = basename((controller.image.value as File).path);
-    var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
-    if (TextUtil.isEmpty(fileType)) {
-      fileType = '*';
-    }
-    String c_type = "image/${fileType}";
+    String f_name = "${basename((controller.image.value as File).path)}.jpg";
+    libImg.Image? image = await getLibImage(await getImage(controller.image.value as File));
+    libImg.JpegEncoder encoder = libImg.JpegEncoder();
+    List<int> bytes = encoder.encodeImage(image!);
+    String newFilePath = "${controller.image.value!.path}.jpg";
+    File file = File(newFilePath);
+    await file.writeAsBytes(bytes);
+    file = await imageCompressAndGetFile(file);
+
+    String c_type = "image/jpg";
     final params = {
       'bucket': "fast-socialbook",
       'file_name': f_name,
@@ -410,7 +415,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final Map parsed = json.decode(response.body.toString());
     try {
       var url = parsed['data'];
-      var baseEntity = await Uploader().uploadFile(url, controller.image.value as File, c_type);
+      var baseEntity = await Uploader().uploadFile(url, file, c_type);
       controller.changeIsLoading(false);
       if (baseEntity != null) {
         var imageUrl = url.split("?")[0];
