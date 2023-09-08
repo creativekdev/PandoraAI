@@ -331,6 +331,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   if (image == null) {
                     return;
                   }
+                  // todo await ImageUtils.onImagePick(image.path, cache)
                   controller.updateImageFile(File(image.path));
                   controller.changeIsPhotoSelect(true);
                   uploadImage();
@@ -395,6 +396,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   uploadImage() async {
     controller.changeIsLoading(true);
+    // todo
     String f_name = "${basename((controller.image.value as File).path)}.jpg";
     libImg.Image? image = await getLibImage(await getImage(controller.image.value as File));
     libImg.JpegEncoder encoder = libImg.JpegEncoder();
