@@ -23,8 +23,11 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "AgreeAndContinue": MessageLookupByLibrary.simpleMessage("同意して続行"),
+        "Another_World": MessageLookupByLibrary.simpleMessage("Another World"),
+        "Cartoon": MessageLookupByLibrary.simpleMessage("Cartoon"),
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "お客様のデイリーリクエスト回数は上限に達しましたので、明日再度お試しください。"),
+        "Halloween": MessageLookupByLibrary.simpleMessage("Halloween"),
         "HaveReport": MessageLookupByLibrary.simpleMessage("あなたはすでにそれを報告しました"),
         "IHaveReadAndAgreeTo":
             MessageLookupByLibrary.simpleMessage("私は読んで同意します"),
@@ -57,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "after": MessageLookupByLibrary.simpleMessage("After"),
         "agree_text1": MessageLookupByLibrary.simpleMessage("あなたに登録する"),
         "agree_text2": MessageLookupByLibrary.simpleMessage("パンドラAIの"),
+        "ai_art": MessageLookupByLibrary.simpleMessage("AI Art"),
         "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("クリア"),
         "ai_draw_hint": MessageLookupByLibrary.simpleMessage("説明を入力してください"),
         "ai_draw_reset_tips":
@@ -455,6 +459,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("最初にログインしてください"),
         "please_select_photos":
             MessageLookupByLibrary.simpleMessage("写真を選択してください"),
+        "plz_remove_bg_tips":
+            MessageLookupByLibrary.simpleMessage("まず背景を削除してください"),
         "popular": MessageLookupByLibrary.simpleMessage("人気のある"),
         "ppmPro": MessageLookupByLibrary.simpleMessage("パンドラAIプロフェッショナルバージョン"),
         "premium": MessageLookupByLibrary.simpleMessage("プロフェッショナルバージョン"),

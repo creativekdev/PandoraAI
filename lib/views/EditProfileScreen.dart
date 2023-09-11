@@ -12,13 +12,13 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/social_user_info.dart';
-import 'package:common_utils/common_utils.dart';
+import 'package:image/image.dart' as libImg;
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../common/Extension.dart';
+import '../utils/utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -35,12 +35,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   UserManager userManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
 
+  String? initName;
+  String? initAvatar;
+
+  bool _notChanged() {
+    return initName == nameController.text && initAvatar == controller.imageUrl.value;
+  }
+
   @override
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'edit_profile_screen');
     thirdpartManager.adsHolder.ignore = true;
     imagePicker = new ImagePicker();
+    initName = userManager.user!.getShownName();
+    initAvatar = userManager.user!.getShownAvatar();
+    controller.updateImageUrl(initAvatar ?? '');
+    nameController.text = initName ?? '';
   }
 
   @override
@@ -52,11 +63,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    var scaffold = Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
         blurAble: false,
         backgroundColor: Colors.transparent,
+        backAction: () {
+          if (_notChanged()) {
+            pop();
+          } else {
+            _willPopCallback(context);
+          }
+        },
         middle: TitleTextWidget(
           S.of(context).edit_profile,
           ColorConstant.BtnTextColor,
@@ -64,180 +82,232 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           FontSizeConstants.topBarTitle,
         ),
       ),
-      body: FutureBuilder(
-        future: _getData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return Obx(
-              () => LoadingOverlay(
-                isLoading: controller.isLoading.value,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(5.w),
-                        child: Card(
-                          shadowColor: Color.fromRGBO(0, 0, 0, 0.5),
-                          elevation: 2.h,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(3.w),
-                          ),
-                          child: Stack(
-                            children: [
-                              Image.asset(
-                                Images.ic_round_top,
-                                width: 100.w,
-                                height: 20.h,
-                                fit: BoxFit.fill,
-                              ),
-                              Column(
-                                children: [
-                                  Center(
-                                    child: Container(
-                                      width: 35.w,
-                                      height: 35.w,
-                                      margin: EdgeInsets.only(top: 10.h),
-                                      child: Stack(
-                                        children: [
-                                          Card(
-                                            elevation: 2.h,
-                                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.w)),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(color: ColorConstant.White, width: 2.w),
-                                              ),
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.circular(50.w),
-                                                child: (controller.isPhotoSelect.value)
-                                                    ? Obx(
-                                                        () => Image.file(
-                                                          controller.image.value as File,
-                                                          width: 40.w,
-                                                          height: 40.w,
-                                                          fit: BoxFit.cover,
-                                                          errorBuilder: (context, error, stackTrace) {
-                                                            return Image.asset(
-                                                              Images.ic_demo1,
-                                                              fit: BoxFit.fill,
-                                                              width: 40.w,
-                                                              height: 40.w,
-                                                            );
-                                                          },
-                                                        ),
-                                                      )
-                                                    : CachedNetworkImageUtils.custom(
-                                                        context: context,
-                                                        imageUrl: (snapshot.hasData) ? (snapshot.data as SocialUserInfo).getShownAvatar() : "",
+      body: Obx(
+        () => LoadingOverlay(
+          isLoading: controller.isLoading.value,
+          opacity: 0,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(5.w),
+                  child: Card(
+                    shadowColor: Color.fromRGBO(0, 0, 0, 0.5),
+                    elevation: 2.h,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3.w),
+                    ),
+                    child: Stack(
+                      children: [
+                        Image.asset(
+                          Images.ic_round_top,
+                          width: 100.w,
+                          height: 20.h,
+                          fit: BoxFit.fill,
+                        ),
+                        Column(
+                          children: [
+                            Center(
+                              child: Container(
+                                width: 35.w,
+                                height: 35.w,
+                                margin: EdgeInsets.only(top: 10.h),
+                                child: Stack(
+                                  children: [
+                                    Card(
+                                      elevation: 2.h,
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.w)),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: ColorConstant.White, width: 2.w),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(50.w),
+                                          child: (controller.isPhotoSelect.value)
+                                              ? Obx(
+                                                  () => Image.file(
+                                                    controller.image.value as File,
+                                                    width: 40.w,
+                                                    height: 40.w,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context, error, stackTrace) {
+                                                      return Image.asset(
+                                                        Images.ic_demo1,
+                                                        fit: BoxFit.fill,
                                                         width: 40.w,
                                                         height: 40.w,
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context, url, error) {
-                                                          return Image.asset(
-                                                            Images.ic_demo1,
-                                                            fit: BoxFit.fill,
-                                                            width: 40.w,
-                                                            height: 40.w,
-                                                          );
-                                                        }),
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            bottom: 1.h,
-                                            right: 2.w,
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                showCameraDialog(context);
-                                              },
-                                              child: SimpleShadow(
-                                                child: Image.asset(
-                                                  Images.ic_camera_upload,
-                                                  height: 10.w,
-                                                  width: 10.w,
-                                                ),
-                                                sigma: 10,
-                                                opacity: 0.2,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                                      );
+                                                    },
+                                                  ),
+                                                )
+                                              : CachedNetworkImageUtils.custom(
+                                                  context: context,
+                                                  imageUrl: initAvatar ?? "",
+                                                  width: 40.w,
+                                                  height: 40.w,
+                                                  fit: BoxFit.cover,
+                                                  errorWidget: (context, url, error) {
+                                                    return Image.asset(
+                                                      Images.ic_demo1,
+                                                      fit: BoxFit.fill,
+                                                      width: 40.w,
+                                                      height: 40.w,
+                                                    );
+                                                  }),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 2.h,
-                                  ),
-                                  TitleTextWidget(
-                                      (snapshot.hasData) ? (snapshot.data as SocialUserInfo).getShownEmail() : "", ColorConstant.LightTextColor, FontWeight.w400, 14.sp),
-                                  SizedBox(
-                                    height: 2.h,
-                                  ),
-                                  SimpleTextInputWidget(S.of(context).name_hint, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress,
-                                      false, nameController),
-                                  SizedBox(
-                                    height: 4.h,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      if (nameController.text.trim().isEmpty) {
-                                        CommonExtension().showToast(S.of(context).name_validation);
-                                      } else {
-                                        FocusManager.instance.primaryFocus?.unfocus();
-                                        controller.changeIsLoading(true);
-                                        var name = nameController.text.toString();
-                                        var avatar = controller.imageUrl.value;
-
-                                        var body = {
-                                          'name': name,
-                                          'avatar': avatar,
-                                        };
-
-                                        final updateProfileResponse = await API.post("/api/user/update", body: body);
-
-                                        if (updateProfileResponse.statusCode == 200) {
-                                          CommonExtension().showToast(S.of(context).update_profile_successfully);
-                                          AppDelegate.instance.getManager<UserManager>().refreshUser();
-                                          Navigator.pop(context, false);
-                                        } else {
-                                          CommonExtension().showToast(S.of(context).commonFailedToast);
-                                        }
-
-                                        controller.changeIsLoading(false);
-                                      }
-                                    },
-                                    child: ButtonWidget(S.of(context).update_profile),
-                                  ),
-                                  SizedBox(
-                                    height: 4.h,
-                                  ),
-                                ],
+                                    Positioned(
+                                      bottom: 1.h,
+                                      right: 2.w,
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          showCameraDialog(context);
+                                        },
+                                        child: SimpleShadow(
+                                          child: Image.asset(
+                                            Images.ic_camera_upload,
+                                            height: 10.w,
+                                            width: 10.w,
+                                          ),
+                                          sigma: 10,
+                                          opacity: 0.2,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(height: 2.h),
+                            TitleTextWidget(initName ?? "", ColorConstant.LightTextColor, FontWeight.w400, 14.sp),
+                            SizedBox(height: 2.h),
+                            SimpleTextInputWidget(
+                              S.of(context).name_hint,
+                              ColorConstant.TextBlack,
+                              FontWeight.w400,
+                              12.sp,
+                              TextInputAction.done,
+                              TextInputType.emailAddress,
+                              false,
+                              nameController,
+                              onChanged: (text) {
+                                setState(() {});
+                              },
+                            ),
+                            SizedBox(
+                              height: 4.h,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                submitUpdate(context);
+                              },
+                              child: ButtonWidget(S.of(context).update_profile),
+                            ),
+                            SizedBox(
+                              height: 4.h,
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          }
-        },
+              ],
+            ),
+          ),
+        ),
       ),
     );
+    if (_notChanged()) {
+      return scaffold;
+    }
+    return WillPopScope(
+        child: scaffold,
+        onWillPop: () async {
+          return _willPopCallback(context);
+        });
   }
 
-  Future<SocialUserInfo> _getData() async {
-    var user = userManager.user!;
-    controller.updateImageUrl(user.getShownAvatar());
-    nameController.text = user.getShownName();
-    return user;
+  Future<bool> _willPopCallback(BuildContext context) async {
+    showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: $(20)),
+          TitleTextWidget(S.of(context).exit_msg, ColorConstant.White, FontWeight.w600, 18),
+          SizedBox(height: $(15)),
+          TitleTextWidget(S.of(context).exit_msg1, ColorConstant.HintColor, FontWeight.w400, 14),
+          SizedBox(height: $(15)),
+          TitleTextWidget(
+            S.of(context).exit_editing,
+            ColorConstant.White,
+            FontWeight.w600,
+            16,
+          )
+              .intoContainer(
+            margin: EdgeInsets.symmetric(horizontal: $(25)),
+            padding: EdgeInsets.symmetric(vertical: $(10)),
+            width: double.maxFinite,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: ColorConstant.BlueColor),
+          )
+              .intoGestureDetector(onTap: () {
+            Navigator.pop(context, true);
+          }),
+          TitleTextWidget(
+            S.of(context).cancel,
+            ColorConstant.White,
+            FontWeight.w400,
+            16,
+          ).intoPadding(padding: EdgeInsets.only(top: $(15), bottom: $(25))).intoGestureDetector(onTap: () {
+            Navigator.pop(context);
+          }),
+        ],
+      ).intoContainer(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        decoration: BoxDecoration(
+          color: ColorConstant.EffectFunctionGrey,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular($(32)), topRight: Radius.circular($(32))),
+        ),
+      ),
+    ).then((value) {
+      if (value ?? false) {
+        Navigator.pop(context);
+      }
+    });
+    return false;
+  }
+
+  Future<void> submitUpdate(BuildContext context) async {
+    if (nameController.text.trim().isEmpty) {
+      CommonExtension().showToast(S.of(context).name_validation);
+    } else {
+      FocusManager.instance.primaryFocus?.unfocus();
+      controller.changeIsLoading(true);
+      var name = nameController.text.toString();
+      var avatar = controller.imageUrl.value;
+
+      var body = {
+        'name': name,
+        'avatar': avatar,
+      };
+
+      final updateProfileResponse = await API.post("/api/user/update", body: body);
+
+      if (updateProfileResponse.statusCode == 200) {
+        CommonExtension().showToast(S.of(context).update_profile_successfully);
+        AppDelegate.instance.getManager<UserManager>().refreshUser();
+        Navigator.pop(context, false);
+      } else {
+        CommonExtension().showToast(S.of(context).commonFailedToast);
+      }
+
+      controller.changeIsLoading(false);
+    }
   }
 
   showCameraDialog(BuildContext context) {
@@ -261,6 +331,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   if (image == null) {
                     return;
                   }
+                  // todo await ImageUtils.onImagePick(image.path, cache)
                   controller.updateImageFile(File(image.path));
                   controller.changeIsPhotoSelect(true);
                   uploadImage();
@@ -325,12 +396,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   uploadImage() async {
     controller.changeIsLoading(true);
-    String f_name = basename((controller.image.value as File).path);
-    var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
-    if (TextUtil.isEmpty(fileType)) {
-      fileType = '*';
-    }
-    String c_type = "image/${fileType}";
+    // todo
+    String f_name = "${basename((controller.image.value as File).path)}.jpg";
+    libImg.Image? image = await getLibImage(await getImage(controller.image.value as File));
+    libImg.JpegEncoder encoder = libImg.JpegEncoder();
+    List<int> bytes = encoder.encodeImage(image!);
+    String newFilePath = "${controller.image.value!.path}.jpg";
+    File file = File(newFilePath);
+    await file.writeAsBytes(bytes);
+    file = await imageCompressAndGetFile(file);
+
+    String c_type = "image/jpg";
     final params = {
       'bucket': "fast-socialbook",
       'file_name': f_name,
@@ -341,7 +417,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final Map parsed = json.decode(response.body.toString());
     try {
       var url = parsed['data'];
-      var baseEntity = await Uploader().uploadFile(url, controller.image.value as File, c_type);
+      var baseEntity = await Uploader().uploadFile(url, file, c_type);
       controller.changeIsLoading(false);
       if (baseEntity != null) {
         var imageUrl = url.split("?")[0];

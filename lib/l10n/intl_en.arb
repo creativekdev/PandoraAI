@@ -508,5 +508,10 @@
   "enter_the_color_value": "Please enter the correct colour value",
   "buy_attr_ai_tools": "Get unlimited full access to all Pandora AI effects: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage etc.",
   "fill_in_address": "Please fill in the address",
-  "remove_bg_again_tips": "Are you sure to remove background again?"
+  "remove_bg_again_tips": "Are you sure to remove background again?",
+  "plz_remove_bg_tips": "Please remove background first",
+  "Halloween": "Halloween",
+  "Cartoon": "Cartoon",
+  "Another_World": "Another World",
+  "ai_art": "AI Art"
 }

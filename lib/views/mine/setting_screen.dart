@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -12,9 +14,11 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Widgets/dialog/dialog_widget.dart';
 import '../ChangePasswordScreen.dart';
@@ -83,21 +87,36 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   )
                   .offstage(offstage: userManager.user?.appleId != ""),
               functions(S.of(context).help, onTap: () {
-                AppWebView.open(context, url: HELP_URL, source: 'my_screen');
+                var uri = Uri.parse(HELP_URL);
+                if (Platform.isIOS) {
+                  launchUrl(uri, mode: LaunchMode.inAppWebView);
+                } else {
+                  launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).term_condition, onTap: () {
-                AppWebView.open(context, url: TERM_AND_USE, source: 'my_screen');
+                var uri = Uri.parse(TERM_AND_USE);
+                if (Platform.isIOS) {
+                  launchUrl(uri, mode: LaunchMode.inAppWebView);
+                } else {
+                  launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).privacy_policy1, onTap: () {
-                AppWebView.open(context, url: USER_PRIVACY, source: 'my_screen');
+                var uri = Uri.parse(USER_PRIVACY);
+                if (Platform.isIOS) {
+                  launchUrl(uri, mode: LaunchMode.inAppWebView);
+                } else {
+                  launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),

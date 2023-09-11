@@ -56,6 +56,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
       setState(() {
         postsLength = homePostEntity?.data.records ?? 0;
         socialPost = homePostEntity?.data.rows ?? [];
+        widget.galleries?.socialPosts = socialPost!;
         isLoading = false;
       });
     } else {
@@ -167,7 +168,19 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
     if (title == "furry") {
       return S.of(context).furry;
     }
-    return "";
+    if (title == "Halloween") {
+      return S.of(context).Halloween;
+    }
+    if (title == "Another World") {
+      return S.of(context).Another_World;
+    }
+    if (title == "Cartoon") {
+      return S.of(context).Cartoon;
+    }
+    if (title == "ai_art") {
+      return S.of(context).ai_art;
+    }
+    return title;
   }
 }
 

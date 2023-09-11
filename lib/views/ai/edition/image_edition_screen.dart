@@ -409,6 +409,14 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     );
   }
 
+  syncShowImageSizeInEffect(File file, bool showOrigin) {
+    SyncFileImage(file: file).getImage().then((value) {
+      if (showOrigin == controller.showOrigin) {
+        controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
+      }
+    });
+  }
+
   Widget getImageWidget(BuildContext context, ImageEditionController controller) {
     if (controller.currentItem.function == ImageEditionFunction.UNDEFINED) {
       return Container();
@@ -417,19 +425,20 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       var effectController = controller.currentItem.holder as AllTransferController;
       bool needGenerateAgain = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
       var file = controller.showOrigin ? controller.originFile : effectController.resultFile ?? effectController.originFile;
-      SyncFileImage(file: file).getImage().then((value) {
-        controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
-      });
+      syncShowImageSizeInEffect(file, controller.showOrigin);
       var image = Image.file(file);
       if (needGenerateAgain) {
         return Stack(
           fit: StackFit.loose,
           children: [
             image,
-            Positioned(
-              child: generateAgainBtn(context),
-              bottom: 0,
-            ),
+            Obx(() => Positioned(
+                  child: generateAgainBtn(context, () {
+                    controller.generate(context, controller.currentItem.holder);
+                  }),
+                  bottom: 0,
+                  left: (controller.showImageSize.value.width - $(150)) / 2,
+                )),
           ],
         );
       } else {
@@ -444,7 +453,14 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         });
       }
       // 使用RX变量监听showImageSize的变化
-      return controller.showOrigin ? Image.file(controller.originFile) : removeBgHolder.buildShownImage(imageSize, controller.showImageSize);
+      return controller.showOrigin
+          ? Image.file(controller.originFile)
+          : removeBgHolder.buildShownImage(
+              imageSize,
+              controller.showImageSize,
+              generateAgainBtn(context, () {
+                controller.removeBgHolder.initData();
+              }));
     } else {
       if (controller.showOrigin) {
         SyncFileImage(file: controller.originFile).getImage().then((value) {
@@ -455,7 +471,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     }
   }
 
-  Widget generateAgainBtn(BuildContext context) {
+  Widget generateAgainBtn(BuildContext context, Function onTap) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -480,10 +496,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
               color: Color(0x33000000),
             ))
         .intoGestureDetector(onTap: () {
-      controller.generate(context, controller.currentItem.holder);
+      onTap.call();
     }).intoContainer(
-      width: ScreenUtil.screenSize.width,
-      alignment: Alignment.center,
       padding: EdgeInsets.symmetric(vertical: $(8)),
     );
   }

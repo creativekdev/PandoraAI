@@ -27,7 +27,8 @@ class DiscoveryMgListCard extends StatelessWidget {
   late double imageSize;
 
   DiscoveryMgListCard({Key? key, required this.data, required this.onTap, required this.width}) : super(key: key) {
-    colors = _cList[Random().nextInt(_cList.length)];
+    var i = (data.id ?? 0) % _cList.length;
+    colors = _cList[i];
     userAvatars = data.coverImage?.split(',');
     previewImages = data.previewImages?.split(',') ?? [];
     if (previewImages.length > 4) {
@@ -58,8 +59,10 @@ class DiscoveryMgListCard extends StatelessWidget {
                     width: $(55),
                     height: $(55),
                     placeholder: (context, url) {
-                      return SkeletonAvatar(
-                        style: SkeletonAvatarStyle(width: $(55), height: $(55)),
+                      return Container(
+                        width: $(55),
+                        height: $(55),
+                        color: ColorConstant.BackgroundColor,
                       );
                     }),
               )
@@ -96,6 +99,12 @@ class DiscoveryMgListCard extends StatelessWidget {
                     imageUrl: e,
                     width: imageSize,
                     height: imageSize,
+                    fit: BoxFit.cover,
+                    placeholder: (c, u) => Container(
+                      width: imageSize,
+                      height: imageSize,
+                      color: ColorConstant.BackgroundColor,
+                    ),
                   ))
               .toList(),
         ).intoContainer(

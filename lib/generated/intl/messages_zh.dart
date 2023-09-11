@@ -23,8 +23,11 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "AgreeAndContinue": MessageLookupByLibrary.simpleMessage("同意并继续"),
+        "Another_World": MessageLookupByLibrary.simpleMessage("Another World"),
+        "Cartoon": MessageLookupByLibrary.simpleMessage("Cartoon"),
         "DAILY_IP_LIMIT_EXCEEDED":
             MessageLookupByLibrary.simpleMessage("您的每日请求次数已达上限，请明天再试"),
+        "Halloween": MessageLookupByLibrary.simpleMessage("Halloween"),
         "HaveReport": MessageLookupByLibrary.simpleMessage("你已经举报过了"),
         "IHaveReadAndAgreeTo": MessageLookupByLibrary.simpleMessage("我已阅读并同意"),
         "InputBadWord": MessageLookupByLibrary.simpleMessage("您的输入包含不良词语: \$s"),
@@ -56,6 +59,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "agree_text1": MessageLookupByLibrary.simpleMessage("注册即表示您同意"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Pandora AI."),
+        "ai_art": MessageLookupByLibrary.simpleMessage("AI Art"),
         "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("清除"),
         "ai_draw_hint": MessageLookupByLibrary.simpleMessage("请输入你的描述"),
         "ai_draw_reset_tips": MessageLookupByLibrary.simpleMessage("清除当前画板"),
@@ -427,6 +431,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("请输入邀请码"),
         "please_login_first": MessageLookupByLibrary.simpleMessage("请先登录"),
         "please_select_photos": MessageLookupByLibrary.simpleMessage("请选择图片"),
+        "plz_remove_bg_tips": MessageLookupByLibrary.simpleMessage("请先去除背景"),
         "popular": MessageLookupByLibrary.simpleMessage("热门"),
         "ppmPro": MessageLookupByLibrary.simpleMessage("Pandora AI 专业版"),
         "premium": MessageLookupByLibrary.simpleMessage("专业版"),

@@ -7,6 +7,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -45,12 +46,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         appBar: AppNavigationBar(
           blurAble: false,
           backgroundColor: Colors.transparent,
-          middle: TitleTextWidget(
+          trailing: TitleTextWidget(
             S.of(context).change_password,
             ColorConstant.BtnTextColor,
             FontWeight.w600,
-            FontSizeConstants.topBarTitle,
-          ),
+            $(18),
+          ).intoContainer(alignment: Alignment.center),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -60,21 +61,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   S.of(context).current_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, oPassController),
               SizedBox(height: 1.4.h),
               SimpleTextInputWidget(
-                  S.of(context).new_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, passController),
+                  S.of(context).new_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, true, passController),
               SizedBox(height: 1.4.h),
               SimpleTextInputWidget(
-                  S.of(context).confirm_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, false, cPassController),
+                  S.of(context).confirm_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, true, cPassController),
               SizedBox(height: 5.h),
               GestureDetector(
                 onTap: () async {
                   if (oPassController.text.trim().isEmpty) {
-                    CommonExtension().showToast(S.of(context).pass_validation);
+                    CommonExtension().showToast(S.of(context).pass_validation, gravity: ToastGravity.CENTER);
                   } else if (passController.text.trim().isEmpty) {
-                    CommonExtension().showToast(S.of(context).pass_validation);
+                    CommonExtension().showToast(S.of(context).pass_validation, gravity: ToastGravity.CENTER);
                   } else if (cPassController.text.trim().isEmpty) {
-                    CommonExtension().showToast(S.of(context).cpass_validation);
+                    CommonExtension().showToast(S.of(context).cpass_validation, gravity: ToastGravity.CENTER);
                   } else if (passController.text.trim() != cPassController.text.trim()) {
-                    CommonExtension().showToast(S.of(context).pass_validation1);
+                    CommonExtension().showToast(S.of(context).pass_validation1, gravity: ToastGravity.CENTER);
                   } else {
                     setState(() {
                       isLoading = true;
@@ -85,15 +86,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       "new_password": passController.text.trim(),
                     };
 
-                    final response = await API.post("/api/user/change_password", body: body).whenComplete(() => {
-                          setState(() {
-                            isLoading = false;
-                          }),
-                        });
+                    final response = await API.post("/api/user/change_password", body: body).whenComplete(() {});
+                    setState(() {
+                      isLoading = false;
+                    });
                     if (response.statusCode == 200) {
                       CommonExtension().showToast(S.of(context).change_pwd_successfully);
-                      AppDelegate.instance.getManager<UserManager>().refreshUser();
-                      Navigator.pop(context);
+                      var userManager = AppDelegate.instance.getManager<UserManager>();
+                      await userManager.logout();
+                      Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+                      delay(() {
+                        userManager.doOnLogin(Get.context!, logPreLoginAction: 'change_password');
+                      }, milliseconds: 500);
                     } else {
                       CommonExtension().showToast(json.decode(response.body)['message']);
                     }

@@ -24,8 +24,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "AgreeAndContinue":
             MessageLookupByLibrary.simpleMessage("Agree And Continue"),
+        "Another_World": MessageLookupByLibrary.simpleMessage("Another World"),
+        "Cartoon": MessageLookupByLibrary.simpleMessage("Cartoon"),
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "You have run out of your daily credits. Please come back tomorrow."),
+        "Halloween": MessageLookupByLibrary.simpleMessage("Halloween"),
         "HaveReport": MessageLookupByLibrary.simpleMessage(
             "You have already reported it"),
         "IHaveReadAndAgreeTo":
@@ -67,6 +70,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("By registering you agree to"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Cartoonizer."),
+        "ai_art": MessageLookupByLibrary.simpleMessage("AI Art"),
         "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("Clear"),
         "ai_draw_hint":
             MessageLookupByLibrary.simpleMessage("Please input some prompts"),
@@ -522,6 +526,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Please login first"),
         "please_select_photos":
             MessageLookupByLibrary.simpleMessage("Please select photos"),
+        "plz_remove_bg_tips": MessageLookupByLibrary.simpleMessage(
+            "Please remove background first"),
         "popular": MessageLookupByLibrary.simpleMessage("Popular"),
         "ppmPro": MessageLookupByLibrary.simpleMessage("Pandora AI Pro"),
         "premium": MessageLookupByLibrary.simpleMessage("Premium"),

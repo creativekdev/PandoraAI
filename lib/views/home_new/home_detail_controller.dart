@@ -3,16 +3,28 @@ import 'package:cartoonizer/Common/importFile.dart';
 import '../../api/app_api.dart';
 import '../../app/cache/cache_manager.dart';
 import '../../models/discovery_list_entity.dart';
+import '../../models/home_post_entity.dart';
 
 class HomeDetailController extends GetxController {
-  HomeDetailController({required int index, required List<DiscoveryListEntity>? posts, required String? categoryVaule}) {
+  HomeDetailController({required int index, required List<DiscoveryListEntity>? posts, required String? categoryVaule, required int records}) {
     _index = index;
     _posts = posts;
+    currentPost = _posts![_index!];
     category = categoryVaule;
+    _records = records;
     pageController = PageController(initialPage: index);
     manager = CacheManager().getManager();
     isShowedGuide = manager.getBool(CacheManager.showedGuideOfHomeDetail);
   }
+
+  late DiscoveryListEntity _currentPost;
+
+  set currentPost(DiscoveryListEntity value) {
+    _currentPost = value;
+    update();
+  }
+
+  DiscoveryListEntity get currentPost => _currentPost;
 
   late CacheManager manager;
 
@@ -21,6 +33,14 @@ class HomeDetailController extends GetxController {
   late bool isShowedGuide;
 
   late PageController pageController;
+  int? _records;
+
+  set records(int? value) {
+    _records = value;
+    update();
+  }
+
+  int? get records => _records;
 
   Offset? _offset;
 
@@ -39,7 +59,6 @@ class HomeDetailController extends GetxController {
 
   set index(int? value) {
     _index = value;
-
     if (_index! >= (_posts!.length - 2)) {
       onLoadMore();
       update();
@@ -49,6 +68,24 @@ class HomeDetailController extends GetxController {
       isShowedGuide = true;
       update();
     }
+  }
+
+  getNewIndex(int newIndex) {
+    index = newIndex;
+    currentPost = _posts![_index!];
+    update();
+  }
+
+  getNewIndexByPost() {
+    for (int i = 0; i < _posts!.length; i++) {
+      DiscoveryListEntity post = _posts![i];
+      if (post.id == _currentPost.id) {
+        index = i;
+        break;
+      }
+    }
+    pageController.jumpToPage(index!);
+    update();
   }
 
   int? get index => _index;
@@ -73,11 +110,23 @@ class HomeDetailController extends GetxController {
       return;
     }
     _isLoading = true;
-    appApi.socialHomePost(from: _posts?.length ?? 0, size: 10, category: category ?? '').then((value) {
-      _posts?.addAll(value?.data.rows ?? []);
+    HomePostEntity? homePostEntity = await loadData(posts?.length ?? 0, 10);
+    if (records != homePostEntity?.data.records) {
+      homePostEntity = await loadData(0, homePostEntity?.data.records ?? 0);
+      records = homePostEntity?.data.records ?? 0;
+      _posts = homePostEntity?.data.rows ?? [];
+      _isLoading = false;
+      getNewIndexByPost();
+      update();
+    } else {
+      _posts?.addAll(homePostEntity?.data.rows ?? []);
       _isLoading = false;
       update();
-    });
+    }
+  }
+
+  Future<HomePostEntity?> loadData(int from, int size) async {
+    return await appApi.socialHomePost(from: from, size: size, category: category ?? '');
   }
 
   @override

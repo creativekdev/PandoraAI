@@ -509,5 +509,10 @@
   "enter_the_color_value": "请输入正确的色值",
   "buy_attr_ai_tools": "解除限制完全访问所有PandoraAI效果：Cartoonize, AIColoring, RemoveBackground，Me-taverse, AIScribble, TextToImage等.",
   "fill_in_address": "请填写地址",
-  "remove_bg_again_tips": "确认要再次去除背景么？"
+  "remove_bg_again_tips": "确认要再次去除背景么？",
+  "plz_remove_bg_tips": "请先去除背景",
+  "Halloween": "Halloween",
+  "Cartoon": "Cartoon",
+  "Another_World": "Another World",
+  "ai_art": "AI Art"
 }

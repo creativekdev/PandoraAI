@@ -16,6 +16,7 @@ import 'package:cartoonizer/views/home_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as imgLib;
@@ -62,10 +63,12 @@ launchURL(String url, {bool force = false}) async {
   var uri = Uri.parse(url);
   if (force) {
     await launchUrl(uri);
-  } else if (await canLaunchUrl(uri)) {
-    await launchUrl(uri);
   } else {
-    throw 'Could not launch $url';
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
 
@@ -499,4 +502,16 @@ Future<bool> judgeInvitationCode() async {
     EventBusHelper().eventBus.fire(OnNewInvitationCodeReceiveEvent(data: code!));
   }, milliseconds: 500);
   return true;
+}
+
+Future<String?> getOsVersion() async {
+  String? osVersionName;
+  if (Platform.isAndroid) {
+    var androidDeviceInfo = await DeviceInfoPlugin().androidInfo;
+    osVersionName = androidDeviceInfo.version.sdkInt.toString();
+  } else if (Platform.isIOS) {
+    var iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
+    osVersionName = iosDeviceInfo.systemVersion;
+  }
+  return osVersionName;
 }
