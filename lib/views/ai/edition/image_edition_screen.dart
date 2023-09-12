@@ -1,16 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/recent/recent_controller.dart';
-import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/background_card.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/recent/recent_controller.dart';
+import 'package:cartoonizer/controller/upload_image_controller.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
@@ -28,13 +23,18 @@ import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/background_card.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import '../../../Common/Extension.dart';
 import '../../../app/app.dart';
 import '../../../app/thirdpart/thirdpart_manager.dart';
 import '../../../app/user/user_manager.dart';
+import '../../../common/Extension.dart';
 import '../../../utils/img_utils.dart';
 import '../../print/print.dart';
 import '../../share/ShareScreen.dart';
@@ -80,6 +80,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   String? title;
   late Size imageSize;
   late StreamSubscription onLimitDialogCancelListener;
+  Rx<bool> generateAgainVisible = false.obs;
 
   @override
   void initState() {
@@ -392,6 +393,18 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
               height: controller.showImageSize.value.height,
             )).intoCenter()),
         getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView).intoCenter(),
+        Obx(
+          () => Align(
+            child: generateAgainBtn(context, () {
+              if (controller.currentItem == ImageEditionFunction.effect) {
+                controller.generate(context, controller.currentItem.holder);
+              } else if (controller.currentItem == ImageEditionFunction.removeBg) {
+                controller.removeBgHolder.initData();
+              }
+            }),
+            alignment: Alignment.bottomCenter,
+          ).visibility(visible: generateAgainVisible.value),
+        ),
         Align(
           alignment: Alignment.centerRight,
           child: buildMenus(context, controller),
@@ -417,33 +430,17 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     });
   }
 
+
   Widget getImageWidget(BuildContext context, ImageEditionController controller) {
     if (controller.currentItem.function == ImageEditionFunction.UNDEFINED) {
       return Container();
     }
     if (controller.currentItem.function == ImageEditionFunction.effect) {
       var effectController = controller.currentItem.holder as AllTransferController;
-      bool needGenerateAgain = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
+      generateAgainVisible.value = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
       var file = controller.showOrigin ? controller.originFile : effectController.resultFile ?? effectController.originFile;
       syncShowImageSizeInEffect(file, controller.showOrigin);
-      var image = Image.file(file);
-      if (needGenerateAgain) {
-        return Stack(
-          fit: StackFit.loose,
-          children: [
-            image,
-            Obx(() => Positioned(
-                  child: generateAgainBtn(context, () {
-                    controller.generate(context, controller.currentItem.holder);
-                  }),
-                  bottom: 0,
-                  left: (controller.showImageSize.value.width - $(150)) / 2,
-                )),
-          ],
-        );
-      } else {
-        return image;
-      }
+      return Image.file(file);
     } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
       var removeBgHolder = controller.currentItem.holder as RemoveBgHolder;
       var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : removeBgHolder.removedImage);
@@ -455,13 +452,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       // 使用RX变量监听showImageSize的变化
       return controller.showOrigin
           ? Image.file(controller.originFile)
-          : removeBgHolder.buildShownImage(
-              imageSize,
-              controller.showImageSize,
-              generateAgainBtn(context, () {
-                controller.removeBgHolder.initData();
-              }));
+          : removeBgHolder.buildShownImage(imageSize, controller.showImageSize, (needGenerateAgain) {
+              generateAgainVisible.value = needGenerateAgain;
+            });
     } else {
+      generateAgainVisible.value = false;
       if (controller.showOrigin) {
         SyncFileImage(file: controller.originFile).getImage().then((value) {
           controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
@@ -498,7 +493,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         .intoGestureDetector(onTap: () {
       onTap.call();
     }).intoContainer(
-      padding: EdgeInsets.symmetric(vertical: $(8)),
+      alignment: Alignment.center,
+      height: $(54),
     );
   }
 

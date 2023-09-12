@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/get_address_entity.dart';
@@ -10,9 +10,9 @@ import 'package:cartoonizer/views/print/print_payment_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_success_screen.dart';
 import 'package:google_maps_webservice/places.dart';
 
-import '../../Common/Extension.dart';
-import '../../Controller/effect_data_controller.dart';
-import '../../Widgets/router/routers.dart';
+import '../../common/Extension.dart';
+import '../../controller/effect_data_controller.dart';
+import '../../widgets/router/routers.dart';
 import '../../app/user/user_manager.dart';
 import '../../models/address_entity.dart';
 import '../../models/print_order_entity.dart';

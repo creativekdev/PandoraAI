@@ -1,7 +1,6 @@
-import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:dio/dio.dart';
+
+import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as libImage;
 import 'package:worker_manager/worker_manager.dart';

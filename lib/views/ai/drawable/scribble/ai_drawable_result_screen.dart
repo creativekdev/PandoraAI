@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Controller/recent/recent_controller.dart';
-import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/switch_image_card.dart';
+import 'package:cartoonizer/controller/recent/recent_controller.dart';
+import 'package:cartoonizer/controller/upload_image_controller.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/widgets/photo_view/any_photo_pager.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
+import 'package:cartoonizer/widgets/switch_image_card.dart';
 import 'package:cartoonizer/api/ai_draw_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';

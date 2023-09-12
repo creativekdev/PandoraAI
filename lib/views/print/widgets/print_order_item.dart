@@ -4,8 +4,8 @@ import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:common_utils/common_utils.dart';
 
-import '../../../Common/importFile.dart';
-import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
+import '../../../common/importFile.dart';
+import '../../../widgets/cacheImage/cached_network_image_utils.dart';
 import '../../../models/print_orders_entity.dart';
 
 class PrintOrderItem extends StatelessWidget {

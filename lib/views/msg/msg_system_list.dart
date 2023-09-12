@@ -1,14 +1,14 @@
-import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
 
 import 'widgets/msg_card.dart';
 

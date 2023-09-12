@@ -1,6 +1,6 @@
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/widgets/cacheImage/cached_network_image_utils.dart';
 
-import '../../Common/importFile.dart';
+import '../../common/importFile.dart';
 
 class HomeImageDetailCard extends StatelessWidget {
   String url;

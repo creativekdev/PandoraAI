@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/effect_data_controller.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/files.dart';
 import 'package:common_utils/common_utils.dart';

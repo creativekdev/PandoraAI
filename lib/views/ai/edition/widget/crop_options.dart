@@ -1,14 +1,13 @@
-import 'package:cartoonizer/Widgets/outline_widget.dart';
-import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
+import 'package:cartoonizer/widgets/outline_widget.dart';
+import 'package:cartoonizer/widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/croppy/src/model/crop_image_result.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/crop_operator.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 
-import '../../../../Common/event_bus_helper.dart';
-import '../../../../Widgets/custom_crop/custom_crop_settings.dart';
-import '../../../../Widgets/custom_crop/custom_cropper.dart';
+import '../../../../widgets/custom_crop/custom_crop_settings.dart';
+import '../../../../widgets/custom_crop/custom_cropper.dart';
 import '../../../../croppy/src/model/crop_aspect_ratio.dart';
 
 class CropOptions extends StatelessWidget {
@@ -20,6 +19,7 @@ class CropOptions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        SizedBox(height: $(15)),
         ShaderMask(
           shaderCallback: (Rect bounds) {
             return LinearGradient(

@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 

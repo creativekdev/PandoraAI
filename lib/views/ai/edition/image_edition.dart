@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
@@ -9,7 +9,6 @@ import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition_screen.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
-import 'package:common_utils/common_utils.dart';
 
 import '../../../models/enums/home_card_type.dart';
 

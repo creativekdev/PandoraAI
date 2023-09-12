@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
+import 'package:cartoonizer/widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';

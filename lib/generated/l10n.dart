@@ -5110,10 +5110,10 @@ class S {
     );
   }
 
-  /// `Are you sure to remove background again?`
+  /// `Are you sure to remove background?`
   String get remove_bg_again_tips {
     return Intl.message(
-      'Are you sure to remove background again?',
+      'Are you sure to remove background?',
       name: 'remove_bg_again_tips',
       desc: '',
       args: [],

@@ -1,12 +1,8 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
-import 'package:cartoonizer/views/discovery/widget/discovery_resources_card.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/outline_widget.dart';
-import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
-import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
+import 'package:cartoonizer/widgets/outline_widget.dart';
+import 'package:cartoonizer/widgets/photo_view/photo_pager.dart';
+import 'package:cartoonizer/widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -17,6 +13,9 @@ import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/discovery/discovery.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_controller.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_resources_card.dart';
+import 'package:cartoonizer/widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/widgets/cacheImage/image_cache_manager.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';

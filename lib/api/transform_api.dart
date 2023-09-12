@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/api/uploader.dart';
-import 'package:cartoonizer/models/cartoonizer_result_entity.dart';
-import 'package:cartoonizer/network/base_requester.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/models/cartoonizer_result_entity.dart';
+import 'package:cartoonizer/widgets/image/sync_download_video.dart';
+import 'package:common_utils/common_utils.dart';
 
 class TransformApi {
   late Uploader _api;

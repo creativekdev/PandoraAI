@@ -1,11 +1,11 @@
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/home_new/home_image_detail_card.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../../Common/Extension.dart';
-import '../../Common/importFile.dart';
-import '../../Widgets/cacheImage/cached_network_image_utils.dart';
+import '../../common/Extension.dart';
+import '../../common/importFile.dart';
+import '../../widgets/cacheImage/cached_network_image_utils.dart';
 import '../../images-res.dart';
 import '../../models/discovery_list_entity.dart';
 import '../../models/enums/home_card_type.dart';

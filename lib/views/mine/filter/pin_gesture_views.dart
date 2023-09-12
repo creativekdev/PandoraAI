@@ -1,7 +1,7 @@
-import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-import '../../../Common/importFile.dart';
+import '../../../common/importFile.dart';
 
 typedef OnPinEndCallBack = void Function(bool isSelectedBg, double scale, double dx, double dy);
 typedef OnDraw = void Function();

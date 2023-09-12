@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/outline_widget.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/outline_widget.dart';
 import 'package:cartoonizer/images-res.dart';
 
 class AMOptContainer extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 
 import 'base_filter_operator.dart';

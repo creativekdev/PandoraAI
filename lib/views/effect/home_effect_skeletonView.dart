@@ -1,6 +1,6 @@
 import 'package:skeletons/skeletons.dart';
 
-import '../../Common/importFile.dart';
+import '../../common/importFile.dart';
 
 class HomeEffectSkeletonView extends StatelessWidget {
   const HomeEffectSkeletonView({Key? key}) : super(key: key);

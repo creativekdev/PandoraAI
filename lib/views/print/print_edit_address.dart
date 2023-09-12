@@ -4,10 +4,10 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
 
-import '../../Common/importFile.dart';
-import '../../Widgets/app_navigation_bar.dart';
-import '../../Widgets/blank_area_intercept.dart';
-import '../../Widgets/state/app_state.dart';
+import '../../common/importFile.dart';
+import '../../widgets/app_navigation_bar.dart';
+import '../../widgets/blank_area_intercept.dart';
+import '../../widgets/state/app_state.dart';
 import '../../models/address_entity.dart';
 import '../common/region/select_region_page.dart';
 

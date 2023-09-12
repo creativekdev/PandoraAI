@@ -1,14 +1,12 @@
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/widgets/image/sync_download_image.dart';
+import 'package:cartoonizer/widgets/search_bar.dart' as search;
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/Widgets/search_bar.dart' as search;
 import 'package:cartoonizer/models/back_pick_template_entity.dart';
-import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:skeletons/skeletons.dart';
 
 class BackTemplatePicker extends StatefulWidget {

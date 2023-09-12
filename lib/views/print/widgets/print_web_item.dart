@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:cartoonizer/Widgets/webview/js_list.dart';
+import 'package:cartoonizer/widgets/webview/js_list.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../../Common/importFile.dart';
+import '../../../common/importFile.dart';
 
 class PrintWebItem extends StatefulWidget {
   PrintWebItem({Key? key, required this.htmlString}) : super(key: key);

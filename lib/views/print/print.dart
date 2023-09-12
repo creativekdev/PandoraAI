@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 import 'print_option_screen.dart';
 

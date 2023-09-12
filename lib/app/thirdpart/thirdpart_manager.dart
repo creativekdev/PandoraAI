@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/admob/splash_ads_holder.dart';
-import 'package:cartoonizer/Widgets/refresh/headers.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/admob/splash_ads_holder.dart';
+import 'package:cartoonizer/widgets/refresh/headers.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';

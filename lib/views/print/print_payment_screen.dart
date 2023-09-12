@@ -1,10 +1,10 @@
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../Common/importFile.dart';
+import '../../common/importFile.dart';
 import '../../config.dart';
 import '../../models/print_orders_entity.dart';
 

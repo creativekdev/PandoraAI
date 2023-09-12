@@ -1,4 +1,4 @@
-import '../../../Common/importFile.dart';
+import '../../../common/importFile.dart';
 
 class PrintSubmitArea extends StatefulWidget {
   const PrintSubmitArea({Key? key, required this.total, required this.onTap}) : super(key: key);

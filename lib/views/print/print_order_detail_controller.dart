@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 import '../../models/print_orders_entity.dart';
 

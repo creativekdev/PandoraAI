@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 typedef TransAction<T, S> = T Function(S data);
 typedef TransAction2<T, S> = T Function(S data, int index);

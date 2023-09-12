@@ -1,14 +1,12 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/dialog.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/enums/home_card_type.dart';
-import 'package:cartoonizer/views/PurchaseScreen.dart';
 
 import 'StripePaymentScreen.dart';
 import 'account/LoginScreen.dart';

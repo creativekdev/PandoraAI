@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/utils/utils.dart';
 
 import 'feedback_dialog.dart';

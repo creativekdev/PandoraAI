@@ -1,7 +1,6 @@
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/effect_data_controller.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
-import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 
 import 'cartoonizer_controller.dart';

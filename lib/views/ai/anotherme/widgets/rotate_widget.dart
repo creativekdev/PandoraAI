@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/sensor_helper.dart';
 
 class RotateWidget extends StatefulWidget {

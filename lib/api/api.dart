@@ -6,8 +6,8 @@ import 'package:cartoonizer/config.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../Common/importFile.dart';
-import '../Common/sToken.dart';
+import '../common/importFile.dart';
+import '../common/sToken.dart';
 
 @deprecated
 class API {
