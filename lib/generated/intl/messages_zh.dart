@@ -288,9 +288,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "how_to_use_desc":
             MessageLookupByLibrary.simpleMessage("选择一张黑白的图画，您将获得彩色图像！"),
         "in_original": MessageLookupByLibrary.simpleMessage("包含原图"),
+        "input_comments": MessageLookupByLibrary.simpleMessage("输入评论"),
         "input_feedback": MessageLookupByLibrary.simpleMessage("请输入您的意见"),
         "input_invited_code": MessageLookupByLibrary.simpleMessage("邀请码填写"),
         "input_name": MessageLookupByLibrary.simpleMessage("输入名称"),
+        "input_password": MessageLookupByLibrary.simpleMessage("请输入密码"),
+        "input_valid_email": MessageLookupByLibrary.simpleMessage("请输入有效的邮箱地址"),
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram": MessageLookupByLibrary.simpleMessage("使用Instagram账号"),
         "invalid_password": MessageLookupByLibrary.simpleMessage("密码错误"),
@@ -392,6 +395,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation": MessageLookupByLibrary.simpleMessage("请输入密码"),
         "pass_validation1": MessageLookupByLibrary.simpleMessage("密码不正确"),
         "password": MessageLookupByLibrary.simpleMessage("密码"),
+        "password_not_match":
+            MessageLookupByLibrary.simpleMessage("两次输入密码不一致，请重新输入"),
         "pay": MessageLookupByLibrary.simpleMessage("支付"),
         "pay_with_new_card": MessageLookupByLibrary.simpleMessage("使用新卡支付"),
         "payment": MessageLookupByLibrary.simpleMessage("支付"),

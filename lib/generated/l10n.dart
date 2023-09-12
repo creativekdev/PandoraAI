@@ -5199,6 +5199,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Please input comments`
+  String get input_comments {
+    return Intl.message(
+      'Please input comments',
+      name: 'input_comments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The two input passwords do not match, please re-enter`
+  String get password_not_match {
+    return Intl.message(
+      'The two input passwords do not match, please re-enter',
+      name: 'password_not_match',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter your password`
+  String get input_password {
+    return Intl.message(
+      'Please enter your password',
+      name: 'input_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid e-mail address`
+  String get input_valid_email {
+    return Intl.message(
+      'Please enter a valid e-mail address',
+      name: 'input_valid_email',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -342,11 +342,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "how_to_use_desc": MessageLookupByLibrary.simpleMessage(
             "Choose a drawing with a black and white them and you will get a colorful-image!"),
         "in_original": MessageLookupByLibrary.simpleMessage("Include original"),
+        "input_comments":
+            MessageLookupByLibrary.simpleMessage("Please input comments"),
         "input_feedback":
             MessageLookupByLibrary.simpleMessage("input feedback"),
         "input_invited_code":
             MessageLookupByLibrary.simpleMessage("Input invitation Code"),
         "input_name": MessageLookupByLibrary.simpleMessage("Input name"),
+        "input_password":
+            MessageLookupByLibrary.simpleMessage("Please enter your password"),
+        "input_valid_email": MessageLookupByLibrary.simpleMessage(
+            "Please enter a valid e-mail address"),
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram":
             MessageLookupByLibrary.simpleMessage("Continue with Instagram"),
@@ -473,6 +479,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation1":
             MessageLookupByLibrary.simpleMessage("Password not matched"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),
+        "password_not_match": MessageLookupByLibrary.simpleMessage(
+            "The two input passwords do not match, please re-enter"),
         "pay": MessageLookupByLibrary.simpleMessage("Pay"),
         "pay_with_new_card":
             MessageLookupByLibrary.simpleMessage("Pay with new card"),

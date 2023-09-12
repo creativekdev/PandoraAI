@@ -74,7 +74,10 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
         });
       } else {
         if (value.error != null) {
-          showLimitDialog(context, type: value.error!, function: 'txt2img', source: 'txt2img_result_page');
+          Navigator.of(context).pop();
+          delay(() {
+            showLimitDialog(Get.context!, type: value.error!, function: 'txt2img', source: 'txt2img_result_page');
+          });
         } else {
           Navigator.of(context).pop();
         }
@@ -134,10 +137,6 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
                           if (value) {
                             Events.txt2imgCompleteDownload(type: 'image', textDisplay: controller.displayText);
                             CommonExtension().showImageSavedOkToast(context);
-                            delay(() {
-                              UserManager userManager = AppDelegate.instance.getManager();
-                              userManager.rateNoticeOperator.onSwitch(context, false);
-                            }, milliseconds: 2000);
                           } else {
                             CommonExtension().showToast(S.of(context).commonFailedToast);
                           }
@@ -213,7 +212,7 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
                   fontWeight: FontWeight.w400,
                   fontSize: $(14),
                 ),
-                maxLines: 4,
+                maxLines: 1000,
                 overflow: TextOverflow.ellipsis,
               )
                   .intoGestureDetector(

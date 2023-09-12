@@ -513,5 +513,9 @@
   "Halloween": "Halloween",
   "Cartoon": "Cartoon",
   "Another_World": "Another World",
-  "ai_art": "AI Art"
+  "ai_art": "AI Art",
+  "input_comments": "Please input comments",
+  "password_not_match": "The two input passwords do not match, please re-enter",
+  "input_password": "Please enter your password",
+  "input_valid_email": "Please enter a valid e-mail address"
 }

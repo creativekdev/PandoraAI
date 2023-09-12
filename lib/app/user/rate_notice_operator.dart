@@ -30,17 +30,10 @@ class RateNoticeOperator {
     var json = cacheManager.getJson(cacheManager.rateConfigKey());
     if (json == null) {
       configEntity = RateConfigEntity();
-      configEntity!.firstLoginDate = DateTime.now().millisecondsSinceEpoch;
+      configEntity!.isShowed = false;
       saveConfig(configEntity!);
     } else {
       configEntity = jsonConvert.convert(json);
-      if (configEntity!.nextActivateDate != 0 && configEntity!.nextActivateDate < DateTime.now().millisecondsSinceEpoch) {
-        configEntity!.nextActivateDate = 0;
-        saveConfig(configEntity!);
-      } else if (DateUtils.isSameDay(DateTime.fromMillisecondsSinceEpoch(configEntity!.nextActivateDate), DateTime.now())) {
-        configEntity!.nextActivateDate = 0;
-        saveConfig(configEntity!);
-      }
     }
   }
 
@@ -60,32 +53,19 @@ class RateNoticeOperator {
     if (configEntity == null) {
       return false;
     }
+    // 如果已经弹过则不弹
+    if (configEntity?.isShowed == true) {
+      return false;
+    }
     // 如果是转换，转换次数如果小于2，则不弹
     if ((configEntity?.switchCount ?? 0) < 2 && addCount) {
       return false;
-    }
-    // 判断时间是否大于15天
-    var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (configEntity!.nextActivateDate != 0) {
-      if (configEntity!.nextActivateDate < currentTime) {
-        if (!configEntity!.calculateInNextActivate) {
-          return true;
-        }
-      }
-    }
-    if (currentTime - configEntity!.firstLoginDate > maxDuration) {
-      if (configEntity!.nextActivateDate == 0) {
-        return true;
-      }
     }
     return false;
   }
 
   void onSwitch(BuildContext context, bool addCount) {
     if (configEntity == null) return;
-    if (configEntity!.nextActivateDate != 0) {
-      return;
-    }
     if (addCount) {
       configEntity!.switchCount++;
       saveConfig(configEntity!);
@@ -95,14 +75,6 @@ class RateNoticeOperator {
 
   void onBuy(BuildContext context) {
     return;
-    if (configEntity == null) return;
-    if (configEntity!.nextActivateDate != 0) {
-      return;
-    }
-    configEntity!.nextActivateDate = DateTime.now().millisecondsSinceEpoch - day;
-    configEntity!.calculateInNextActivate = false;
-    saveConfig(configEntity!);
-    judgeAndShowNotice(context, false);
   }
 
   bool _dialogShown = false;
@@ -121,10 +93,7 @@ class RateNoticeOperator {
           onResult: (value) {
             delay(() {
               _dialogShown = false;
-              // 15天后再次激活
-              configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivate)).millisecondsSinceEpoch;
-              configEntity!.switchCount = 0;
-              configEntity!.calculateInNextActivate = true;
+              configEntity?.isShowed = true;
               saveConfig(configEntity!);
             }, milliseconds: 100);
           },

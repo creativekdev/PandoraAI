@@ -44,6 +44,7 @@
   "discoveryComment": "评论",
   "discoveryComments": "评论",
   "discoveryDetails": "详情",
+  "input_comments": "输入评论",
   "discoveryDetailsUseSameTemplate": "使用此模板",
   "discoveryLike": "点赞",
   "discoveryShareInputHint": "I created this using %s",
@@ -514,5 +515,8 @@
   "Halloween": "Halloween",
   "Cartoon": "Cartoon",
   "Another_World": "Another World",
-  "ai_art": "AI Art"
+  "ai_art": "AI Art",
+  "password_not_match": "两次输入密码不一致，请重新输入",
+  "input_password": "请输入密码",
+  "input_valid_email": "请输入有效的邮箱地址"
 }

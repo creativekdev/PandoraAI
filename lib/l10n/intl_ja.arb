@@ -507,5 +507,9 @@
   "Halloween": "Halloween",
   "Cartoon": "Cartoon",
   "Another_World": "Another World",
-  "ai_art": "AI Art"
+  "ai_art": "AI Art",
+  "input_comments": "コメントを入力してください",
+  "password_not_match": "2つのパスワードが一致しません",
+  "input_password": "パスワードを入力してください",
+  "input_valid_email": "有効なメールアドレスを入力してください"
 }

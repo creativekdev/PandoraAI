@@ -94,16 +94,6 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
                       onResult.call(true);
                       FeedbackUtils.open(context);
                     }
-                    // FeedbackUtils.open(context).then((value) {
-                    //   if (value ?? false) {
-                    //     if (mounted) {
-                    //       if (Navigator.canPop(context)) {
-                    //         Navigator.pop(context);
-                    //         onResult.call(true);
-                    //       }
-                    //     }
-                    //   }
-                    // });
                   }),
                   RateItem(
                     title: S.of(context).rate_good,

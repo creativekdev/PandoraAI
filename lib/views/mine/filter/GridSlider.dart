@@ -1,9 +1,4 @@
-import 'dart:async';
-import 'dart:math';
-import 'dart:ui' as ui;
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/images-res.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 typedef FloatCallback = void Function(double);
@@ -36,6 +31,9 @@ class _GridSliderState extends State<GridSlider> {
         });
       },
       onPanEnd: (details) {
+        setState(() {
+          widget.currentPos = widget.currentPos.round().toDouble();
+        });
         widget.onEnd();
       },
       child: Container(

@@ -361,12 +361,18 @@ class MessageLookup extends MessageLookupByLibrary {
             "¡Elige un dibujo en blanco y negro y obtendrás una imagen colorida!"),
         "in_original":
             MessageLookupByLibrary.simpleMessage("Contiene la imagen original"),
+        "input_comments":
+            MessageLookupByLibrary.simpleMessage("Introduzca comentarios"),
         "input_feedback": MessageLookupByLibrary.simpleMessage(
             "Por favor, introduzca sus comentarios"),
         "input_invited_code": MessageLookupByLibrary.simpleMessage(
             "Rellene el código de invitación"),
         "input_name":
             MessageLookupByLibrary.simpleMessage("Introduzca un nombre"),
+        "input_password":
+            MessageLookupByLibrary.simpleMessage("Introduzca su contraseña"),
+        "input_valid_email": MessageLookupByLibrary.simpleMessage(
+            "Introduzca una dirección de correo electrónico válida"),
         "insta_login":
             MessageLookupByLibrary.simpleMessage("Instagram (en inglés)"),
         "instagram": MessageLookupByLibrary.simpleMessage(
@@ -498,6 +504,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation1":
             MessageLookupByLibrary.simpleMessage("La contraseña es incorrecta"),
         "password": MessageLookupByLibrary.simpleMessage("contraseña"),
+        "password_not_match": MessageLookupByLibrary.simpleMessage(
+            "Dos contraseñas no coinciden, vuelva a introducirlas"),
         "pay": MessageLookupByLibrary.simpleMessage("pagar"),
         "pay_with_new_card":
             MessageLookupByLibrary.simpleMessage("Pagar con una tarjeta nueva"),

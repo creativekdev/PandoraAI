@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
@@ -16,7 +14,6 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -156,7 +153,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                         ),
                         SizedBox(width: $(6)),
                         Text(
-                          '${txt2imgController.editingController.text.length}/${txt2imgController.maxLength}',
+                          '${txt2imgController.editingController.text.characters.length}/${txt2imgController.maxLength}',
                           style: TextStyle(color: Color(0xff858585)),
                         )
                       ],

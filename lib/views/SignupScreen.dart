@@ -147,15 +147,15 @@ class _SignupScreenState extends AppState<SignupScreen> {
     var pass = passController.text.trim();
     var cpass = cPassController.text.trim();
     if (!email.contains('@')) {
-      CommonExtension().showToast("Please input valid email!");
+      CommonExtension().showToast(S.of(context).input_valid_email);
       return;
     }
     if (TextUtil.isEmpty(pass)) {
-      CommonExtension().showToast("Please input password!");
+      CommonExtension().showToast(S.of(context).input_password);
       return;
     }
     if (pass != cpass) {
-      CommonExtension().showToast("Please confirm password!");
+      CommonExtension().showToast(S.of(context).password_not_match);
       return;
     }
     if (!agreementCheck) {

@@ -135,6 +135,9 @@ class AiColoringController extends GetxController {
             if (value.entity != null) {
               simulateProgressBarController.loadComplete();
               Events.aiColoringCompleteSuccess(source: source, photoType: photoType);
+              // 增加次数判断，看是否显示rate_us
+              UserManager userManager = AppDelegate.instance.getManager();
+              userManager.rateNoticeOperator.onSwitch(Get.context!, true);
             } else {
               simulateProgressBarController.onError(error: value.type);
             }

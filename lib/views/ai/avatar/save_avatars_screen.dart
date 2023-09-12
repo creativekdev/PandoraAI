@@ -7,8 +7,6 @@ import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -253,10 +251,6 @@ class _SaveAvatarsScreenState extends AppState<SaveAvatarsScreen> {
           Events.avatarResultDownloadOkClick(saveType: selectedList.length == outputImages.length ? "Save All" : "Save Select");
           hideLoading().whenComplete(() {
             CommonExtension().showImageSavedOkToast(context);
-            delay(() {
-              UserManager userManager = AppDelegate.instance.getManager();
-              userManager.rateNoticeOperator.onSwitch(context, false);
-            }, milliseconds: 2000);
           });
         });
       }
