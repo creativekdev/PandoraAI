@@ -1,6 +1,6 @@
-import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 enum AccountLimitType {
   guest,

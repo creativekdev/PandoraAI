@@ -1,10 +1,10 @@
-import 'package:cartoonizer/Widgets/color/palette_widget.dart';
+import 'package:cartoonizer/widgets/color/palette_widget.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/views/common/background/widgets/edit_color_hex_widget.dart';
 
-import '../../../../Common/event_bus_helper.dart';
-import '../../../../Widgets/router/routers.dart';
+import '../../../../common/event_bus_helper.dart';
+import '../../../../widgets/router/routers.dart';
 import '../background_picker.dart';
 
 class BackColorsPicker extends StatefulWidget {

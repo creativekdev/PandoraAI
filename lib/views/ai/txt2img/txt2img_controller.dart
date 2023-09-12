@@ -2,11 +2,11 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
 
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/recent/recent_controller.dart';
-import 'package:cartoonizer/Controller/upload_image_controller.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/recent/recent_controller.dart';
+import 'package:cartoonizer/controller/upload_image_controller.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/text2image_api.dart';
 import 'package:cartoonizer/app/app.dart';

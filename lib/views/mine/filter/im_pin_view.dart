@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/views/mine/filter/pin_gesture_views.dart';
 import 'package:image/image.dart' as imgLib;
 
-import '../../../Widgets/app_navigation_bar.dart';
-import '../../../Widgets/background_card.dart';
+import '../../../widgets/app_navigation_bar.dart';
+import '../../../widgets/background_card.dart';
 import '../../../utils/utils.dart';
 
 class ImPinView extends StatefulWidget {

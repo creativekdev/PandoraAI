@@ -1,7 +1,7 @@
-import 'package:cartoonizer/Widgets/visibility_holder.dart';
+import 'package:cartoonizer/widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
 
-import '../../Common/importFile.dart';
+import '../../common/importFile.dart';
 import '../../api/app_api.dart';
 import '../../models/discovery_list_entity.dart';
 import '../../models/home_post_entity.dart';

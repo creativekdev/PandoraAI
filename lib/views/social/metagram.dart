@@ -1,18 +1,12 @@
-import 'dart:io';
-
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
-import 'package:cartoonizer/Widgets/connector/platform_connector_page.dart';
-import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
+import 'package:cartoonizer/controller/effect_data_controller.dart';
+import 'package:cartoonizer/widgets/auth/connector_platform.dart';
+import 'package:cartoonizer/widgets/image/sync_download_video.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:common_utils/common_utils.dart';
 
 import 'metagram_introduce_screen.dart';
 import 'metagram_screen.dart';

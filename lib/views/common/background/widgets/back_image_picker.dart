@@ -1,7 +1,7 @@
-import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
-import 'package:cartoonizer/Widgets/gallery/pick_album_helper.dart';
-import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/widgets/camera/pai_camera_screen.dart';
+import 'package:cartoonizer/widgets/gallery/pick_album_helper.dart';
+import 'package:cartoonizer/widgets/image/medium_image_provider.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';

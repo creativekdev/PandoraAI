@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/models/print_option_entity.dart';
 import 'package:cartoonizer/views/print/print_controller.dart';
 import 'package:cartoonizer/views/print/print_shipping_screen.dart';
@@ -12,9 +12,9 @@ import 'package:cartoonizer/views/print/widgets/print_submit_area.dart';
 import 'package:cartoonizer/views/print/widgets/print_web_item.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import '../../Widgets/app_navigation_bar.dart';
-import '../../Widgets/cacheImage/cached_network_image_utils.dart';
-import '../../Widgets/router/routers.dart';
+import '../../widgets/app_navigation_bar.dart';
+import '../../widgets/cacheImage/cached_network_image_utils.dart';
+import '../../widgets/router/routers.dart';
 import '../../app/app.dart';
 import '../../app/user/user_manager.dart';
 

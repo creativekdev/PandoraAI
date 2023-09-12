@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Controller/upload_image_controller.dart';
+import 'package:cartoonizer/controller/effect_data_controller.dart';
+import 'package:cartoonizer/controller/upload_image_controller.dart';
 import 'package:cartoonizer/api/clip_drop_api.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-import '../../../Common/importFile.dart';
-import '../../../Widgets/app_navigation_bar.dart';
-import '../../../Widgets/dialog/dialog_widget.dart';
+import '../../../common/importFile.dart';
+import '../../../widgets/app_navigation_bar.dart';
+import '../../../widgets/dialog/dialog_widget.dart';
 import '../../../api/app_api.dart';
 import '../../../api/remove_bg_api.dart';
 import '../../../app/app.dart';
@@ -139,7 +139,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
 
   getRemovebgImage() async {
     var dataController = Get.find<EffectDataController>();
-    if (dataController.data?.matting3rdParty == 1) {
+    if (dataController.data?.matting3rdParty == -1) {
       var clipDropApi = ClipDropApi();
       removeBgUrl = await clipDropApi.getCachePath(widget.filePath);
       if (!TextUtil.isEmpty(removeBgUrl)) {

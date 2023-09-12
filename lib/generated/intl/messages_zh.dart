@@ -471,7 +471,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "remaining_credits": MessageLookupByLibrary.simpleMessage("已获权益"),
         "remind": MessageLookupByLibrary.simpleMessage("提示"),
         "remove_bg_again_tips":
-            MessageLookupByLibrary.simpleMessage("确认要再次去除背景么？"),
+            MessageLookupByLibrary.simpleMessage("确认要去除背景么？"),
         "reply": MessageLookupByLibrary.simpleMessage("回复"),
         "resend": MessageLookupByLibrary.simpleMessage("重新发送"),
         "resend_failed": MessageLookupByLibrary.simpleMessage("发送失败"),

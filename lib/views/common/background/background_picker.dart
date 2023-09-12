@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/background_card.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/background_card.dart';
+import 'package:cartoonizer/widgets/router/routers.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:common_utils/common_utils.dart';
 
-import '../../../Common/event_bus_helper.dart';
+import '../../../common/event_bus_helper.dart';
 import 'background_picker_holder.dart';
 
 class BackgroundPicker {

@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 
 abstract class TransResultController {

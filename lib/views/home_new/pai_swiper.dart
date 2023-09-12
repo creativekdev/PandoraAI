@@ -1,8 +1,7 @@
-import 'package:cartoonizer/Widgets/visibility_holder.dart';
+import 'package:cartoonizer/widgets/visibility_holder.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 
-import '../../Common/importFile.dart';
-import '../../Widgets/cacheImage/cached_network_image_utils.dart';
+import '../../common/importFile.dart';
 import '../../models/discovery_list_entity.dart';
 
 typedef OnClickItem = Function(int index, DiscoveryListEntity data);

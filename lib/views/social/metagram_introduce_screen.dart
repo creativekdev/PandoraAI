@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
-import 'package:cartoonizer/Widgets/connector/platform_connector_page.dart';
-import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
+import 'package:cartoonizer/controller/effect_data_controller.dart';
+import 'package:cartoonizer/widgets/auth/connector_platform.dart';
+import 'package:cartoonizer/widgets/connector/platform_connector_page.dart';
+import 'package:cartoonizer/widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';

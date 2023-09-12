@@ -1,5 +1,4 @@
-import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
-import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
+import 'package:cartoonizer/widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -8,7 +7,6 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring_screen.dart';
 
 class AiColoring {

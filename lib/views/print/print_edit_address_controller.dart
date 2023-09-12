@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/app_api.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/address_entity.dart';
 import 'package:cartoonizer/models/state_entity.dart';
@@ -9,7 +9,7 @@ import 'package:cartoonizer/views/print/print_shipping_controller.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
-import '../../Common/Extension.dart';
+import '../../common/Extension.dart';
 import '../../generated/json/base/json_convert_content.dart';
 import '../../models/print_order_entity.dart';
 import '../../models/region_code_entity.dart';

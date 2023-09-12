@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/views/print/print_option_controller.dart';
 import 'package:cartoonizer/views/print/print_screen.dart';
 import 'package:cartoonizer/views/print/widgets/print_option_item.dart';
@@ -9,7 +9,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
 
-import '../../Widgets/router/routers.dart';
+import '../../widgets/router/routers.dart';
 
 class PrintOptionScreen extends StatefulWidget {
   String source;

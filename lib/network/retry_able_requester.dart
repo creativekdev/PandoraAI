@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/Widgets/widget_extensions.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/widgets/widget_extensions.dart';
 import 'package:cartoonizer/common/ThemeConstant.dart';
 import 'package:cartoonizer/generated/l10n.dart';
 import 'package:cartoonizer/images-res.dart';

@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:cartoonizer/views/print/print_order_controller.dart';
 
-import '../../../Common/event_bus_helper.dart';
-import '../../../Common/importFile.dart';
-import '../../../Widgets/router/routers.dart';
+import '../../../common/event_bus_helper.dart';
+import '../../../common/importFile.dart';
+import '../../../widgets/router/routers.dart';
 import '../../../api/app_api.dart';
 import '../../../config.dart';
 import '../../../models/print_orders_entity.dart';

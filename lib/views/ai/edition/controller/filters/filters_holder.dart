@@ -97,9 +97,9 @@ class FiltersHolder extends ImageEditionBaseHolder {
     if (shownImage == null) {
       return;
     }
-    var targetCoverRect = ImageUtils.getTargetCoverRect(Size(shownImage!.width.toDouble(), shownImage!.height.toDouble()), Size(60, 60));
+    var targetCoverRect = ImageUtils.getTargetCoverRect(Size(_originImageData!.width.toDouble(), _originImageData!.height.toDouble()), Size(60, 60));
     imgLib.Image cropedImage =
-        imgLib.copyCrop(shownImage!, targetCoverRect.left.toInt(), targetCoverRect.top.toInt(), targetCoverRect.width.toInt(), targetCoverRect.height.toInt());
+        imgLib.copyCrop(_originImageData!, targetCoverRect.left.toInt(), targetCoverRect.top.toInt(), targetCoverRect.width.toInt(), targetCoverRect.height.toInt());
     imgLib.Image resizedImage = imgLib.copyResize(cropedImage, width: 60, height: 60);
     for (var value in filterOperator.filters) {
       thumbnails[value] = Uint8List.fromList(

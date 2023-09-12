@@ -1,8 +1,8 @@
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/views/print/widgets/print_order_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_order_list_controller.dart';
 
-import '../../../Common/importFile.dart';
+import '../../../common/importFile.dart';
 import '../../../models/print_orders_entity.dart';
 import '../print_order_detail_screen.dart';
 

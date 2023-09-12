@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/recent/recent_controller.dart';
-import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/recent/recent_controller.dart';
+import 'package:cartoonizer/controller/upload_image_controller.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/color_fill_api.dart';
 import 'package:cartoonizer/app/app.dart';

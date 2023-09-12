@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/socialmedia_connector_api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -11,7 +11,7 @@ import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/views/discovery/widget/show_report_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../../Common/Extension.dart';
+import '../../common/Extension.dart';
 import '../../app/app.dart';
 
 class DiscoveryListController extends GetxController {

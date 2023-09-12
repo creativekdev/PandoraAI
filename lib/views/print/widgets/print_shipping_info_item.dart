@@ -1,4 +1,4 @@
-import '../../../Common/importFile.dart';
+import '../../../common/importFile.dart';
 
 class PrintShippingInfoItem extends StatelessWidget {
   const PrintShippingInfoItem({Key? key, required this.image, required this.value, this.color}) : super(key: key);

@@ -1,8 +1,8 @@
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 
-import '../../../Common/importFile.dart';
-import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
+import '../../../common/importFile.dart';
+import '../../../widgets/cacheImage/cached_network_image_utils.dart';
 
 class PrintSelectItem extends StatelessWidget {
   PrintSelectItem({Key? key, required this.title, required this.content, required this.imgUrl, required this.showImage}) : super(key: key);

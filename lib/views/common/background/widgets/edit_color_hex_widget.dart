@@ -1,7 +1,7 @@
 import 'package:cartoonizer/images-res.dart';
 
-import '../../../../Common/Extension.dart';
-import '../../../../Common/importFile.dart';
+import '../../../../common/Extension.dart';
+import '../../../../common/importFile.dart';
 import '../../../../utils/color_util.dart';
 
 typedef OnColorSubmit = Function(String colorHex);

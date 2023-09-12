@@ -1,5 +1,5 @@
-import '../../../Common/importFile.dart';
-import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
+import '../../../common/importFile.dart';
+import '../../../widgets/cacheImage/cached_network_image_utils.dart';
 import '../../../models/print_option_entity.dart';
 
 class PrintOptionItem extends StatelessWidget {

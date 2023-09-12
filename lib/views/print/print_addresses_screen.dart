@@ -1,10 +1,10 @@
 import 'package:cartoonizer/views/print/print_addresses_screen_controller.dart';
 import 'package:cartoonizer/views/print/print_edit_address.dart';
 
-import '../../Common/importFile.dart';
-import '../../Widgets/app_navigation_bar.dart';
-import '../../Widgets/router/routers.dart';
-import '../../Widgets/state/app_state.dart';
+import '../../common/importFile.dart';
+import '../../widgets/app_navigation_bar.dart';
+import '../../widgets/router/routers.dart';
+import '../../widgets/state/app_state.dart';
 import '../../images-res.dart';
 import '../../models/address_entity.dart';
 

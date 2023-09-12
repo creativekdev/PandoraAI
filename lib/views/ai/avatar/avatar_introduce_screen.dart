@@ -1,19 +1,17 @@
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/outline_widget.dart';
-import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/dialog/choose_create_avatar_style_dialog.dart';
-import 'package:cartoonizer/views/ai/avatar/dialog/submit_avatar_dialog.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/choose_tab_bar.dart';
-import 'package:common_utils/common_utils.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/widgets/outline_widget.dart';
+import 'package:cartoonizer/widgets/photo_view/any_photo_pager.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'avatar.dart';

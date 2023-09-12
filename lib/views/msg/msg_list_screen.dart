@@ -1,13 +1,13 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/badge.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/views/msg/msg_discovery_list.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:cartoonizer/views/msg/msg_system_list.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/badge.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 class MsgListScreen extends StatefulWidget {

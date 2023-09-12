@@ -1,4 +1,4 @@
-import '../../../Common/importFile.dart';
+import '../../../common/importFile.dart';
 
 class PrintOrderInfoItem extends StatelessWidget {
   const PrintOrderInfoItem({Key? key, required this.name, required this.value}) : super(key: key);

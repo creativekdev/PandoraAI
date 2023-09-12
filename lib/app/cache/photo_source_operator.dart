@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:photo_manager/photo_manager.dart';
 

@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
