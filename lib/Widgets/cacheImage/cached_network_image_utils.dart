@@ -44,9 +44,11 @@ class CachedNetworkImageUtils {
     int? memCacheWidth,
     int? memCacheHeight,
     String? cacheKey,
-    int? maxWidthDiskCache = 1024,
-    int? maxHeightDiskCache = 1024,
+    int? maxWidthDiskCache,
+    int? maxHeightDiskCache,
   }) {
+    maxWidthDiskCache = ((width ?? 375) * 3).toInt();
+    maxHeightDiskCache = ((height ?? 375) * 3).toInt();
     useOld = true;
     if (cacheManager == null) {
       cacheManager = CachedImageCacheManager();
@@ -70,7 +72,6 @@ class CachedNetworkImageUtils {
     if (TextUtil.isEmpty(imageUrl.trim())) {
       return errorWidget.call(context, imageUrl, Exception('image url is empty'));
     }
-    // return CachedNetworkImageFixLoadError(imageUrl: imageUrl, height: height ?? 0, width: width ?? 0, fit: fit);
     if (useOld || imageUrl.contains('.webp')) {
       return CachedNetworkImage(
         key: key is GlobalKey<FutureLoadingImageState> ? null : key,
