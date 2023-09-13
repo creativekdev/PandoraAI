@@ -83,7 +83,7 @@ class DiscoveryDetailScreen extends StatefulWidget {
   State<DiscoveryDetailScreen> createState() => _DiscoveryDetailScreenState();
 }
 
-class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> with TickerProviderStateMixin {
+class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
   UserManager userManager = AppDelegate.instance.getManager();
   late DiscoveryDetailController controller;
 

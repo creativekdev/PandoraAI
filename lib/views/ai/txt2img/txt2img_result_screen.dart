@@ -216,7 +216,7 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
                   fontWeight: FontWeight.w400,
                   fontSize: $(14),
                 ),
-                maxLines: 1000,
+                maxLines: 4,
                 overflow: TextOverflow.ellipsis,
               )
                   .intoGestureDetector(

@@ -11,6 +11,7 @@ import 'package:cartoonizer/common/auth.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/password_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/widget/icon_input.dart';
@@ -54,7 +55,13 @@ class _SignupScreenState extends AppState<SignupScreen> {
     agreementTap = TapGestureRecognizer();
     termTap = TapGestureRecognizer();
     api = AppApi().bindState(this);
+    passController.addListener(() {
+      _passwordStrength = PasswordUtil.checkPasswordStrength(passController.text);
+      setState(() {});
+    });
   }
+
+  PasswordStrength? _passwordStrength;
 
   bool isShow = true;
   bool isShow1 = true;
@@ -448,9 +455,25 @@ class _SignupScreenState extends AppState<SignupScreen> {
     }
   }
 
+  String getPasswordStrength() {
+    switch (_passwordStrength) {
+      case null:
+        return "";
+      case PasswordStrength.LengthError:
+        return "密码必须是6-16位";
+      case PasswordStrength.Weak:
+        return "密码强度太弱";
+      case PasswordStrength.Medium:
+        return "密码强度中等";
+      case PasswordStrength.Strong:
+        return "密码强度高";
+    }
+  }
+
   @override
   Widget buildWidget(BuildContext context) {
     var prefixPage = ModalRoute.of(context)!.settings.arguments;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppNavigationBar(
@@ -498,6 +521,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                 inputAction: TextInputAction.next,
                 passwordInput: true,
               ).intoMaterial(color: Colors.transparent).hero(tag: 'pwd'),
+              if (_passwordStrength != null) TitleTextWidget(getPasswordStrength(), Colors.white, FontWeight.normal, $(16)),
               SizedBox(height: $(16)),
               iconInput(
                 title: S.of(context).c_password,

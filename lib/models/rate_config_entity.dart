@@ -15,16 +15,10 @@ class RateConfigEntity {
   @JSONField(name: "is_showed")
   late bool isShowed;
 
-  // @JSONField(name: "next_activate_date")
-  // late int nextActivateDate;
-  // @JSONField(name: "calculate_in_next_activate")
-  // late bool calculateInNextActivate;
 
   RateConfigEntity({
     this.switchCount = 0,
     this.isShowed = false,
-    // this.nextActivateDate = 0,
-    // this.calculateInNextActivate = true,
   });
 
   factory RateConfigEntity.fromJson(Map<String, dynamic> json) => $RateConfigEntityFromJson(json);

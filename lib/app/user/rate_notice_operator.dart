@@ -11,14 +11,6 @@ const int minute = second * 60;
 const int hour = minute * 60;
 const int day = hour * 24;
 
-// in production
-// const int maxDuration = 15 * day;
-// const int nextActivate = 360; // 90 * 24; hour
-
-// in development
-const int maxDuration = 10 * minute;
-const int nextActivate = 2;
-
 class RateNoticeOperator {
   CacheManager cacheManager;
 
