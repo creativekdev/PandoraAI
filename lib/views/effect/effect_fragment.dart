@@ -1,17 +1,13 @@
 import 'dart:ui';
 
-import 'package:cartoonizer/common/event_bus_helper.dart';
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/controller/effect_data_controller.dart';
-import 'package:cartoonizer/widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/widgets/badge.dart';
-import 'package:cartoonizer/widgets/state/app_state.dart';
-import 'package:cartoonizer/widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/effect_data_controller.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
@@ -19,6 +15,10 @@ import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment/payment.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/badge.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
+import 'package:cartoonizer/widgets/tabbar/app_tab_bar.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../models/discovery_list_entity.dart';
@@ -164,9 +164,11 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
       init: dataController,
       builder: (_) {
         List<SliverToBoxAdapter>? contents = _.data?.homepage?.galleries.map((e) {
+          String title = _.data?.locale["app_home"][e.title] ?? e.title;
           return SliverToBoxAdapter(
             child: PaiContentView(
               height: e.title == 'facetoon' ? $(96) : $(172),
+              title: title,
               onTap: (String category, List<DiscoveryListEntity>? posts, String title) {
                 Navigator.of(context).push<bool>(
                   MaterialPageRoute(

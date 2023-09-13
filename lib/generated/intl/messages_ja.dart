@@ -298,10 +298,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "how_to_use_desc":
             MessageLookupByLibrary.simpleMessage("白黒の絵を選択すると、カラフルな画像が得られます。"),
         "in_original": MessageLookupByLibrary.simpleMessage("元の写真を含む"),
+        "input_comments": MessageLookupByLibrary.simpleMessage("コメントを入力してください"),
         "input_feedback":
             MessageLookupByLibrary.simpleMessage("あなたのコメントを入力してください"),
         "input_invited_code": MessageLookupByLibrary.simpleMessage("招待コード入力"),
         "input_name": MessageLookupByLibrary.simpleMessage("名前を入力してください"),
+        "input_password":
+            MessageLookupByLibrary.simpleMessage("パスワードを入力してください"),
+        "input_valid_email":
+            MessageLookupByLibrary.simpleMessage("有効なメールアドレスを入力してください"),
         "insta_login": MessageLookupByLibrary.simpleMessage("instagram"),
         "instagram":
             MessageLookupByLibrary.simpleMessage("Instagramアカウントを使用する"),
@@ -413,6 +418,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("パスワードを入力してください"),
         "pass_validation1": MessageLookupByLibrary.simpleMessage("パスワードが正しくない"),
         "password": MessageLookupByLibrary.simpleMessage("パスワード"),
+        "password_not_match":
+            MessageLookupByLibrary.simpleMessage("2つのパスワードが一致しません"),
         "pay": MessageLookupByLibrary.simpleMessage("支払い"),
         "pay_now": MessageLookupByLibrary.simpleMessage("今払う"),
         "pay_with_new_card":
@@ -472,9 +479,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("プロ"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("数量"),
+        "rate_average": MessageLookupByLibrary.simpleMessage("平均"),
+        "rate_bad": MessageLookupByLibrary.simpleMessage("悪い"),
         "rate_description":
             MessageLookupByLibrary.simpleMessage("ご利用体験はいかがでしたか？評価をいただけますか？"),
-        "rate_pandora_ai": MessageLookupByLibrary.simpleMessage("私たちに評価をください"),
+        "rate_good": MessageLookupByLibrary.simpleMessage("良い"),
+        "rate_pandora_ai":
+            MessageLookupByLibrary.simpleMessage("Pandora AIがお気に入りですか?"),
         "rate_us":
             MessageLookupByLibrary.simpleMessage("AppStoreで評価していただけますか？"),
         "rate_us1":

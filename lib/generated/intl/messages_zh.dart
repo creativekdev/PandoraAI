@@ -288,9 +288,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "how_to_use_desc":
             MessageLookupByLibrary.simpleMessage("选择一张黑白的图画，您将获得彩色图像！"),
         "in_original": MessageLookupByLibrary.simpleMessage("包含原图"),
+        "input_comments": MessageLookupByLibrary.simpleMessage("输入评论"),
         "input_feedback": MessageLookupByLibrary.simpleMessage("请输入您的意见"),
         "input_invited_code": MessageLookupByLibrary.simpleMessage("邀请码填写"),
         "input_name": MessageLookupByLibrary.simpleMessage("输入名称"),
+        "input_password": MessageLookupByLibrary.simpleMessage("请输入密码"),
+        "input_valid_email": MessageLookupByLibrary.simpleMessage("请输入有效的邮箱地址"),
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram": MessageLookupByLibrary.simpleMessage("使用Instagram账号"),
         "invalid_password": MessageLookupByLibrary.simpleMessage("密码错误"),
@@ -392,6 +395,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation": MessageLookupByLibrary.simpleMessage("请输入密码"),
         "pass_validation1": MessageLookupByLibrary.simpleMessage("密码不正确"),
         "password": MessageLookupByLibrary.simpleMessage("密码"),
+        "password_not_match":
+            MessageLookupByLibrary.simpleMessage("两次输入密码不一致，请重新输入"),
         "pay": MessageLookupByLibrary.simpleMessage("支付"),
         "pay_now": MessageLookupByLibrary.simpleMessage("去支付"),
         "pay_with_new_card": MessageLookupByLibrary.simpleMessage("使用新卡支付"),
@@ -443,9 +448,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("数量"),
-        "rate_description":
-            MessageLookupByLibrary.simpleMessage("您的使用体验如何？愿意给我们评分么？"),
-        "rate_pandora_ai": MessageLookupByLibrary.simpleMessage("给我们评分"),
+        "rate_average": MessageLookupByLibrary.simpleMessage("一般"),
+        "rate_bad": MessageLookupByLibrary.simpleMessage("吐个槽"),
+        "rate_description": MessageLookupByLibrary.simpleMessage(
+            "你生成了许多不可思议的图片！点击下方人物，留下您的感受吧！"),
+        "rate_good": MessageLookupByLibrary.simpleMessage("给个好评"),
+        "rate_pandora_ai":
+            MessageLookupByLibrary.simpleMessage("喜欢Pandora AI吗？"),
         "rate_us": MessageLookupByLibrary.simpleMessage("去AppStore给我们评分"),
         "rate_us1": MessageLookupByLibrary.simpleMessage("去PlayStore给我们评分"),
         "reached_limit_content":

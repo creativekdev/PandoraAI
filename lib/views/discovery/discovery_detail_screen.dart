@@ -1,10 +1,8 @@
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/controller/effect_data_controller.dart';
-import 'package:cartoonizer/widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/widgets/state/app_state.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
@@ -14,10 +12,12 @@ import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_controller.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
+import 'package:cartoonizer/views/discovery/widget/insta_like_button.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
-import 'package:like_button/like_button.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 extension DiscoveryListEntityEx on DiscoveryListEntity {
@@ -233,44 +233,57 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
       body: GetBuilder<DiscoveryDetailController>(
         init: Get.find<DiscoveryDetailController>(),
         builder: (controller) {
-          return Column(
-            children: [
-              Expanded(
-                  child: ListView.builder(
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return DiscoveryDetailCard(
-                        controller: controller,
-                        onLikeTap: (liked) async {
-                          if (userManager.isNeedLogin) {
-                            userManager.doOnLogin(context, logPreLoginAction: controller.discoveryEntity.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
-                            return liked;
-                          }
-                          bool result;
-                          if (liked) {
-                            controller.discoveryUnLike();
-                            result = false;
-                          } else {
-                            controller.discoveryLike(source, style);
-                            result = true;
-                          }
-                          return result;
-                        },
-                        onCommentTap: () {
-                          onCreateCommentClick(controller);
-                        },
-                        onTryTap: () {
-                          HomeCardTypeUtils.jump(context: context, source: '$source-try-template', data: controller.discoveryEntity);
-                        });
-                  } else {
-                    return buildCommentItem(context, index - 1, controller);
-                  }
-                },
-                itemCount: controller.dataList.length + 1,
-                controller: controller.scrollController,
-              )),
-              footer(context, controller),
-            ],
+          return InstaLikeButton(
+            iconColor: Colors.red,
+            height: ScreenUtil.screenSize.height,
+            onChanged: () {
+              if (userManager.isNeedLogin) {
+                userManager.doOnLogin(context, logPreLoginAction: controller.discoveryEntity.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
+                return;
+              }
+              if (controller.liked.value == false) {
+                controller.discoveryLike(source, style);
+              }
+            },
+            child: Column(
+              children: [
+                Expanded(
+                    child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return DiscoveryDetailCard(
+                          controller: controller,
+                          onLikeTap: (liked) async {
+                            if (userManager.isNeedLogin) {
+                              userManager.doOnLogin(context, logPreLoginAction: controller.discoveryEntity.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
+                              return liked;
+                            }
+                            bool result;
+                            if (liked) {
+                              controller.discoveryUnLike();
+                              result = false;
+                            } else {
+                              controller.discoveryLike(source, style);
+                              result = true;
+                            }
+                            return result;
+                          },
+                          onCommentTap: () {
+                            onCreateCommentClick(controller);
+                          },
+                          onTryTap: () {
+                            HomeCardTypeUtils.jump(context: context, source: '$source-try-template', data: controller.discoveryEntity);
+                          });
+                    } else {
+                      return buildCommentItem(context, index - 1, controller);
+                    }
+                  },
+                  itemCount: controller.dataList.length + 1,
+                  controller: controller.scrollController,
+                )),
+                footer(context, controller),
+              ],
+            ),
           );
         },
       ),
@@ -284,52 +297,24 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
     return Row(
       children: [
         Expanded(
-            child: _function(context, Images.ic_discovery_comment, S.of(context).discoveryComment, onTap: () {
+            child: TitleTextWidget(
+          S.of(context).input_comments,
+          ColorConstant.White,
+          FontWeight.normal,
+          $(14),
+          align: TextAlign.left,
+        )
+                .intoContainer(
+          padding: EdgeInsets.all($(16)),
+          margin: EdgeInsets.only(left: $(16), right: $(16), top: $(8)),
+          decoration: BoxDecoration(
+            color: Color(0xFF0F0F0F),
+            borderRadius: BorderRadius.circular($(8)),
+          ),
+        )
+                .intoGestureDetector(onTap: () {
           onCreateCommentClick(controller);
         })),
-        Expanded(
-          child: Obx(() => LikeButton(
-                size: $(24),
-                circleColor: CircleColor(
-                  start: Color(0xfffc2a2a),
-                  end: Color(0xffc30000),
-                ),
-                bubblesColor: BubblesColor(
-                  dotPrimaryColor: Color(0xfffc2a2a),
-                  dotSecondaryColor: Color(0xffc30000),
-                ),
-                isLiked: controller.liked.value,
-                likeBuilder: (bool isLiked) {
-                  return Image.asset(
-                    isLiked ? Images.ic_discovery_liked : Images.ic_discovery_like,
-                    width: $(24),
-                    color: isLiked ? Colors.red : Colors.white,
-                  );
-                },
-                likeCount: 0,
-                onTap: (liked) async {
-                  if (userManager.isNeedLogin) {
-                    userManager.doOnLogin(context, logPreLoginAction: controller.discoveryEntity.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
-                    return liked;
-                  }
-                  bool result;
-                  if (liked) {
-                    controller.discoveryUnLike();
-                    result = false;
-                  } else {
-                    controller.discoveryLike(source, style);
-                    result = true;
-                  }
-                  return result;
-                },
-                countBuilder: (int? count, bool isLiked, String text) {
-                  return Text(
-                    isLiked ? S.of(context).discoveryUnlike : S.of(context).discoveryLike,
-                    style: TextStyle(color: Colors.white),
-                  );
-                },
-              ).ignore(ignoring: controller.likeLocalAddAlready.value)),
-        ),
       ],
     )
         .intoContainer(

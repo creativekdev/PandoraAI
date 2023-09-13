@@ -1,12 +1,14 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:cartoonizer/files.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+
+import 'Common/importFile.dart';
+import 'app/app.dart';
+import 'app/user/user_manager.dart';
 
 class GallerySaver {
   static const String channelName = 'gallery_saver';
@@ -77,7 +79,11 @@ class GallerySaver {
     if (tempFile != null) {
       tempFile.delete();
     }
-
+    if (result == true) {
+      // 增加次数判断，看是否显示rate_us
+      UserManager userManager = AppDelegate.instance.getManager();
+      userManager.rateNoticeOperator.onSwitch(Get.context!, false);
+    }
     return result;
   }
 

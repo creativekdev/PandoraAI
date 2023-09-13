@@ -111,7 +111,12 @@ class ShareScreen extends StatefulWidget {
             backgroundColor: backgroundColor,
             effectKey: effectKey,
             needDiscovery: needDiscovery,
-            onShareSuccess: onShareSuccess,
+            onShareSuccess: (platform) {
+              onShareSuccess?.call(platform);
+              // 增加次数判断，看是否显示rate_us
+              UserManager userManager = AppDelegate.instance.getManager();
+              userManager.rateNoticeOperator.onSwitch(Get.context!, false);
+            },
             preShareVideo: preShareVideo!,
           );
         },

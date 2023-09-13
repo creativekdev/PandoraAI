@@ -1,5 +1,5 @@
-import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
 import 'package:common_utils/common_utils.dart';
@@ -10,18 +10,6 @@ const int second = 1000;
 const int minute = second * 60;
 const int hour = minute * 60;
 const int day = hour * 24;
-
-// in production
-const int maxSwitchCount = 1;
-const int maxDuration = 15 * day;
-const int nextActivatePositive = 2160; // 90 * 24; hour
-const int nextActivateNegative = 720; // 30 * 24; hour
-
-// in development
-// const int maxSwitchCount = 3;
-// const int maxDuration = 10 * minute;
-// const int nextActivatePositive = 2;
-// const int nextActivateNegative = 1;
 
 class RateNoticeOperator {
   CacheManager cacheManager;
@@ -34,17 +22,10 @@ class RateNoticeOperator {
     var json = cacheManager.getJson(cacheManager.rateConfigKey());
     if (json == null) {
       configEntity = RateConfigEntity();
-      configEntity!.firstLoginDate = DateTime.now().millisecondsSinceEpoch;
+      configEntity!.isShowed = false;
       saveConfig(configEntity!);
     } else {
       configEntity = jsonConvert.convert(json);
-      if (configEntity!.nextActivateDate != 0 && configEntity!.nextActivateDate < DateTime.now().millisecondsSinceEpoch) {
-        configEntity!.nextActivateDate = 0;
-        saveConfig(configEntity!);
-      } else if (DateUtils.isSameDay(DateTime.fromMillisecondsSinceEpoch(configEntity!.nextActivateDate), DateTime.now())) {
-        configEntity!.nextActivateDate = 0;
-        saveConfig(configEntity!);
-      }
     }
   }
 
@@ -60,78 +41,51 @@ class RateNoticeOperator {
     return cacheManager.setJson(rateConfigKey, configEntity.toJson());
   }
 
-  bool shouldRate() {
+  bool shouldRate(bool addCount) {
     if (configEntity == null) {
       return false;
     }
-    var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (configEntity!.nextActivateDate != 0) {
-      if (configEntity!.nextActivateDate < currentTime) {
-        if (!configEntity!.calculateInNextActivate) {
-          return true;
-        }
-      }
+    // 如果已经弹过则不弹
+    if (configEntity?.isShowed == true) {
+      return false;
     }
-    if (currentTime - configEntity!.firstLoginDate > maxDuration) {
-      if (configEntity!.nextActivateDate == 0) {
-        return true;
-      }
+    // 如果是转换，转换次数如果小于2，则不弹
+    if ((configEntity?.switchCount ?? 0) < 2 && addCount) {
+      return false;
     }
-    if (configEntity!.switchCount >= maxSwitchCount) {
-      return true;
-    }
-    return false;
+    return true;
   }
 
-  void onSwitch(BuildContext context) {
+  void onSwitch(BuildContext context, bool addCount) {
     if (configEntity == null) return;
-    if (configEntity!.nextActivateDate != 0) {
-      return;
+    if (addCount) {
+      configEntity!.switchCount++;
+      saveConfig(configEntity!);
     }
-    configEntity!.switchCount++;
-    saveConfig(configEntity!);
-    judgeAndShowNotice(context);
+    judgeAndShowNotice(context, addCount);
   }
 
   void onBuy(BuildContext context) {
     return;
-    if (configEntity == null) return;
-    if (configEntity!.nextActivateDate != 0) {
-      return;
-    }
-    configEntity!.nextActivateDate = DateTime.now().millisecondsSinceEpoch - day;
-    configEntity!.calculateInNextActivate = false;
-    saveConfig(configEntity!);
-    judgeAndShowNotice(context);
   }
 
   bool _dialogShown = false;
 
-  Future<bool> judgeAndShowNotice(BuildContext context) async {
+  Future<bool> judgeAndShowNotice(BuildContext context, bool addCount) async {
     if (_dialogShown) {
       return false;
     }
     LogUtil.v('${configEntity?.print()}', tag: 'rateConfig');
-    if (shouldRate()) {
+    if (shouldRate(addCount)) {
       _dialogShown = true;
       showDialog(
         context: context,
-        barrierDismissible: false,
+        barrierDismissible: true,
         builder: (context) => RateNoticeDialogContent(
           onResult: (value) {
             delay(() {
               _dialogShown = false;
-              if (value) {
-                // 3 month later
-                configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivatePositive)).millisecondsSinceEpoch;
-                configEntity!.switchCount = 0;
-                configEntity!.calculateInNextActivate = true;
-              } else {
-                // 1 month later
-                configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivateNegative)).millisecondsSinceEpoch;
-                configEntity!.switchCount = 0;
-                configEntity!.calculateInNextActivate = false;
-              }
+              configEntity?.isShowed = true;
               saveConfig(configEntity!);
             }, milliseconds: 100);
           },

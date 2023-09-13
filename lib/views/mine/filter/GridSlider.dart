@@ -31,6 +31,9 @@ class _GridSliderState extends State<GridSlider> {
         });
       },
       onPanEnd: (details) {
+        setState(() {
+          widget.currentPos = widget.currentPos.round().toDouble();
+        });
         widget.onEnd();
       },
       child: Container(

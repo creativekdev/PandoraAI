@@ -280,8 +280,11 @@
   "give_feedback": "Give Feedback",
   "input_feedback": "input feedback",
   "no_thanks": "No, thanks",
-  "rate_pandora_ai": "Rate Pandora AI",
-  "rate_description": "If you enjoy using Pandora AI, would you mind taking a moment to rate it?",
+  "rate_pandora_ai": "Do you like Pandora AI?",
+  "rate_description": "You generate a lot of incredible pictures! Click on the people below to leave your feelings!",
+  "rate_bad": "Bad",
+  "rate_average": "Average",
+  "rate_good": "Good",
   "looveit": "Looove it! rate now",
   "more": "More",
   "generate_again": "Generate again",
@@ -511,5 +514,9 @@
   "Halloween": "Halloween",
   "Cartoon": "Cartoon",
   "Another_World": "Another World",
-  "ai_art": "AI Art"
+  "ai_art": "AI Art",
+  "input_comments": "Please input comments",
+  "password_not_match": "Password is not matched",
+  "input_password": "Please enter your password",
+  "input_valid_email": "Please enter a valid e-mail address"
 }

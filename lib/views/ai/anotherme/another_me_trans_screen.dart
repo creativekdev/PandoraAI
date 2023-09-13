@@ -132,6 +132,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                 recentController.onMetaverseUsed(file, image);
                 transResult = image;
                 simulateProgressBarController.loadComplete();
+                // 增加次数判断，看是否显示rate_us
+                UserManager userManager = AppDelegate.instance.getManager();
+                userManager.rateNoticeOperator.onSwitch(Get.context!, true);
               } else {
                 simulateProgressBarController.onError(error: value.type);
               }
@@ -279,10 +282,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               await hideLoading();
                               Events.metaverseCompleteDownload(type: 'video');
                               CommonExtension().showVideoSavedOkToast(context);
-                              delay(() {
-                                UserManager userManager = AppDelegate.instance.getManager();
-                                userManager.rateNoticeOperator.onSwitch(context);
-                              }, milliseconds: 2000);
                             }
                           });
                         } else {
@@ -296,10 +295,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                           await hideLoading();
                           Events.metaverseCompleteDownload(type: 'image');
                           CommonExtension().showImageSavedOkToast(context);
-                          delay(() {
-                            UserManager userManager = AppDelegate.instance.getManager();
-                            userManager.rateNoticeOperator.onSwitch(context);
-                          }, milliseconds: 2000);
                         }
                       }
                     });

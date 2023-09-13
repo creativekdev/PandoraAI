@@ -1,6 +1,7 @@
 import 'package:cartoonizer/widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 
+
 import '../../common/importFile.dart';
 import '../../models/home_page_entity.dart';
 
@@ -13,7 +14,7 @@ class PaiSliverView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final finalList = list?.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList();
+    final finalList = list?.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList() ?? [];
     return Container(
         padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
         child: Wrap(

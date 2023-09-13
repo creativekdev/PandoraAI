@@ -1,8 +1,8 @@
-import 'package:cartoonizer/widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
+import 'package:cartoonizer/widgets/visibility_holder.dart';
 
-import '../../common/importFile.dart';
 import '../../api/app_api.dart';
+import '../../common/importFile.dart';
 import '../../models/discovery_list_entity.dart';
 import '../../models/home_post_entity.dart';
 
@@ -10,10 +10,18 @@ typedef OnClickAll = Function(String category, List<DiscoveryListEntity>? posts,
 typedef OnClickItem = Function(int index, String category, List<DiscoveryListEntity>? posts, String title);
 
 class PaiContentView extends StatefulWidget {
-  const PaiContentView({Key? key, required this.height, required this.onTap, required this.onTapItem, required this.galleries}) : super(key: key);
+  const PaiContentView({
+    Key? key,
+    required this.height,
+    required this.onTap,
+    required this.onTapItem,
+    required this.galleries,
+    required this.title,
+  }) : super(key: key);
   final double height;
   final OnClickAll onTap;
   final OnClickItem onTapItem;
+  final String title;
   final HomePageHomepageGalleries? galleries;
 
   @override
@@ -83,7 +91,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TitleTextWidget(
-                getTitle(widget.galleries?.title ?? ''),
+                widget.title,
                 ColorConstant.White,
                 FontWeight.w500,
                 $(16),
@@ -111,7 +119,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               )
                   .intoGestureDetector(
                 onTap: () {
-                  widget.onTap(widget.galleries?.categoryString ?? '', socialPost, getTitle(widget.galleries?.title ?? ''));
+                  widget.onTap(widget.galleries?.categoryString ?? '', socialPost, widget.title);
                 },
               )
             ],
@@ -129,7 +137,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               itemCount: this.socialPost?.length ?? 0,
               itemBuilder: (context, index) => _Item(widget.height, this.socialPost![index]).intoGestureDetector(
                 onTap: () {
-                  widget.onTapItem(index, widget.galleries?.categoryString ?? '', socialPost, getTitle(widget.galleries?.title ?? ''));
+                  widget.onTapItem(index, widget.galleries?.categoryString ?? '', socialPost, widget.title);
                 },
               ),
             ),
@@ -151,37 +159,6 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
 
   @override
   bool get wantKeepAlive => true;
-
-  String getTitle(String title) {
-    if (title == "new") {
-      return S.of(context).new_category;
-    }
-    if (title == "facetoon") {
-      return S.of(context).facetoon;
-    }
-    if (title == "stylemorph") {
-      return S.of(context).stylemorph;
-    }
-    if (title == "blogging") {
-      return S.of(context).blogging;
-    }
-    if (title == "furry") {
-      return S.of(context).furry;
-    }
-    if (title == "Halloween") {
-      return S.of(context).Halloween;
-    }
-    if (title == "Another World") {
-      return S.of(context).Another_World;
-    }
-    if (title == "Cartoon") {
-      return S.of(context).Cartoon;
-    }
-    if (title == "ai_art") {
-      return S.of(context).ai_art;
-    }
-    return title;
-  }
 }
 
 class _Item extends StatelessWidget {

@@ -361,12 +361,18 @@ class MessageLookup extends MessageLookupByLibrary {
             "¡Elige un dibujo en blanco y negro y obtendrás una imagen colorida!"),
         "in_original":
             MessageLookupByLibrary.simpleMessage("Contiene la imagen original"),
+        "input_comments":
+            MessageLookupByLibrary.simpleMessage("Introduzca comentarios"),
         "input_feedback": MessageLookupByLibrary.simpleMessage(
             "Por favor, introduzca sus comentarios"),
         "input_invited_code": MessageLookupByLibrary.simpleMessage(
             "Rellene el código de invitación"),
         "input_name":
             MessageLookupByLibrary.simpleMessage("Introduzca un nombre"),
+        "input_password":
+            MessageLookupByLibrary.simpleMessage("Introduzca su contraseña"),
+        "input_valid_email": MessageLookupByLibrary.simpleMessage(
+            "Introduzca una dirección de correo electrónico válida"),
         "insta_login":
             MessageLookupByLibrary.simpleMessage("Instagram (en inglés)"),
         "instagram": MessageLookupByLibrary.simpleMessage(
@@ -498,6 +504,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation1":
             MessageLookupByLibrary.simpleMessage("La contraseña es incorrecta"),
         "password": MessageLookupByLibrary.simpleMessage("contraseña"),
+        "password_not_match": MessageLookupByLibrary.simpleMessage(
+            "Dos contraseñas no coinciden, vuelva a introducirlas"),
         "pay": MessageLookupByLibrary.simpleMessage("pagar"),
         "pay_now": MessageLookupByLibrary.simpleMessage("Pagar ahora"),
         "pay_with_new_card":
@@ -565,9 +573,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("Cantidad"),
+        "rate_average": MessageLookupByLibrary.simpleMessage("Promedio"),
+        "rate_bad": MessageLookupByLibrary.simpleMessage("Mala"),
         "rate_description": MessageLookupByLibrary.simpleMessage(
             "¿Cómo fue tu experiencia? ¿Quieres puntuarnos?"),
-        "rate_pandora_ai": MessageLookupByLibrary.simpleMessage("Califícanos"),
+        "rate_good": MessageLookupByLibrary.simpleMessage("Buena"),
+        "rate_pandora_ai":
+            MessageLookupByLibrary.simpleMessage("¿Te gusta Pandora AI?"),
         "rate_us": MessageLookupByLibrary.simpleMessage(
             "Vaya a la AppStore y califíquenos"),
         "rate_us1": MessageLookupByLibrary.simpleMessage(
