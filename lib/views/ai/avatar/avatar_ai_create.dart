@@ -1,6 +1,6 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';

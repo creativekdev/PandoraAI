@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/search_bar.dart' as search;
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/search_bar.dart' as search;
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/images-res.dart';

@@ -5,11 +5,11 @@ import 'package:cartoonizer/views/print/widgets/print_submit_area.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
 
-import '../../Common/importFile.dart';
-import '../../Widgets/app_navigation_bar.dart';
-import '../../Widgets/blank_area_intercept.dart';
-import '../../Widgets/router/routers.dart';
-import '../../Widgets/state/app_state.dart';
+import '../../common/importFile.dart';
+import '../../widgets/app_navigation_bar.dart';
+import '../../widgets/blank_area_intercept.dart';
+import '../../widgets/router/routers.dart';
+import '../../widgets/state/app_state.dart';
 
 class PrintShippingScreen extends StatefulWidget {
   String source;

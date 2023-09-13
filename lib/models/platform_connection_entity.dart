@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
+import 'package:cartoonizer/widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/platform_connection_entity.g.dart';
 import 'dart:convert';

@@ -1,9 +1,8 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
-import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
+import 'package:cartoonizer/widgets/cacheImage/cached_network_image_utils.dart';
 
 class EffectOptions extends StatelessWidget {
   AllTransferController controller;

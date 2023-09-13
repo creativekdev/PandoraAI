@@ -1,7 +1,7 @@
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/background_card.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/background_card.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:skeletons/skeletons.dart';

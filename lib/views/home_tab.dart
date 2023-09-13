@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/discovery/discovery_fragment.dart';

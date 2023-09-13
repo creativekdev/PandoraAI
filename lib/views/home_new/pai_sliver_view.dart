@@ -1,7 +1,8 @@
-import 'package:cartoonizer/Widgets/visibility_holder.dart';
+import 'package:cartoonizer/widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 
-import '../../Common/importFile.dart';
+
+import '../../common/importFile.dart';
 import '../../models/home_page_entity.dart';
 
 typedef OnClickItem = Function(HomePageHomepageTools data);

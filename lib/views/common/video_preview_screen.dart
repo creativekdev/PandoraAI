@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
-import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
+import 'package:cartoonizer/widgets/image/sync_download_video.dart';
+import 'package:cartoonizer/widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/utils/utils.dart';

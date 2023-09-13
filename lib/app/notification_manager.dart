@@ -1,25 +1,17 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/firebase_options.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
-import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
-import 'package:cartoonizer/views/social/metagram.dart';
-import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
-import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';

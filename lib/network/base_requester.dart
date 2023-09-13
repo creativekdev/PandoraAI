@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/sToken.dart';
+import 'package:cartoonizer/common/sToken.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/main.dart';
 import 'package:dio/dio.dart';

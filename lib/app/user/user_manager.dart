@@ -1,23 +1,21 @@
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/effect_data_controller.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
 import 'package:cartoonizer/models/ai_server_entity.dart';
-import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/LoginScreen.dart';
+import 'package:cartoonizer/widgets/auth/connector_platform.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 

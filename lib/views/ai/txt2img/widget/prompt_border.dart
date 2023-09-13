@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 
 class PromptBorder extends StatelessWidget {

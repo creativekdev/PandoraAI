@@ -1,6 +1,6 @@
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/welcome_widgets.dart';

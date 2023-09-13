@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/another_me_result_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/utils/utils.dart';

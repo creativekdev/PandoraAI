@@ -1,6 +1,6 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/progress/circle_progress_bar.dart';
+import 'package:cartoonizer/widgets/router/routers.dart';
 import 'dart:math' as math;
 
 import 'package:cartoonizer/models/enums/account_limit_type.dart';

@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:flutter/material.dart';
 
 typedef FloatCallback = void Function(double);

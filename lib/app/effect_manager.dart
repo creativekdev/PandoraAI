@@ -1,13 +1,12 @@
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
-import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/models/ai_server_entity.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/widgets/image/sync_download_image.dart';
+import 'package:cartoonizer/widgets/image/sync_download_video.dart';
 import 'package:common_utils/common_utils.dart';
 
 class EffectManager extends BaseManager {

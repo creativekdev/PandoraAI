@@ -5,9 +5,9 @@ import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_shipping_info_item.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import '../../Common/importFile.dart';
 import '../../app/app.dart';
 import '../../app/user/user_manager.dart';
+import '../../common/importFile.dart';
 import '../../images-res.dart';
 import '../../models/print_orders_entity.dart';
 

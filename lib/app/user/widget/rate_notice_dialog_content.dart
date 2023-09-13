@@ -1,6 +1,6 @@
-import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
 
 class RateNoticeDialogContent extends StatefulWidget {

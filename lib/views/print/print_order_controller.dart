@@ -1,8 +1,8 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/print/widgets/time_selection_sheet.dart';
 import 'package:common_utils/common_utils.dart';
 
-import '../../Common/event_bus_helper.dart';
+import '../../common/event_bus_helper.dart';
 
 class PrintOrderController extends GetxController {
   TabController? tabController;

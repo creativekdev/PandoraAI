@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 ///auto generate code, please do not modify;
 enum AvatarStatus {

@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';

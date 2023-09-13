@@ -1,9 +1,9 @@
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/views/home_new/home_detail_screen.dart';
 
-import '../../Common/importFile.dart';
-import '../../Widgets/app_navigation_bar.dart';
-import '../../Widgets/cacheImage/cached_network_image_utils.dart';
+import '../../common/importFile.dart';
+import '../../widgets/app_navigation_bar.dart';
+import '../../widgets/cacheImage/cached_network_image_utils.dart';
 import '../../models/discovery_list_entity.dart';
 import 'home_details_controller.dart';
 

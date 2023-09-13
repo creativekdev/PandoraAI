@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 typedef ItemBuilder = Widget Function(BuildContext context, int index, String value, bool checked);
 

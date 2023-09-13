@@ -1,6 +1,6 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/blank_area_intercept.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 

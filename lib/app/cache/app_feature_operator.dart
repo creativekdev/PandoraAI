@@ -1,17 +1,9 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/widgets/router/routers.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
-import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
-import 'package:cartoonizer/views/social/metagram.dart';
-import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
-import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:common_utils/common_utils.dart';
 
 import 'cache_manager.dart';

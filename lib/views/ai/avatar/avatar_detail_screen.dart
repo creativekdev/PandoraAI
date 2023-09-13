@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/widgets/photo_view/photo_pager.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';

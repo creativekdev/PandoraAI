@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../../images-res.dart';

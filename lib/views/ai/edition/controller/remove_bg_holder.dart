@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -14,7 +14,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
 
-import '../../../../Common/event_bus_helper.dart';
+import '../../../../common/event_bus_helper.dart';
 import '../../../common/background/background_picker.dart';
 import '../../../mine/filter/pin_gesture_views.dart';
 
@@ -129,6 +129,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       clear();
     }
   }
+
   bool lastRemoveSuccess = false;
 
   onSavedBackground(BackgroundData data) async {
@@ -214,20 +215,12 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     return alpha == 0;
   }
 
-  Widget buildShownImage(Size size, Rx<Size> showSize, Widget generateAgain) {
+  Widget buildShownImage(Size size, Rx<Size> showSize, Function(bool needGenerateAgain) callback) {
     if (removedImage == null) {
-      return Stack(
-        fit: StackFit.loose,
-        children: [
-          Image.file(originFile!),
-          Obx(() => Positioned(
-                child: generateAgain,
-                bottom: 0,
-                left: (parent.showImageSize.value.width - $(150)) / 2,
-              )),
-        ],
-      );
+      callback.call(true);
+      return Image.file(originFile!);
     }
+    callback.call(false);
     return RepaintBoundary(
       key: globalKey,
       child: Listener(

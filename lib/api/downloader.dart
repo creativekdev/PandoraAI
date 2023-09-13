@@ -1,10 +1,9 @@
 import 'dart:io';
 
-import 'package:cartoonizer/network/dio_node.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 
-import '../Widgets/widget_extensions.dart';
+import '../widgets/widget_extensions.dart';
 
 class Downloader {
   // 工厂模式

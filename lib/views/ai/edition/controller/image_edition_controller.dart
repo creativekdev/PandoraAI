@@ -1,28 +1,22 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/upload_image_controller.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
-import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/widgets/lib_image_widget/lib_image_widget.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
-
-import '../../../../Widgets/app_navigation_bar.dart';
-import '../../../../utils/utils.dart';
 
 class ImageEditionController extends GetxController {
   final String photoType;
@@ -222,9 +216,9 @@ class ImageEditionController extends GetxController {
   }
 
   switchBack(BuildContext context) async {
-    if (_lastItem == null) {
+    if (_lastItem == null && currentItem == ImageEditionFunction.removeBg) {
       Navigator.of(context).pop();
-    } else {
+    } else if (_lastItem != null) {
       currentItem = _lastItem!;
     }
   }
@@ -334,11 +328,7 @@ class ImageEditionController extends GetxController {
         return true;
       }
       bool needRemove;
-      if (!targetHolder.lastRemoveSuccess) {
-        needRemove = true;
-      } else {
-        needRemove = await needRemoveBg(context, targetHolder);
-      }
+      needRemove = await needRemoveBg(context, targetHolder);
       if (!needRemove) {
         return false;
       }
@@ -355,11 +345,7 @@ class ImageEditionController extends GetxController {
         return true;
       }
       bool needRemove;
-      if (!targetHolder.lastRemoveSuccess) {
-        needRemove = true;
-      } else {
-        needRemove = await needRemoveBg(context, targetHolder);
-      }
+      needRemove = await needRemoveBg(context, targetHolder);
       if (!needRemove) {
         return false;
       }
@@ -377,13 +363,13 @@ class ImageEditionController extends GetxController {
   }
 
   Future<bool> needRemoveBg(BuildContext context, RemoveBgHolder holder) async {
-    bool needRemove = true;
-    if (holder.removedImage != null) {
-      var bool = await showEnsureToSwitchRemoveBg(context);
-      if (bool == null || bool == false) {
-        needRemove = false;
-      }
+    var needRemove = true;
+    // if (holder.removedImage != null) {
+    var bool = await showEnsureToSwitchRemoveBg(context);
+    if (bool == null || bool == false) {
+      needRemove = false;
     }
+    // }
     return needRemove;
   }
 

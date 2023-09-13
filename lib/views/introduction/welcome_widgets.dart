@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 class WelcomeWidgets extends StatelessWidget {
   final String? image;

@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/progress/progress_bar.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/progress/progress_bar.dart';
+import 'package:cartoonizer/widgets/router/routers.dart';
 import 'package:cartoonizer/api/downloader.dart';
 
 class ApkDownloadScreen extends StatefulWidget {

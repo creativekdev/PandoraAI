@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/indicator/line_tab_indicator.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';

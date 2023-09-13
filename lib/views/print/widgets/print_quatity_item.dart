@@ -1,4 +1,4 @@
-import '../../../Common/importFile.dart';
+import '../../../common/importFile.dart';
 
 class PrintQuatityItem extends StatefulWidget {
   PrintQuatityItem({Key? key, required this.quantity, required this.onAddTap, required this.onSubTap}) : super(key: key);

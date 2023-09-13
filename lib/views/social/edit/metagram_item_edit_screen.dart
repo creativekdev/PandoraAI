@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/Widgets/outline_widget.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/widgets/outline_widget.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';

@@ -1,14 +1,14 @@
-import 'package:cartoonizer/Widgets/search_bar.dart' as search;
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/widgets/search_bar.dart' as search;
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/views/print/print_order_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_order_list.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import '../../Common/importFile.dart';
-import '../../Widgets/AutomaticKeepAliveWidget.dart';
-import '../../Widgets/app_navigation_bar.dart';
-import '../../Widgets/blank_area_intercept.dart';
+import '../../common/importFile.dart';
+import '../../widgets/AutomaticKeepAliveWidget.dart';
+import '../../widgets/app_navigation_bar.dart';
+import '../../widgets/blank_area_intercept.dart';
 import '../../images-res.dart';
 
 class PrintOrderScreen extends StatefulWidget {

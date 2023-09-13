@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

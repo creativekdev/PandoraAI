@@ -1,6 +1,6 @@
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 
-import '../../../Common/importFile.dart';
+import '../../../common/importFile.dart';
 import '../../../images-res.dart';
 import '../../../models/shipping_method_entity.dart';
 

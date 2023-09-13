@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/auth/auth.dart';
-import 'package:cartoonizer/Widgets/auth/auth_api.dart';
-import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/auth/auth.dart';
+import 'package:cartoonizer/widgets/auth/auth_api.dart';
+import 'package:cartoonizer/widgets/auth/sign_list_widget.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';

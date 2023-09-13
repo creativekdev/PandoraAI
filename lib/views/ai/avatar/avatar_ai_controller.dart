@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/effect_data_controller.dart';
+import 'package:cartoonizer/widgets/gallery/pick_album.dart';
+import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';

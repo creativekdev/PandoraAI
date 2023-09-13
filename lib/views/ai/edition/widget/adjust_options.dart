@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
-import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
+import 'package:cartoonizer/widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';

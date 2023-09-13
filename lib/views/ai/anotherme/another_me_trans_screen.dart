@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/recent/recent_controller.dart';
-import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/Widgets/outline_widget.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/switch_image_card.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/recent/recent_controller.dart';
+import 'package:cartoonizer/controller/upload_image_controller.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/widgets/outline_widget.dart';
+import 'package:cartoonizer/widgets/router/routers.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
+import 'package:cartoonizer/widgets/switch_image_card.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';

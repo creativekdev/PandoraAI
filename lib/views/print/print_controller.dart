@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/models/print_product_need_info_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';

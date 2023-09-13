@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/print/print_order_detail_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
@@ -7,8 +7,8 @@ import 'package:cartoonizer/views/print/widgets/print_shipping_info_item.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import '../../Common/importFile.dart';
-import '../../Widgets/cacheImage/cached_network_image_utils.dart';
+import '../../common/importFile.dart';
+import '../../widgets/cacheImage/cached_network_image_utils.dart';
 import '../../images-res.dart';
 import '../../models/print_orders_entity.dart';
 

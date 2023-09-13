@@ -1,8 +1,8 @@
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/effect_data_controller.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';

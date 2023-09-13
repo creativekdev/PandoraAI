@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
+import 'package:cartoonizer/controller/effect_data_controller.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';

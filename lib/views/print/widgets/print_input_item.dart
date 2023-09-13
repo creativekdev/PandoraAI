@@ -1,4 +1,4 @@
-import '../../../Common/importFile.dart';
+import '../../../common/importFile.dart';
 import '../../../images-res.dart';
 import '../../../models/region_code_entity.dart';
 

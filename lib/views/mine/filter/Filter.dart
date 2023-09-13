@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 

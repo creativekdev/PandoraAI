@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:skeletons/skeletons.dart';
 

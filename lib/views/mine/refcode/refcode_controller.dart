@@ -1,10 +1,10 @@
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/event_bus_helper.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:common_utils/common_utils.dart';
 
 class RefCodeController extends GetxController {

@@ -1,6 +1,6 @@
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Widgets/gallery/crop_screen.dart';
-import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/widgets/gallery/crop_screen.dart';
+import 'package:cartoonizer/widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';

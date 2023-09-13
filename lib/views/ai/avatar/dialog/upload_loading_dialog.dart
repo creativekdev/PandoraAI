@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_controller.dart';
 
 class UploadLoadingDialog extends StatefulWidget {
