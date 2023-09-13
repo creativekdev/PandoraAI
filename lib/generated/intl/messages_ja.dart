@@ -110,7 +110,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "buy_attr_ai_artist":
             MessageLookupByLibrary.simpleMessage(" %d 回AIアーティストの変換/日"),
         "buy_attr_ai_tools": MessageLookupByLibrary.simpleMessage(
-            "Pandora AI のすべてのエフェクトに無制限にフルアクセスできます。Cartoonize、AIColoring、RemoveBackground、Me-taverse、AIScribble、TextToImage など。"),
+            "Pandora AI Pro のすべての権限に完全にアクセスし、毎週のアップデートを今すぐお楽しみください。"),
         "buy_attr_metaverse":
             MessageLookupByLibrary.simpleMessage(" %d 回Me-Taverse変換/日"),
         "c_password": MessageLookupByLibrary.simpleMessage("パスワード確認"),
@@ -414,6 +414,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation1": MessageLookupByLibrary.simpleMessage("パスワードが正しくない"),
         "password": MessageLookupByLibrary.simpleMessage("パスワード"),
         "pay": MessageLookupByLibrary.simpleMessage("支払い"),
+        "pay_now": MessageLookupByLibrary.simpleMessage("今払う"),
         "pay_with_new_card":
             MessageLookupByLibrary.simpleMessage("新しいカードの支払いを使用する"),
         "payment": MessageLookupByLibrary.simpleMessage("支払い"),

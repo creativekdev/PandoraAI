@@ -1,5 +1,5 @@
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/views/StripePaymentScreen.dart';
+import 'package:cartoonizer/views/payment/StripePaymentScreen.dart';
 
 class PayAvatarAndroid {
   String planId;

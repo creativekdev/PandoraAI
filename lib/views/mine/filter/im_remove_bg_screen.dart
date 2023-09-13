@@ -139,7 +139,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
 
   getRemovebgImage() async {
     var dataController = Get.find<EffectDataController>();
-    if (dataController.data?.matting3rdParty == -1) {
+    if (dataController.data?.matting3rdParty == 1) {
       var clipDropApi = ClipDropApi();
       removeBgUrl = await clipDropApi.getCachePath(widget.filePath);
       if (!TextUtil.isEmpty(removeBgUrl)) {

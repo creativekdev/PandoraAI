@@ -153,7 +153,11 @@ class AGOptContainerState extends State<AGOptContainer> with SingleTickerProvide
             radius: $(12),
             strokeWidth: $(2),
             gradient: LinearGradient(
-              colors: [Color(0xFF04F1F9), Color(0xFF7F97F3), Color(0xFFEC5DD8)],
+              colors: [
+                Color(0xFF04F1F9),
+                Color(0xFF7F97F3),
+                Color(0xFFEC5DD8),
+              ],
               end: Alignment.topLeft,
               begin: Alignment.bottomRight,
             ),

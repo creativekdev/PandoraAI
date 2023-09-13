@@ -129,7 +129,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "buy_attr_ai_artist": MessageLookupByLibrary.simpleMessage(
             "%d Conversions of AI Artist per day"),
         "buy_attr_ai_tools": MessageLookupByLibrary.simpleMessage(
-            "Get unlimited full access to all Pandora AI effects: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage etc."),
+            "Get full access to all Pandora AI Pro privileges and enjoy weekly updates now!"),
         "buy_attr_metaverse": MessageLookupByLibrary.simpleMessage(
             "%d Conversions of Me-Taverse per day"),
         "c_password": MessageLookupByLibrary.simpleMessage("Confirm Password"),
@@ -474,6 +474,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Password not matched"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),
         "pay": MessageLookupByLibrary.simpleMessage("Pay"),
+        "pay_now": MessageLookupByLibrary.simpleMessage("Pay Now"),
         "pay_with_new_card":
             MessageLookupByLibrary.simpleMessage("Pay with new card"),
         "payment": MessageLookupByLibrary.simpleMessage("Payment"),

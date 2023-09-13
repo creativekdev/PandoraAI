@@ -108,7 +108,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "buy_attr_ai_artist":
             MessageLookupByLibrary.simpleMessage("%d 次AI Artist转化 / 天"),
         "buy_attr_ai_tools": MessageLookupByLibrary.simpleMessage(
-            "解除限制完全访问所有PandoraAI效果：Cartoonize, AIColoring, RemoveBackground，Me-taverse, AIScribble, TextToImage等."),
+            "立即获得所有 Pandora AI Pro 特权并享受每周丰富的内容更新！"),
         "buy_attr_metaverse":
             MessageLookupByLibrary.simpleMessage("%d 次Me-Taverse转化 / 天"),
         "c_password": MessageLookupByLibrary.simpleMessage("确认密码"),
@@ -393,6 +393,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation1": MessageLookupByLibrary.simpleMessage("密码不正确"),
         "password": MessageLookupByLibrary.simpleMessage("密码"),
         "pay": MessageLookupByLibrary.simpleMessage("支付"),
+        "pay_now": MessageLookupByLibrary.simpleMessage("去支付"),
         "pay_with_new_card": MessageLookupByLibrary.simpleMessage("使用新卡支付"),
         "payment": MessageLookupByLibrary.simpleMessage("支付"),
         "paymentBtn": MessageLookupByLibrary.simpleMessage("提交订单"),

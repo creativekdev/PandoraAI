@@ -11,7 +11,7 @@ import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
-import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/payment/payment.dart';
 import 'package:flutter/cupertino.dart';
 
 extension DialogWidgetEx on Widget {
@@ -467,7 +467,7 @@ Future<PAICameraEntity?> showPhotoTakeDialog(BuildContext context, bool showRece
       CommonExtension().showToast('Image not exist');
       return null;
     }
-    return PAICameraEntity(source: 'gallery', xFile: XFile(first.path));
+    return PAICameraEntity(source: 'gallery', xFile: XFile(first.path), width: list.first.width, height: list.first.height);
   } else if (type == PhotoTakeDialogType.recent) {
     Navigator.push(
         context,

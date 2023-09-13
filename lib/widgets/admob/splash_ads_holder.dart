@@ -7,11 +7,11 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/enums/ad_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/PurchaseScreen.dart';
+import 'package:cartoonizer/views/payment/PurchaseScreen.dart';
 import 'package:cartoonizer/widgets/admob/ads_holder.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import '../../views/StripeSubscriptionScreen.dart';
+import '../../views/payment/StripeSubscriptionScreen.dart';
 
 class SplashAdsHolder extends PageAdsHolder {
   /// 广告重载间隔

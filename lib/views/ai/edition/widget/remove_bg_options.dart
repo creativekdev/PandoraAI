@@ -37,7 +37,7 @@ class RemoveBgOptions extends StatelessWidget {
             .intoContainer(
               width: double.maxFinite,
               padding: EdgeInsets.symmetric(horizontal: $(4)),
-              margin: EdgeInsets.only(top: 40),
+              margin: EdgeInsets.only(top: 15),
             )
             .ignore(ignoring: controller.removedImage == null),
         if (controller.removedImage == null)

@@ -49,7 +49,7 @@ class _AnotherMeScreenState extends State<AnotherMeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
-      body: AppCamera(onTakePhoto: (xFile, ratio, source) async {
+      body: AppCamera(onTakePhoto: (xFile, ratio, width, height, source) async {
         startTransfer(context, await saveIfNotExist(xFile), ratio, null, source);
       }),
     );

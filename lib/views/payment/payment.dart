@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/views/PurchaseScreen.dart';
-import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
+import 'package:cartoonizer/views/payment/PurchaseScreen.dart';
+import 'package:cartoonizer/views/payment/StripeSubscriptionScreen.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 class PaymentUtils {

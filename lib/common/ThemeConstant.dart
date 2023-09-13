@@ -26,6 +26,8 @@ class ColorConstant {
     Color(0xFF6CF6FF),
     Color(0xFFFF66FC),
   ];
+  static const ColorLinearStart = Color(0xFFE31ECD);
+  static const ColorLinearEnd = Color(0xFF243CFF);
   static const BorderColor = Color.fromRGBO(0, 0, 0, 0.05);
   static const HintColor = Color.fromRGBO(151, 151, 151, 1);
   static const DividerColor = Color.fromRGBO(204, 204, 204, 1);

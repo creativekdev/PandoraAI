@@ -18,7 +18,7 @@ import 'package:cartoonizer/widgets/credit_card_form/credit_card_model.dart';
 import 'package:http/http.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import 'account/LoginScreen.dart';
+import '../account/LoginScreen.dart';
 
 class StripeAddNewCardScreen extends StatefulWidget {
   final String planId;

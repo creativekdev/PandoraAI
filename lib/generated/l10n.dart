@@ -1210,6 +1210,16 @@ class S {
     );
   }
 
+  /// `Pay Now`
+  String get pay_now {
+    return Intl.message(
+      'Pay Now',
+      name: 'pay_now',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Pay with new card`
   String get pay_with_new_card {
     return Intl.message(
@@ -5090,10 +5100,10 @@ class S {
     );
   }
 
-  /// `Get unlimited full access to all Pandora AI effects: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage etc.`
+  /// `Get full access to all Pandora AI Pro privileges and enjoy weekly updates now!`
   String get buy_attr_ai_tools {
     return Intl.message(
-      'Get unlimited full access to all Pandora AI effects: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage etc.',
+      'Get full access to all Pandora AI Pro privileges and enjoy weekly updates now!',
       name: 'buy_attr_ai_tools',
       desc: '',
       args: [],
