@@ -279,8 +279,11 @@
   "give_feedback": "コメント",
   "input_feedback": "あなたのコメントを入力してください",
   "no_thanks": "結構です",
-  "rate_pandora_ai": "私たちに評価をください",
+  "rate_pandora_ai": "Pandora AIがお気に入りですか?",
   "rate_description": "ご利用体験はいかがでしたか？評価をいただけますか？",
+  "rate_bad": "悪い",
+  "rate_average": "平均",
+  "rate_good": "良い",
   "looveit": "好きです、今すぐ評価へ",
   "more": "詳細",
   "generate_again": "再生",
@@ -504,5 +507,9 @@
   "Halloween": "Halloween",
   "Cartoon": "Cartoon",
   "Another_World": "Another World",
-  "ai_art": "AI Art"
+  "ai_art": "AI Art",
+  "input_comments": "コメントを入力してください",
+  "password_not_match": "2つのパスワードが一致しません",
+  "input_password": "パスワードを入力してください",
+  "input_valid_email": "有効なメールアドレスを入力してください"
 }

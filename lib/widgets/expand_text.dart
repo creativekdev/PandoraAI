@@ -120,8 +120,8 @@ class _ExpandableTextState extends State<ExpandableText> with SingleTickerProvid
         .width;
     if (oneLineWidth > width * minLines) {
       var d = width * 1.8 / oneLineWidth;
-      var e = (text.length * d).toInt();
-      collapseText = text.substring(0, e);
+      var e = (text.characters.length * d).toInt();
+      collapseText = text.characters.take(e).toString();
     } else {
       collapseText = text;
     }

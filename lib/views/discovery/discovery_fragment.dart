@@ -207,8 +207,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                         padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(7)),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(32),
-                          // color: checked ? Colors.transparent : Color(0xFF37373B),
-                          color: Colors.transparent,
+                          color: checked ? Colors.transparent : Color(0xFF37373B),
                           border: Border.all(color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent, width: 1),
                         ),
                       )
@@ -243,11 +242,14 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                   width: $(16),
                 )
                     .intoContainer(
-                      padding: EdgeInsets.symmetric(vertical: $(5), horizontal: $(6)),
-                      margin: EdgeInsets.only(top: 8),
-                      color: ColorConstant.BackgroundColor,
-                    )
-                    .visibility(visible: !listController.isTagScrolling && !listController.isScrollEnd),
+                  padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(6)),
+                  margin: EdgeInsets.only(top: 8),
+                  color: ColorConstant.BackgroundColor,
+                )
+                    .intoGestureDetector(onTap: () {
+                  listController.tagController
+                      .animateTo(listController.tagController.offset + ScreenUtil.screenSize.width, duration: Duration(milliseconds: 300), curve: Curves.linear);
+                }).visibility(visible: !listController.isTagScrolling && !listController.isScrollEnd),
               ),
             ],
           )

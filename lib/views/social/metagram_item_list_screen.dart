@@ -94,9 +94,6 @@ class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
     await hideLoading();
     Events.metagramCompleteDownload(type: 'image');
     CommonExtension().showImageSavedOkToast(context);
-    delay(() {
-      userManager.rateNoticeOperator.onSwitch(context);
-    }, milliseconds: 2000);
   }
 
   @override

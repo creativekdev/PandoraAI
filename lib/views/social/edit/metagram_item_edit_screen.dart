@@ -377,10 +377,6 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
     await hideLoading();
     Events.metagramCompleteDownload(type: 'image');
     CommonExtension().showImageSavedOkToast(context);
-    delay(() {
-      UserManager userManager = AppDelegate.instance.getManager();
-      userManager.rateNoticeOperator.onSwitch(context);
-    }, milliseconds: 2000);
   }
 
   void submit(MetagramItemEditController controller) {

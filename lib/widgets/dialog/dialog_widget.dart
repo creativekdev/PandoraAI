@@ -154,7 +154,11 @@ showShareSuccessDialog(BuildContext context) {
           margin: EdgeInsets.symmetric(horizontal: $(35)),
         )
         .intoCenter(),
-  );
+  ).then((value) {
+    // 增加次数判断，看是否显示rate_us
+    UserManager userManager = AppDelegate.instance.getManager();
+    userManager.rateNoticeOperator.onSwitch(Get.context!, false);
+  });
 }
 
 /// openAppSettingsOnGalleryRequireFailed

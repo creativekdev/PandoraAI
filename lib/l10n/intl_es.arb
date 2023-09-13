@@ -279,8 +279,11 @@
   "give_feedback": "Retroalimentación",
   "input_feedback": "Por favor, introduzca sus comentarios",
   "no_thanks": "No por ahora",
-  "rate_pandora_ai": "Califícanos",
+  "rate_pandora_ai": "¿Te gusta Pandora AI?",
   "rate_description": "¿Cómo fue tu experiencia? ¿Quieres puntuarnos?",
+  "rate_bad": "Mala",
+  "rate_average": "Promedio",
+  "rate_good": "Buena",
   "looveit": "Me encantó, ahora ve y califica",
   "more": "más",
   "generate_again": "Reconstruir",
@@ -510,5 +513,9 @@
   "Halloween": "Halloween",
   "Cartoon": "Cartoon",
   "Another_World": "Another World",
-  "ai_art": "AI Art"
+  "ai_art": "AI Art",
+  "input_comments": "Introduzca comentarios",
+  "password_not_match": "Dos contraseñas no coinciden, vuelva a introducirlas",
+  "input_password": "Introduzca su contraseña",
+  "input_valid_email": "Introduzca una dirección de correo electrónico válida"
 }

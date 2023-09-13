@@ -2850,21 +2850,51 @@ class S {
     );
   }
 
-  /// `Rate Pandora AI`
+  /// `Do you like Pandora AI?`
   String get rate_pandora_ai {
     return Intl.message(
-      'Rate Pandora AI',
+      'Do you like Pandora AI?',
       name: 'rate_pandora_ai',
       desc: '',
       args: [],
     );
   }
 
-  /// `If you enjoy using Pandora AI, would you mind taking a moment to rate it?`
+  /// `You generate a lot of incredible pictures! Click on the people below to leave your feelings!`
   String get rate_description {
     return Intl.message(
-      'If you enjoy using Pandora AI, would you mind taking a moment to rate it?',
+      'You generate a lot of incredible pictures! Click on the people below to leave your feelings!',
       name: 'rate_description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bad`
+  String get rate_bad {
+    return Intl.message(
+      'Bad',
+      name: 'rate_bad',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Average`
+  String get rate_average {
+    return Intl.message(
+      'Average',
+      name: 'rate_average',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Good`
+  String get rate_good {
+    return Intl.message(
+      'Good',
+      name: 'rate_good',
       desc: '',
       args: [],
     );
@@ -5165,6 +5195,46 @@ class S {
     return Intl.message(
       'AI Art',
       name: 'ai_art',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please input comments`
+  String get input_comments {
+    return Intl.message(
+      'Please input comments',
+      name: 'input_comments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password is not matched`
+  String get password_not_match {
+    return Intl.message(
+      'Password is not matched',
+      name: 'password_not_match',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter your password`
+  String get input_password {
+    return Intl.message(
+      'Please enter your password',
+      name: 'input_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid e-mail address`
+  String get input_valid_email {
+    return Intl.message(
+      'Please enter a valid e-mail address',
+      name: 'input_valid_email',
       desc: '',
       args: [],
     );

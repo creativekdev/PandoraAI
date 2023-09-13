@@ -168,6 +168,10 @@ class Images {
    static const String ic_prompt_tripple_arrow = 'assets/images/ic_prompt_tripple_arrow.png';
    static const String ic_radio_off = 'assets/images/ic_radio_off.png';
    static const String ic_radio_on = 'assets/images/ic_radio_on.png';
+   static const String ic_rate_average = 'assets/images/ic_rate_average.png';
+   static const String ic_rate_bad = 'assets/images/ic_rate_bad.png';
+   static const String ic_rate_bg = 'assets/images/ic_rate_bg.png';
+   static const String ic_rate_good = 'assets/images/ic_rate_good.png';
    static const String ic_rate_us = 'assets/images/ic_rate_us.png';
    static const String ic_recent_checked = 'assets/images/ic_recent_checked.png';
    static const String ic_recent_delete = 'assets/images/ic_recent_delete.png';

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -153,7 +154,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                         ),
                         SizedBox(width: $(6)),
                         Text(
-                          '${txt2imgController.editingController.text.length}/${txt2imgController.maxLength}',
+                          '${txt2imgController.editingController.text.characters.length}/${txt2imgController.maxLength}',
                           style: TextStyle(color: Color(0xff858585)),
                         )
                       ],

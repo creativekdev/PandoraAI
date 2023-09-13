@@ -44,6 +44,7 @@
   "discoveryComment": "评论",
   "discoveryComments": "评论",
   "discoveryDetails": "详情",
+  "input_comments": "输入评论",
   "discoveryDetailsUseSameTemplate": "使用此模板",
   "discoveryLike": "点赞",
   "discoveryShareInputHint": "I created this using %s",
@@ -279,8 +280,11 @@
   "give_feedback": "意见反馈",
   "input_feedback": "请输入您的意见",
   "no_thanks": "暂时不用了",
-  "rate_pandora_ai": "给我们评分",
-  "rate_description": "您的使用体验如何？愿意给我们评分么？",
+  "rate_pandora_ai": "喜欢Pandora AI吗？",
+  "rate_description": "你生成了许多不可思议的图片！点击下方人物，留下您的感受吧！",
+  "rate_bad": "吐个槽",
+  "rate_average": "一般",
+  "rate_good": "给个好评",
   "looveit": "很喜欢，现在去评分",
   "more": "更多",
   "generate_again": "重新生成",
@@ -511,5 +515,8 @@
   "Halloween": "Halloween",
   "Cartoon": "Cartoon",
   "Another_World": "Another World",
-  "ai_art": "AI Art"
+  "ai_art": "AI Art",
+  "password_not_match": "两次输入密码不一致，请重新输入",
+  "input_password": "请输入密码",
+  "input_valid_email": "请输入有效的邮箱地址"
 }

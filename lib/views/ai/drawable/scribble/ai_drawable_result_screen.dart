@@ -1,14 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/controller/recent/recent_controller.dart';
-import 'package:cartoonizer/controller/upload_image_controller.dart';
-import 'package:cartoonizer/widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/widgets/photo_view/any_photo_pager.dart';
-import 'package:cartoonizer/widgets/state/app_state.dart';
-import 'package:cartoonizer/widgets/switch_image_card.dart';
 import 'package:cartoonizer/api/ai_draw_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -17,6 +9,8 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/recent/recent_controller.dart';
+import 'package:cartoonizer/controller/upload_image_controller.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
@@ -27,6 +21,12 @@ import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
 import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/widgets/photo_view/any_photo_pager.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
+import 'package:cartoonizer/widgets/switch_image_card.dart';
 import 'package:common_utils/common_utils.dart';
 
 class AiDrawableResultScreen extends StatefulWidget {
@@ -140,6 +140,11 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
             drawableController.resultFilePaths = value.filePath;
             resultFilePath = drawableController.resultFilePaths.first;
             progressBarController.loadComplete();
+            // 增加次数判断，看是否显示rate_us
+            delay(() {
+              UserManager userManager = AppDelegate.instance.getManager();
+              userManager.rateNoticeOperator.onSwitch(Get.context!, true);
+            }, milliseconds: 1000);
           } else {
             progressBarController.onError();
           }
@@ -306,10 +311,6 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
     await hideLoading();
     Events.aidrawCompleteDownload(type: 'image');
     CommonExtension().showImageSavedOkToast(context);
-    delay(() {
-      UserManager userManager = AppDelegate.instance.getManager();
-      userManager.rateNoticeOperator.onSwitch(context);
-    }, milliseconds: 2000);
   }
 
   shareOut(BuildContext context) async {

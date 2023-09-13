@@ -253,10 +253,6 @@ class _SaveAvatarsScreenState extends AppState<SaveAvatarsScreen> {
           Events.avatarResultDownloadOkClick(saveType: selectedList.length == outputImages.length ? "Save All" : "Save Select");
           hideLoading().whenComplete(() {
             CommonExtension().showImageSavedOkToast(context);
-            delay(() {
-              UserManager userManager = AppDelegate.instance.getManager();
-              userManager.rateNoticeOperator.onSwitch(context);
-            }, milliseconds: 2000);
           });
         });
       }
