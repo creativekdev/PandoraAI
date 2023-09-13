@@ -5210,10 +5210,10 @@ class S {
     );
   }
 
-  /// `The two input passwords do not match, please re-enter`
+  /// `Password is not matched`
   String get password_not_match {
     return Intl.message(
-      'The two input passwords do not match, please re-enter',
+      'Password is not matched',
       name: 'password_not_match',
       desc: '',
       args: [],

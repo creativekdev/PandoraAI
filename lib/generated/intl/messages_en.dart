@@ -479,8 +479,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation1":
             MessageLookupByLibrary.simpleMessage("Password not matched"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),
-        "password_not_match": MessageLookupByLibrary.simpleMessage(
-            "The two input passwords do not match, please re-enter"),
+        "password_not_match":
+            MessageLookupByLibrary.simpleMessage("Password is not matched"),
         "pay": MessageLookupByLibrary.simpleMessage("Pay"),
         "pay_with_new_card":
             MessageLookupByLibrary.simpleMessage("Pay with new card"),
