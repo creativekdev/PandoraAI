@@ -1,19 +1,19 @@
 import 'dart:io';
 
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/controller/recent/recent_controller.dart';
-import 'package:cartoonizer/controller/upload_image_controller.dart';
-import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/color_fill_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/recent/recent_controller.dart';
+import 'package:cartoonizer/controller/upload_image_controller.dart';
 import 'package:cartoonizer/models/color_fill_result_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
 import 'package:common_utils/common_utils.dart';
 
 class AiColoringController extends GetxController {
@@ -112,6 +112,11 @@ class AiColoringController extends GetxController {
         if (generateCount - 1 > 0) {
           Events.aiColoringGenerateAgain(time: generateCount - 1);
         }
+        // 增加次数判断，看是否显示rate_us
+        delay(() {
+          UserManager userManager = AppDelegate.instance.getManager();
+          userManager.rateNoticeOperator.onSwitch(Get.context!, true);
+        }, milliseconds: 1000);
       } else {
         if (value.error != null) {
           showLimitDialog(context, type: value.error!, function: 'aicoloring', source: 'ai_coloring_result');
@@ -135,9 +140,6 @@ class AiColoringController extends GetxController {
             if (value.entity != null) {
               simulateProgressBarController.loadComplete();
               Events.aiColoringCompleteSuccess(source: source, photoType: photoType);
-              // 增加次数判断，看是否显示rate_us
-              UserManager userManager = AppDelegate.instance.getManager();
-              userManager.rateNoticeOperator.onSwitch(Get.context!, true);
             } else {
               simulateProgressBarController.onError(error: value.type);
             }

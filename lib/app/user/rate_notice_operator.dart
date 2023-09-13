@@ -1,5 +1,5 @@
-import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
 import 'package:common_utils/common_utils.dart';
@@ -61,7 +61,7 @@ class RateNoticeOperator {
     if ((configEntity?.switchCount ?? 0) < 2 && addCount) {
       return false;
     }
-    return false;
+    return true;
   }
 
   void onSwitch(BuildContext context, bool addCount) {

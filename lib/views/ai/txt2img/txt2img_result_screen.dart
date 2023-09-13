@@ -2,14 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:cartoonizer/common/Extension.dart';
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -19,6 +16,9 @@ import 'package:cartoonizer/views/ai/txt2img/widget/txt2img_opt_container.dart';
 import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:vibration/vibration.dart';
 
@@ -87,6 +87,10 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
       if (value != null) {
         if (value.data != null) {
           progressController.loadComplete();
+          delay(() {
+            UserManager userManager = AppDelegate.instance.getManager();
+            userManager.rateNoticeOperator.onSwitch(Get.context!, true);
+          }, milliseconds: 1000);
         } else {
           progressController.onError(error: value.error);
         }
