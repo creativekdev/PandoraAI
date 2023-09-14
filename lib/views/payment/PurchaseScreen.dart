@@ -363,7 +363,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         }
       });
     }
-    var yearlyPrice = double.tryParse(year.price?.toString() ?? '0') ?? 0;
+    var yearlyPrice = double.tryParse(year.rawPrice?.toString() ?? '0') ?? 0;
     double originYearlyPrice = 0;
     if (yearlyPrice != 0) {
       originYearlyPrice = yearlyPrice / 0.65;
@@ -622,7 +622,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                   Container(
                                     height: 1,
                                     color: checked ? ColorConstant.ColorLinearStart : Color(0xffa5a5a5),
-                                    width: yearlyOriP.toStringAsFixed(2).length * $(10.4),
+                                    width: yearlyOriP.toStringAsFixed(2).length * $(9.8),
                                   ).intoCenter(),
                                 ],
                               ).intoContainer(height: $(20), margin: EdgeInsets.only(left: $(6)))
