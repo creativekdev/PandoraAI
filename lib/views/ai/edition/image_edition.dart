@@ -2,18 +2,18 @@ import 'dart:io';
 
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition_screen.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
 
 import '../../../models/enums/home_card_type.dart';
 
@@ -144,6 +144,6 @@ class ImageEdition {
 
   static Size getShownImageSize() {
     return Size(ScreenUtil.screenSize.width,
-        ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(65) + ScreenUtil.getBottomPadding(Get.context!)));
+        ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140) + ScreenUtil.getBottomPadding(Get.context!)));
   }
 }

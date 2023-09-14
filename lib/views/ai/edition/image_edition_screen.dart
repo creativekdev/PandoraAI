@@ -318,7 +318,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
               body: Stack(
                 fit: StackFit.expand,
                 children: [
-                  buildContent(context, controller).intoContainer(margin: EdgeInsets.only(bottom: $(62))),
+                  buildContent(context, controller).intoContainer(
+                    margin: EdgeInsets.only(bottom: $(140) + ScreenUtil.getBottomPadding(context)),
+                  ),
                   Align(
                     child: buildOptions(context, controller).intoContainer(
                       padding: EdgeInsets.only(top: $(15)),
