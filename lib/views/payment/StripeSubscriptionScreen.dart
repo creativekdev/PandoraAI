@@ -31,41 +31,23 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     "monthly": {
       "id": "io.socialbook.cartoonizer.monthly",
       "plan_id": "80000",
-      "title": "Monthly",
+      "title": S.of(Get.context!).monthly,
       "price": 3.99,
-      "unit": "Month",
+      "unit": S.of(Get.context!).month,
     },
     "yearly": {
-      "id": "io.socialbook.cartoonizer.yearly",
-      "plan_id": "80001",
-      "title": "Yearly",
-      "price": 39.99,
-      "unit": "Year",
+      "id": "io.socialbook.cartoonizer.yearly29",
+      "plan_id": "80002",
+      "title": S.of(Get.context!).yearly,
+      "price": 29.99,
+      "unit": S.of(Get.context!).year,
     },
   };
 
   @override
   void initState() {
-    delay(() {
-      subscriptions = {
-        "monthly": {
-          "id": "io.socialbook.cartoonizer.monthly",
-          "plan_id": "80000",
-          "title": S.of(context).monthly,
-          "price": 3.99,
-          "unit": S.of(context).month,
-        },
-        "yearly": {
-          "id": "io.socialbook.cartoonizer.yearly",
-          "plan_id": "80001",
-          "title": S.of(context).yearly,
-          "price": 39.99,
-          "unit": S.of(context).year,
-        },
-      };
-      initStoreInfo();
-    });
     super.initState();
+    initStoreInfo();
   }
 
   @override
@@ -230,7 +212,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     var yearlyPrice = double.tryParse(yearly['price']?.toString() ?? '0') ?? 0;
     double originYearlyPrice = 0;
     if (yearlyPrice != 0) {
-      originYearlyPrice = yearlyPrice / 0.65;
+      originYearlyPrice = yearlyPrice / 0.75;
     }
     return Column(
       children: [
@@ -485,7 +467,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(32), topRight: Radius.circular($(32))),
               child: Container(
                 child: Text(
-                  '35% off',
+                  '25% off',
                   style: TextStyle(color: Colors.white, fontSize: $(8), fontFamily: 'Poppins'),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: $(8)),

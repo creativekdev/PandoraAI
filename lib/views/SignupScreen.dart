@@ -88,7 +88,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
       token = googleAuth?.accessToken;
       tokenId = googleAuth?.idToken;
 
-      var credential;
+      OAuthCredential credential;
       if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
         credential = GoogleAuthProvider.credential(
           accessToken: googleAuth?.accessToken,
@@ -281,6 +281,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
         } else {
           CommonExtension().showToast("Oops! Something went wrong");
         }
+      } catch (e) {
       } finally {
         hideLoading();
       }

@@ -5,6 +5,7 @@ import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/recent/recent_controller.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
@@ -38,6 +39,15 @@ class ImageEdition {
     } else {
       if (record == null) {
         bool isShowRecent = cardType == HomeCardType.imageEdition;
+        if (initKey == null) {
+          RecentController recentController = Get.find();
+          var firstWhereOrNull = recentController.recordList.firstWhereOrNull((element) {
+            return element is RecentEffectModel || element is RecentStyleMorphModel;
+          });
+          if (firstWhereOrNull != null) {
+            initKey = firstWhereOrNull.itemList?.first?.key;
+          }
+        }
         await _open(context, source: source, initKey: initKey, style: style, function: function, isShowRecent: isShowRecent);
       } else {
         await _openFromRecent(context, source: source, initKey: initKey, style: style, function: function, record: record);

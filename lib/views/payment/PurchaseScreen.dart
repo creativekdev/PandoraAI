@@ -29,7 +29,7 @@ class PurchaseScreen extends StatefulWidget {
 
 const bool _kAutoConsume = true;
 const String _kConsumableId = 'io.socialbook.cartoonizer.monthly';
-const String _kUpgradeId = 'io.socialbook.cartoonizer.yearly';
+const String _kUpgradeId = 'io.socialbook.cartoonizer.yearly29';
 const List<String> _kProductIds = <String>[
   _kConsumableId,
   _kUpgradeId,
@@ -683,7 +683,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(32), topRight: Radius.circular($(32))),
               child: Container(
                 child: Text(
-                  '35% off',
+                  '25% off',
                   style: TextStyle(color: Colors.white, fontSize: $(8), fontFamily: 'Poppins'),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: $(8)),
