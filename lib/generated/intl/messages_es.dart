@@ -133,7 +133,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "buy_attr_ai_artist":
             MessageLookupByLibrary.simpleMessage("％d conversión AI Artist/día"),
         "buy_attr_ai_tools": MessageLookupByLibrary.simpleMessage(
-            "Obtenga acceso ilimitado completo a todos los efectos de Pandora AI: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage, etc."),
+            "Obtenga acceso completo a todos los privilegios de Pandora AI Pro y disfrute de actualizaciones semanales ahora!"),
         "buy_attr_metaverse": MessageLookupByLibrary.simpleMessage(
             "％d conversión me-taverse/día"),
         "c_password":
@@ -389,6 +389,24 @@ class MessageLookup extends MessageLookupByLibrary {
         "last_name": MessageLookupByLibrary.simpleMessage("Apellido"),
         "last_one": MessageLookupByLibrary.simpleMessage("Ya el ultimo"),
         "like": MessageLookupByLibrary.simpleMessage("Gustar"),
+        "limit_inv_desc": MessageLookupByLibrary.simpleMessage(
+            "Comparte el código de invitación para obtener crédito adicional"),
+        "limit_login_desc": MessageLookupByLibrary.simpleMessage(
+            "Obtenga créditos adicionales todos los días Múltiples oportunidades de generación de imágenes gratuitas por efecto Conviértase en un usuario registrado y disfrute de beneficios exclusivos para usuarios registrados."),
+        "limit_login_title": MessageLookupByLibrary.simpleMessage(
+            "Inicia sesión para obtener créditos adicionales diarios"),
+        "limit_login_title_extra": MessageLookupByLibrary.simpleMessage(
+            "La cuota de hoy para esta función se ha agotado."),
+        "limit_pro_btn":
+            MessageLookupByLibrary.simpleMessage("Hazte socio por sólo "),
+        "limit_pro_desc": MessageLookupByLibrary.simpleMessage(
+            "Editor de fotos, efectos exclusivos y actualizaciones semanales."),
+        "limit_pro_title":
+            MessageLookupByLibrary.simpleMessage("Actualizar a miembro"),
+        "limit_pro_title_extra": MessageLookupByLibrary.simpleMessage(
+            "o vuelva mañana para obtener créditos adicionales."),
+        "limit_register_btn": MessageLookupByLibrary.simpleMessage(
+            "Registro con un clic para obtener más créditos"),
         "login": MessageLookupByLibrary.simpleMessage("Iniciar sesión"),
         "loginToThePlatformAccount": MessageLookupByLibrary.simpleMessage(
             "Inicie sesión en su cuenta de terceros"),
@@ -450,6 +468,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "¡Error en la solicitud! Por favor, compruebe su red"),
         "no_messages_yet":
             MessageLookupByLibrary.simpleMessage("No hay noticias nuevas"),
+        "no_network": MessageLookupByLibrary.simpleMessage(
+            "No se detectó ninguna conexión de red"),
         "no_thanks": MessageLookupByLibrary.simpleMessage("No por ahora"),
         "no_watermark": MessageLookupByLibrary.simpleMessage(
             "(Imagen de alta definición sin marca de agua)"),
@@ -504,9 +524,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation1":
             MessageLookupByLibrary.simpleMessage("La contraseña es incorrecta"),
         "password": MessageLookupByLibrary.simpleMessage("contraseña"),
+        "password_length_tips": MessageLookupByLibrary.simpleMessage(
+            "La longitud de la contraseña debe ser de 6 a 16 caracteres."),
         "password_not_match": MessageLookupByLibrary.simpleMessage(
             "Dos contraseñas no coinciden, vuelva a introducirlas"),
+        "password_strong_detected": MessageLookupByLibrary.simpleMessage(
+            "Evite números/letras/caracteres especiales puros"),
         "pay": MessageLookupByLibrary.simpleMessage("pagar"),
+        "pay_now": MessageLookupByLibrary.simpleMessage("Pagar ahora"),
         "pay_with_new_card":
             MessageLookupByLibrary.simpleMessage("Pagar con una tarjeta nueva"),
         "payment": MessageLookupByLibrary.simpleMessage("pagar"),
@@ -572,6 +597,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("Cantidad"),
+        "quatity": MessageLookupByLibrary.simpleMessage("Cantidad"),
         "rate_average": MessageLookupByLibrary.simpleMessage("Promedio"),
         "rate_bad": MessageLookupByLibrary.simpleMessage("Mala"),
         "rate_description": MessageLookupByLibrary.simpleMessage(
@@ -769,7 +795,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "unpaid": MessageLookupByLibrary.simpleMessage("Impagado"),
         "update": MessageLookupByLibrary.simpleMessage("Actualizar"),
         "update_address_success": MessageLookupByLibrary.simpleMessage(
-            "Dirección eliminada con éxito"),
+            "Dirección actualizada exitosamente"),
         "update_now": MessageLookupByLibrary.simpleMessage("Actualizar ahora"),
         "update_pass":
             MessageLookupByLibrary.simpleMessage("Actualizar la contraseña"),

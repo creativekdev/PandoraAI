@@ -3,7 +3,9 @@ import 'dart:ui';
 
 import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/widgets/tabbar/app_tab_bar.dart';
@@ -21,7 +23,7 @@ import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
-import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/payment/payment.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -117,6 +119,13 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 }
               }),
               Container(height: $(12)),
+              ImageTextBarWidget(S.of(context).ppmPro, Images.ic_premium, true).intoGestureDetector(onTap: () {
+                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+                PaymentUtils.pay(context, 'my_page').then((value) {
+                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                });
+              }).offstage(offstage: userManager.isNeedLogin),
+              line(context).offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).recently, Images.ic_recently, true, color: Color(0xfff95f5f)).intoGestureDetector(onTap: () {
                 Navigator.push(
                     context,
@@ -187,14 +196,8 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 onTap: () async {
                   Avatar.open(context, source: 'my_page');
                 },
-              ),
-              line(context),
-              ImageTextBarWidget(S.of(context).premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
-                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                PaymentUtils.pay(context, 'my_page').then((value) {
-                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-                });
-              }).offstage(offstage: userManager.isNeedLogin),
+              ).visibility(visible: false),
+              // line(context),
               Container(height: $(12)),
               ImageTextBarWidget(S.of(context).settings, Images.ic_settings, true).intoGestureDetector(
                 onTap: () {

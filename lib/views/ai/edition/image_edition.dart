@@ -1,14 +1,20 @@
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
+import 'dart:io';
+
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/controller/recent/recent_controller.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition_screen.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
 
 import '../../../models/enums/home_card_type.dart';
 
@@ -33,6 +39,15 @@ class ImageEdition {
     } else {
       if (record == null) {
         bool isShowRecent = cardType == HomeCardType.imageEdition;
+        if (initKey == null) {
+          RecentController recentController = Get.find();
+          var firstWhereOrNull = recentController.recordList.firstWhereOrNull((element) {
+            return element is RecentEffectModel || element is RecentStyleMorphModel;
+          });
+          if (firstWhereOrNull != null) {
+            initKey = firstWhereOrNull.itemList?.first?.key;
+          }
+        }
         await _open(context, source: source, initKey: initKey, style: style, function: function, isShowRecent: isShowRecent);
       } else {
         await _openFromRecent(context, source: source, initKey: initKey, style: style, function: function, record: record);
@@ -56,7 +71,8 @@ class ImageEdition {
       return;
     }
     CacheManager cacheManager = AppDelegate().getManager();
-    var path = await ImageUtils.onImagePick(paiCameraEntity.xFile.path, cacheManager.storageOperator.imageDir.path, compress: true, size: 1536, showLoading: true, maxM: 2);
+    var path = await onPrePickImage(paiCameraEntity.xFile.path, paiCameraEntity.width, paiCameraEntity.height);
+    path = await ImageUtils.onImagePick(path, cacheManager.storageOperator.imageDir.path, compress: true, size: 1536, showLoading: true, maxM: 2);
     await Navigator.of(context).push(
       MaterialPageRoute(
         settings: RouteSettings(name: '/ImageEditionScreen'),
@@ -118,5 +134,26 @@ class ImageEdition {
         );
       },
     ));
+  }
+
+  static Future<String> onPrePickImage(String path, int width, int height) async {
+    var shownImageSize = getShownImageSize();
+    var containerRatio = shownImageSize.width / shownImageSize.height;
+    var imageRatio = width / height;
+    if (imageRatio < containerRatio) {
+      //图片更细长，需要裁减缩放, 先获取图片裁减区域
+      var targetCoverRect = ImageUtils.getTargetCoverRect(Size(width.toDouble(), height.toDouble()), shownImageSize);
+      var imageInfo = await SyncFileImage(file: File(path)).getImage();
+      var uint8list = await cropFile(imageInfo.image, targetCoverRect);
+      var s = path + "crop_${containerRatio}." + getFileType(path);
+      await File(s).writeAsBytes(uint8list);
+      return s;
+    }
+    return path;
+  }
+
+  static Size getShownImageSize() {
+    return Size(ScreenUtil.screenSize.width,
+        ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140) + ScreenUtil.getBottomPadding(Get.context!)));
   }
 }

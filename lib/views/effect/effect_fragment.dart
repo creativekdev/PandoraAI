@@ -13,7 +13,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
-import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/payment/payment.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/widgets/badge.dart';

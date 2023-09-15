@@ -19,7 +19,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../widgets/dialog/dialog_widget.dart';
-import '../ChangePasswordScreen.dart';
+import '../account/ChangePasswordScreen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);

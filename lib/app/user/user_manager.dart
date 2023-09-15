@@ -13,7 +13,7 @@ import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
-import 'package:cartoonizer/views/EmailVerificationScreen.dart';
+import 'package:cartoonizer/views/account/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/LoginScreen.dart';
 import 'package:cartoonizer/widgets/auth/connector_platform.dart';
 import 'package:common_utils/common_utils.dart';

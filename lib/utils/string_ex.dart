@@ -87,6 +87,7 @@ extension StringEx on String {
 typedef StringRender = String Function();
 
 Map<String, StringRender> _intlMap = {
+  'no network': () => S.of(Get.context!).no_network,
   'not_found': () => S.of(Get.context!).not_found,
   'invalid password': () => S.of(Get.context!).invalid_password,
   'oops failed': () => S.of(Get.context!).commonFailedToast,

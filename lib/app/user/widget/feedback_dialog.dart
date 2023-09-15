@@ -1,11 +1,13 @@
-import 'package:cartoonizer/common/Extension.dart';
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
+
+import '../../../images-res.dart';
 
 class FeedbackUtils {
   static Future<bool?> open(BuildContext context) async {
@@ -73,10 +75,10 @@ class _FeedbackDialogState extends AppState<_FeedbackDialog> {
   @override
   Widget buildWidget(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      // mainAxisSize: MainAxisSize.min,
       children: [
         TitleTextWidget(S.of(context).give_feedback, ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
-          padding: EdgeInsets.only(top: $(25), bottom: $(15), left: $(15), right: $(15)),
+          padding: EdgeInsets.only(top: $(25), bottom: $(26), left: $(107), right: $(63)),
         ),
         TextField(
           controller: textEditingController,
@@ -102,27 +104,75 @@ class _FeedbackDialogState extends AppState<_FeedbackDialog> {
         ).intoContainer(
           padding: EdgeInsets.all($(10)),
           margin: EdgeInsets.symmetric(horizontal: $(15)),
-          decoration: BoxDecoration(color: Color(0xff33363a), borderRadius: BorderRadius.circular($(6))),
+          decoration: BoxDecoration(
+              color: Color(0xff15172A),
+              borderRadius: BorderRadius.circular($(8)),
+              border: Border.all(
+                color: Color(0xFFFFFFFF).withOpacity(0.1),
+                width: $(1),
+              )),
         ),
-        Text(
-          S.of(context).submit,
-          style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(17)),
+        // Text(
+        //   S.of(context).submit,
+        //   style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(17)),
+        // )
+        //     .intoContainer(
+        //         alignment: Alignment.center,
+        //         width: double.maxFinite,
+        //         decoration: BoxDecoration(borderRadius: BorderRadius.circular($(18)), color: ColorConstant.White),
+        //         padding: EdgeInsets.symmetric(vertical: $(5)),
+        //         margin: EdgeInsets.only(
+        //           top: $(20),
+        //           bottom: $(20),
+        //           left: $(15),
+        //           right: $(15),
+        //         ))
+        //     .intoGestureDetector(onTap: () {
+        //   submit();
+        // }),
+        ShaderMask(
+          shaderCallback: (rect) {
+            return LinearGradient(colors: [
+              ColorConstant.ColorLinearStart,
+              ColorConstant.ColorLinearEnd,
+            ]).createShader(rect);
+          },
+          blendMode: BlendMode.srcATop,
+          child: Text(
+            S.of(context).submit,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: $(17),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         )
             .intoContainer(
                 alignment: Alignment.center,
                 width: double.maxFinite,
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular($(6)), color: ColorConstant.BlueColor),
-                padding: EdgeInsets.symmetric(vertical: $(10)),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular($(18)), color: ColorConstant.White),
+                padding: EdgeInsets.symmetric(vertical: $(5)),
                 margin: EdgeInsets.only(
-                  top: $(15),
+                  top: $(20),
                   bottom: $(20),
                   left: $(15),
                   right: $(15),
                 ))
             .intoGestureDetector(onTap: () {
           submit();
-        }),
+        })
       ],
-    ).customDialogStyle();
+    )
+        .intoContainer(
+            width: $(300),
+            height: $(260),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(Images.ic_feed_bg),
+              ),
+            ))
+        .customDialogStyle(
+          color: Colors.transparent,
+        );
   }
 }

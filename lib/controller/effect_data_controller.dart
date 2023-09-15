@@ -33,7 +33,8 @@ class EffectDataController extends GetxController {
     super.onInit();
     onAppStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       if (!(event.data ?? true)) {
-        loadData();
+        // loadData();
+        loadData(ignoreCache: true);
       }
     });
     networkListener = EventBusHelper().eventBus.on<OnNetworkStateChangeEvent>().listen((event) {
@@ -56,8 +57,8 @@ class EffectDataController extends GetxController {
     loadData();
   }
 
-  loadData() {
-    effectManager.loadData().then((value) {
+  loadData({ignoreCache = false}) {
+    effectManager.loadData(ignoreCache: ignoreCache).then((value) {
       loading = false;
       if (value != null && value != data) {
         this.data = value;

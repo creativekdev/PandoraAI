@@ -28,8 +28,10 @@ import 'package:image/image.dart' as imglib;
 import 'package:photo_manager/photo_manager.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
+typedef OnPickCallback = Function(XFile file, double ratio, int width, int height, String source);
+
 class AppCamera extends StatefulWidget {
-  Function(XFile file, double ratio, String source) onTakePhoto;
+  OnPickCallback onTakePhoto;
 
   AppCamera({
     Key? key,
@@ -209,8 +211,8 @@ class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, Wi
                     }).onError((error, stackTrace) {});
                   }
                   // If the Future is complete, display the preview.
-                  var ratio = cameraController?.value.aspectRatio ?? cameraHeight / cameraWidth;
-                  var surfaceWidth = cameraHeight / ratio;
+                  var ratio = 1 / (cameraController?.value.aspectRatio ?? cameraHeight / cameraWidth);
+                  var surfaceWidth = cameraHeight * ratio;
                   var offsetX = (surfaceWidth - cameraWidth) / 2;
                   var surface = CustomIOSCameraPreview(
                     cameraController!,
@@ -356,7 +358,15 @@ class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, Wi
                         takePhoto().then((value) {
                           if (value != null) {
                             _animationController.forward();
-                            delay(() async => widget.onTakePhoto.call(value.value, value.key, 'camera'), milliseconds: 300);
+                            delay(
+                                () async => widget.onTakePhoto.call(
+                                      value.value.xFile,
+                                      value.key,
+                                      value.value.width,
+                                      value.value.height,
+                                      'camera',
+                                    ),
+                                milliseconds: 300);
                           } else {
                             CommonExtension().showToast('Take Photo Failed');
                           }
@@ -398,7 +408,7 @@ class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, Wi
     );
   }
 
-  Widget galleryContainer(BuildContext context, Function(XFile file, double datio, String source) callback) => Row(
+  Widget galleryContainer(BuildContext context, OnPickCallback callback) => Row(
         mainAxisSize: MainAxisSize.max,
         children: [
           Icon(
@@ -456,8 +466,8 @@ class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, Wi
                   }
                   var xFile = XFile((file).path);
                   var imageInfo = await SyncFileImage(file: file).getImage();
-                  var ratio = imageInfo.image.height / imageInfo.image.width;
-                  widget.onTakePhoto.call(xFile, ratio, 'album');
+                  var ratio = imageInfo.image.width / imageInfo.image.height;
+                  widget.onTakePhoto.call(xFile, ratio, imageInfo.image.width, imageInfo.image.height, 'album');
                 }).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)));
               },
               itemCount: assetList.length,
@@ -472,7 +482,7 @@ class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, Wi
             color: Color(0x88010101),
           ));
 
-  choosePhoto(BuildContext context, Function(XFile file, double ratio, String source) callback) async {
+  choosePhoto(BuildContext context, OnPickCallback callback) async {
     PermissionsUtil.checkPermissions().then((value) {
       if (value) {
         PickAlbumScreen.pickImage(
@@ -488,7 +498,7 @@ class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, Wi
             }
             var xFile = XFile((file).path);
             var imageInfo = await SyncFileImage(file: file).getImage();
-            callback.call(xFile, imageInfo.image.height / imageInfo.image.width, 'album');
+            callback.call(xFile, imageInfo.image.height / imageInfo.image.width, imageInfo.image.width, imageInfo.image.height, 'album');
           }
         });
       } else {
@@ -513,7 +523,7 @@ class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, Wi
     }).onError((error, stackTrace) {});
   }
 
-  Future<MapEntry<double, XFile>?> takePhoto() async {
+  Future<MapEntry<double, _PicInfo>?> takePhoto() async {
     if (lastScreenShot == null) {
       return null;
     }
@@ -530,7 +540,7 @@ class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, Wi
     String filePath = '${operator.imageDir.path}${DateTime.now().millisecondsSinceEpoch}.png';
     var uint8list = Uint8List.fromList(list);
     var imageInfo = (await SyncMemoryImage(list: uint8list).getImage()).image;
-    double ratio = cameraHeight / cameraWidth;
+    double ratio = cameraWidth / cameraHeight;
     Rect rect;
     rect = ImageUtils.getTargetCoverRect(Size(imageInfo.width.toDouble(), imageInfo.height.toDouble()), Size(cameraWidth, cameraHeight));
     File file = await cropFileToTarget(
@@ -538,18 +548,30 @@ class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, Wi
       rect,
       filePath,
     );
+    int w = rect.width.toInt();
+    int h = rect.height.toInt();
     if (pose != PoseState.stand) {
       var im = (await SyncFileImage(file: file).getImage()).image;
       var bytes = (await im.toByteData())!.buffer.asUint8List();
       var orImg = imglib.Image.fromBytes(im.width, im.height, bytes);
       var resImg = imglib.copyRotate(orImg, pose.coefficient());
       var encodePng = imglib.encodePng(resImg);
+      w = resImg.width;
+      h = resImg.height;
       await file.writeAsBytes(encodePng);
       ratio = 1 / ratio;
     }
     takingPhoto = false;
-    return MapEntry(ratio, XFile(file.path));
+    return MapEntry(ratio, _PicInfo(XFile(file.path), w, h));
   }
+}
+
+class _PicInfo {
+  XFile xFile;
+  int width;
+  int height;
+
+  _PicInfo(this.xFile, this.width, this.height);
 }
 
 /// imgLib -> Image package from https://pub.dartlang.org/packages/image

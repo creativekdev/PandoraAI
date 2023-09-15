@@ -5,7 +5,7 @@ import 'package:cartoonizer/widgets/outline_widget.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/payment/payment.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 class RewardAdvertisementScreen extends StatefulWidget {
@@ -74,18 +74,6 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          ClipRRect(
-            child: Image.asset(
-              Images.ic_buy_background,
-              width: double.maxFinite,
-              height: double.maxFinite,
-              fit: BoxFit.fitWidth,
-            ),
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular($(24)),
-              topLeft: Radius.circular($(24)),
-            ),
-          ),
           Icon(
             Icons.close,
             size: $(24),
@@ -111,11 +99,6 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
                           child: Column(
                             children: [
                               SizedBox(height: $(25)),
-                              buildBuyAttr(context, S.of(context).buyAttrNoAds, Images.ic_bug_no_ad),
-                              buildBuyAttr(context, S.of(context).buyAttrNoWatermark, Images.ic_buy_no_watermark),
-                              buildBuyAttr(context, S.of(context).buyAttrHDImages, Images.ic_buy_hd_image),
-                              buildBuyAttr(context, S.of(context).buyAttrFasterSpeed, Images.ic_buy_faster_convert),
-                              SizedBox(height: $(20)),
                               Text(
                                 S.of(context).buyNow,
                                 style: TextStyle(color: Colors.white, fontSize: $(17)),

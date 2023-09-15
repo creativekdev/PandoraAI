@@ -24,7 +24,7 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/SignupScreen.dart';
+import 'package:cartoonizer/views/account/SignupScreen.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/print/print.dart';

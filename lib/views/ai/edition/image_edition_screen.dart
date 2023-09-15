@@ -86,8 +86,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'image_edition_screen');
-    imageSize = Size(ScreenUtil.screenSize.width,
-        ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140) + ScreenUtil.getBottomPadding(Get.context!)));
+    imageSize = ImageEdition.getShownImageSize();
     controller = Get.put(ImageEditionController(
       originPath: widget.filePath,
       effectStyle: widget.style,
@@ -316,10 +315,30 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           builder: (controller) {
             return Scaffold(
               appBar: buildNavigationBar(context),
-              body: Column(
+              body: Stack(
+                fit: StackFit.expand,
                 children: [
-                  Expanded(child: buildContent(context, controller)),
-                  buildOptions(context, controller).intoContainer(padding: EdgeInsets.only(top: $(15)), height: $(140) + ScreenUtil.getBottomPadding(context)),
+                  buildContent(context, controller).intoContainer(
+                    margin: EdgeInsets.only(bottom: $(140) + ScreenUtil.getBottomPadding(context)),
+                  ),
+                  Align(
+                    child: buildOptions(context, controller).intoContainer(
+                      padding: EdgeInsets.only(top: $(15)),
+                      height: $(140) + ScreenUtil.getBottomPadding(context),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+                        ColorConstant.BackgroundColor.withOpacity(0),
+                        ColorConstant.BackgroundColor.withOpacity(0.2),
+                        ColorConstant.BackgroundColor.withOpacity(0.4),
+                        ColorConstant.BackgroundColor.withOpacity(0.6),
+                        ColorConstant.BackgroundColor.withOpacity(0.8),
+                        ColorConstant.BackgroundColor,
+                        ColorConstant.BackgroundColor,
+                        ColorConstant.BackgroundColor,
+                      ])),
+                    ),
+                    alignment: Alignment.bottomCenter,
+                  )
                 ],
               ),
             );
@@ -430,7 +449,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     });
   }
 
-
   Widget getImageWidget(BuildContext context, ImageEditionController controller) {
     if (controller.currentItem.function == ImageEditionFunction.UNDEFINED) {
       return Container();
@@ -440,7 +458,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       generateAgainVisible.value = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
       var file = controller.showOrigin ? controller.originFile : effectController.resultFile ?? effectController.originFile;
       syncShowImageSizeInEffect(file, controller.showOrigin);
-      return Image.file(file);
+      return Image.file(
+        file,
+        fit: BoxFit.cover,
+        width: imageSize.width,
+      );
     } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
       var removeBgHolder = controller.currentItem.holder as RemoveBgHolder;
       var file = controller.showOrigin ? controller.originFile : (removeBgHolder.removedImage == null ? removeBgHolder.originFile : removeBgHolder.removedImage);

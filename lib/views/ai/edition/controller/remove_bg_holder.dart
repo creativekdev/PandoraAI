@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:cartoonizer/widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
+import 'package:cartoonizer/widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/widgets/router/routers.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
@@ -23,6 +23,7 @@ class RemoveBgConfig {
   BackgroundData? selectData;
   double ratio = 1;
   double scale = 1;
+  double defaultScale = 1;
   double dx = 0;
   double dy = 0;
 
@@ -105,7 +106,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
           imageRatio: shownImage!.width / shownImage!.height,
           imageHeight: shownImage!.height.toDouble(),
           imageWidth: shownImage!.width.toDouble(),
-          onGetRemoveBgImage: (String path) async {
+          onGetRemoveBgImage: (String path, double ratio) async {
             lastRemoveSuccess = true;
             clear();
             parent.filtersHolder.cropOperator.currentItem = null;
@@ -113,6 +114,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
             removedImage = File(path);
             var imageInfo = await SyncFileImage(file: removedImage!).getImage();
             config.ratio = imageInfo.image.width / imageInfo.image.height;
+            config.defaultScale = ratio;
             imageUiFront = await getImage(File(path));
             imageFront = await getLibImage(imageUiFront!);
             setShownImage(imageFront);
@@ -246,10 +248,13 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                       if (removedImage != null)
                         Container(
                           alignment: Alignment.center,
-                          child: Image.file(
-                            key: _personImageKey,
-                            removedImage!,
-                            fit: BoxFit.contain,
+                          child: Transform.scale(
+                            child: Image.file(
+                              key: _personImageKey,
+                              removedImage!,
+                              fit: BoxFit.contain,
+                            ),
+                            scale: config.defaultScale,
                           ),
                         ),
                       Obx(
