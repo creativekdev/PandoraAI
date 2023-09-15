@@ -14,11 +14,11 @@ class PasswordVerifyDescCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        item(context, checked: passwordStrength != PasswordStrength.LengthError, text: '密码长度需6-16位'),
+        item(context, checked: passwordStrength != PasswordStrength.LengthError, text: S.of(context).password_length_tips),
         item(
           context,
           checked: passwordStrength == PasswordStrength.Medium || passwordStrength == PasswordStrength.Strong,
-          text: '不能是纯数字/字母/特殊字符',
+          text: S.of(context).password_strong_detected,
         ),
       ],
     );
