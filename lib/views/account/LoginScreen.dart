@@ -15,7 +15,7 @@ import 'package:cartoonizer/common/auth.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/EmailVerificationScreen.dart';
+import 'package:cartoonizer/views/account/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/widget/icon_input.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/gestures.dart';
@@ -23,9 +23,9 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../ForgotPasswordScreen.dart';
-import '../SignupScreen.dart';
-import '../SocialSignUpScreen.dart';
+import 'ForgotPasswordScreen.dart';
+import 'SignupScreen.dart';
+import 'SocialSignUpScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   bool toSignUp;

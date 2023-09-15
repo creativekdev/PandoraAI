@@ -27,6 +27,7 @@ class ThirdpartManager extends BaseManager {
 
   bool get appBackground => _appBackground;
   late StreamSubscription onPayStatusListen;
+  ConnectivityResult? currentNetState;
 
   @override
   Future<void> onCreate() async {
@@ -44,6 +45,7 @@ class ThirdpartManager extends BaseManager {
       }
     });
     Connectivity().onConnectivityChanged.listen((event) {
+      currentNetState = event;
       EventBusHelper().eventBus.fire(OnNetworkStateChangeEvent(data: event));
     });
     Executor().warmUp(isolatesCount: 2);

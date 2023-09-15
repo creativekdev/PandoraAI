@@ -450,6 +450,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "¡Error en la solicitud! Por favor, compruebe su red"),
         "no_messages_yet":
             MessageLookupByLibrary.simpleMessage("No hay noticias nuevas"),
+        "no_network": MessageLookupByLibrary.simpleMessage(
+            "No se detectó ninguna conexión de red"),
         "no_thanks": MessageLookupByLibrary.simpleMessage("No por ahora"),
         "no_watermark": MessageLookupByLibrary.simpleMessage(
             "(Imagen de alta definición sin marca de agua)"),

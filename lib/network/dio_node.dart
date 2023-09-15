@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/src/adapters/io_adapter.dart';
 import 'package:flutter/foundation.dart';
+
 
 const _receiveTimeout = 60000;
 const _connectTimeout = 30000;
@@ -36,6 +38,12 @@ class DioNode {
     options.connectTimeout = connectTimeout ?? _connectTimeout;
     options.responseType = _responseType;
     Dio client = Dio(options);
+    // debug代码，xia哥的服务器需要关闭ssl证书认证
+    // (client.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+    //   client.badCertificateCallback=(cert, host, port){
+    //     return true;
+    //   };
+    // };
     client.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options, handler) {
       if (kReleaseMode) {
         return handler.next(options);

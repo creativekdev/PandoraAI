@@ -372,6 +372,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "no_internet_msg": MessageLookupByLibrary.simpleMessage(
             "リクエストが失敗しました、ネットワークの接続をご確認してください"),
         "no_messages_yet": MessageLookupByLibrary.simpleMessage("ニュースなし"),
+        "no_network":
+            MessageLookupByLibrary.simpleMessage("ネットワーク接続が検出されませんでした"),
         "no_thanks": MessageLookupByLibrary.simpleMessage("結構です"),
         "no_watermark":
             MessageLookupByLibrary.simpleMessage("（HD、ウォーターマークなしの画像）"),

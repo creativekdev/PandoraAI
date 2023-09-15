@@ -2,6 +2,7 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:dio/dio.dart';
@@ -25,6 +26,8 @@ mixin ExceptionHandler {
         } else {
           CommonExtension().showToast(e.toString().intl);
         }
+      } else if (e is NetException) {
+        CommonExtension().showToast('no network'.intl);
       } else {
         CommonExtension().showToast(e.toString().intl);
       }

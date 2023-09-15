@@ -5249,6 +5249,16 @@ class S {
       args: [],
     );
   }
+
+  /// `No network connection detected.`
+  String get no_network {
+    return Intl.message(
+      'No network connection detected.',
+      name: 'no_network',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

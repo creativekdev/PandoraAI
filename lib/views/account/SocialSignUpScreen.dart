@@ -10,8 +10,8 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import './EmailVerificationScreen.dart';
-import '../common/Extension.dart';
+import 'EmailVerificationScreen.dart';
+import '../../common/Extension.dart';
 
 class SocialSignUpScreen extends StatefulWidget {
   final additionalUserInfo;

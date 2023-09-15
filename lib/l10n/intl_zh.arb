@@ -519,5 +519,6 @@
   "ai_art": "AI Art",
   "password_not_match": "两次输入密码不一致，请重新输入",
   "input_password": "请输入密码",
-  "input_valid_email": "请输入有效的邮箱地址"
+  "input_valid_email": "请输入有效的邮箱地址",
+  "no_network": "未检测到网络连接"
 }

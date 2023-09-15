@@ -12,7 +12,9 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/payment/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/widgets/outline_widget.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
@@ -28,11 +30,28 @@ class PurchaseScreen extends StatefulWidget {
 }
 
 const bool _kAutoConsume = true;
-const String _kConsumableId = 'io.socialbook.cartoonizer.monthly';
-const String _kUpgradeId = 'io.socialbook.cartoonizer.yearly29';
-const List<String> _kProductIds = <String>[
-  _kConsumableId,
-  _kUpgradeId,
+const monthId = 'io.socialbook.cartoonizer.monthly';
+const yearId = 'io.socialbook.cartoonizer.yearly';
+const year29Id = 'io.socialbook.cartoonizer.yearly29';
+const List<Map<String, dynamic>> productMap = [
+  {
+    'plan_id': '80000',
+    'apple_id': monthId,
+    'active': true,
+    'plan_type': 'monthly',
+  },
+  {
+    'plan_id': '80001',
+    'apple_id': yearId,
+    'active': false,
+    'plan_type': 'yearly',
+  },
+  {
+    'plan_id': '80002',
+    'apple_id': year29Id,
+    'active': true,
+    'plan_type': 'yearly',
+  },
 ];
 
 class _PurchaseScreenState extends State<PurchaseScreen> {
@@ -108,7 +127,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   void deliverProduct(PurchaseDetails purchaseDetails) async {
     // IMPORTANT!! Always verify purchase details before delivering the product.
-    if (purchaseDetails.productID == _kConsumableId || purchaseDetails.productID == _kUpgradeId) {
+    var filter = productMap.filter((t) => t['active']);
+    if (filter.exist((t) => t['apple_id'] == purchaseDetails.productID)) {
       await ConsumableStore.save(purchaseDetails.purchaseID ?? "");
       final List<String> consumables = await ConsumableStore.load();
       setState(() {
@@ -216,7 +236,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       });
     }
 
-    ProductDetailsResponse productDetailResponse = await _inAppPurchase.queryProductDetails(_kProductIds.toSet());
+    ProductDetailsResponse productDetailResponse = await _inAppPurchase.queryProductDetails(productMap.map((e) => e['apple_id'].toString()).toSet());
     print(productDetailResponse.productDetails);
 
     if (productDetailResponse.error != null) {
@@ -265,9 +285,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     var year, month;
     for (int i = 0; i < _products.length; i++) {
-      if (_products[i].id == _kConsumableId) {
+      if (_products[i].id == monthId) {
         month = _products[i];
-      } else if (_products[i].id == _kUpgradeId) {
+      } else if (_products[i].id == year29Id) {
         year = _products[i];
       }
     }
@@ -339,9 +359,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     var year, month;
     for (int i = 0; i < _products.length; i++) {
-      if (_products[i].id == _kConsumableId) {
+      if (_products[i].id == monthId) {
         month = _products[i];
-      } else if (_products[i].id == _kUpgradeId) {
+      } else if (_products[i].id == year29Id) {
         year = _products[i];
       }
     }
@@ -371,9 +391,18 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     var currentPlan;
     if (_showPurchasePlan) {
-      var user = userManager.user!;
-      bool isMonthlyPlan = user.userSubscription['plan_type'] == 'monthly';
-      currentPlan = isMonthlyPlan ? month : year;
+      var subscription = userManager.user!.userSubscription;
+      var planId = subscription['plan_id']?.toString();
+      var appleId = subscription['apple_store_plan_id']?.toString();
+      if (!TextUtil.isEmpty(appleId)) {
+        currentPlan = _products.pick((t) => t.id == appleId);
+      } else if (!TextUtil.isEmpty(planId)) {
+        appleId = (productMap.pick((t) => t['plan_id'] == planId) ?? {})['apple_id'];
+        currentPlan = _products.pick((t) => t.id == appleId);
+      }
+      if (currentPlan == null) {
+        return Container();
+      }
       return buyPlanItem(
         context,
         plan: currentPlan,
@@ -650,22 +679,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                   },
                   child: TitleTextWidget("${plan.price}", ColorConstant.White, FontWeight.w500, $(26), align: TextAlign.center),
                 ),
-                Text(
-                  S.of(context).most_popular,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Poppins',
-                    fontSize: $(10),
-                  ),
-                )
-                    .intoContainer(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(vertical: $(4)),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFFED700),
-                          borderRadius: BorderRadius.circular($(4)),
-                        ))
-                    .visibility(visible: false),
                 SizedBox(height: $(12)),
               ],
             ).intoContainer(

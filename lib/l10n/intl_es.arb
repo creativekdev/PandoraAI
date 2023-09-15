@@ -518,5 +518,6 @@
   "input_comments": "Introduzca comentarios",
   "password_not_match": "Dos contraseñas no coinciden, vuelva a introducirlas",
   "input_password": "Introduzca su contraseña",
-  "input_valid_email": "Introduzca una dirección de correo electrónico válida"
+  "input_valid_email": "Introduzca una dirección de correo electrónico válida",
+  "no_network": "No se detectó ninguna conexión de red"
 }

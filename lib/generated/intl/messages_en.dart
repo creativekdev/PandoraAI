@@ -426,6 +426,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Oops! Please check your network connection."),
         "no_messages_yet":
             MessageLookupByLibrary.simpleMessage("There are no messages yet"),
+        "no_network": MessageLookupByLibrary.simpleMessage(
+            "No network connection detected."),
         "no_thanks": MessageLookupByLibrary.simpleMessage("No, thanks"),
         "no_watermark": MessageLookupByLibrary.simpleMessage(
             "(No watermark, High-res image)"),

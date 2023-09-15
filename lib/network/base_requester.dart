@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/common/sToken.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/main.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -115,6 +118,18 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     _client.options.headers.addAll(options.headers);
   }
 
+  bool checkNetworkState() {
+    ThirdpartManager manager = AppDelegate.instance.getManager();
+    if (manager.currentNetState == null) {
+      return true;
+    }
+    if (manager.currentNetState == ConnectivityResult.none) {
+      onError(NetException());
+      return false;
+    }
+    return true;
+  }
+
   Future<BaseEntity?> doGet(
     String path, {
     Map<String, String>? headers,
@@ -128,6 +143,10 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
   }) async {
     params ??= Map();
     headers ??= Map();
+    var netAvailable = checkNetworkState();
+    if (!netAvailable) {
+      return null;
+    }
     await _preHandleRequest(headers, params, preHandleRequest);
     try {
       Response response = await _client.get(
@@ -158,6 +177,10 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
   }) async {
     params ??= Map();
     headers ??= Map();
+    var netAvailable = checkNetworkState();
+    if (!netAvailable) {
+      return null;
+    }
     await _preHandleRequest(headers, params, preHandleRequest);
     var data;
     if (isFormData) {
@@ -191,6 +214,10 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     bool needRetry = true,
   }) async {
     headers ??= Map();
+    var netAvailable = checkNetworkState();
+    if (!netAvailable) {
+      return null;
+    }
     try {
       Response response = await _client.post(
         path,
@@ -222,6 +249,10 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
   }) async {
     params ??= Map();
     headers ??= Map();
+    var netAvailable = checkNetworkState();
+    if (!netAvailable) {
+      return null;
+    }
     await _preHandleRequest(headers, params, preHandleRequest);
     try {
       Response response = await _client.put(
@@ -252,6 +283,10 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
   }) async {
     params ??= Map();
     headers ??= Map();
+    var netAvailable = checkNetworkState();
+    if (!netAvailable) {
+      return null;
+    }
     await _preHandleRequest(headers, params, preHandleRequest);
     try {
       Response response = await _client.delete(path, data: data, queryParameters: params);
@@ -294,6 +329,8 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     }
   }
 }
+
+class NetException implements Exception {}
 
 class ApiOptions {
   String baseUrl;

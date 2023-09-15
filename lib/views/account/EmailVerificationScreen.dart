@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -8,7 +9,7 @@ import 'package:cartoonizer/views/home_screen.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import '../common/Extension.dart';
+import '../../common/Extension.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String? email;
@@ -90,12 +91,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     };
 
     try {
-      final response = await API.post("/user/${userId}/activation/send", body: body);
-      if (response.statusCode == 200) {
+      var baseEntity = await AppApi2().post('/user/${userId}/activation/send', params: body);
+      if (baseEntity != null) {
         CommonExtension().showToast(S.of(context).resend_successfully);
-      } else {
-        var body = jsonDecode(response.body);
-        CommonExtension().showToast(body['message'] ?? S.of(context).resend_failed);
       }
     } catch (e) {
       CommonExtension().showToast(S.of(context).resend_failed);
@@ -116,15 +114,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     };
 
     try {
-      final response = await API.post("/api/user/activate", body: body);
-
-      if (response.statusCode == 200) {
+      var baseEntity = await AppApi2().post('/api/user/activate', params: body);
+      if (baseEntity != null) {
         CommonExtension().showToast(S.of(context).activate_successfully);
         Navigator.of(context).pop(true);
       } else {
-        var body = jsonDecode(response.body);
         textEditingController.clear();
-        CommonExtension().showToast(body['message'] ?? S.of(context).activate_failed);
       }
     } catch (e) {
       CommonExtension().showToast(S.of(context).activate_failed);

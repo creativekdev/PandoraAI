@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -8,9 +7,10 @@ import 'package:cartoonizer/common/dialog.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/widgets/outline_widget.dart';
+import 'package:common_utils/common_utils.dart';
 
-import 'StripePaymentScreen.dart';
 import '../account/LoginScreen.dart';
+import 'StripePaymentScreen.dart';
 import 'widgets/payment_attrs_list.dart';
 
 class StripeSubscriptionScreen extends StatefulWidget {
@@ -36,6 +36,13 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
       "unit": S.of(Get.context!).month,
     },
     "yearly": {
+      "id": "io.socialbook.cartoonizer.yearly",
+      "plan_id": "80001",
+      "title": S.of(Get.context!).yearly,
+      "price": 39.99,
+      "unit": S.of(Get.context!).year,
+    },
+    "yearly29": {
       "id": "io.socialbook.cartoonizer.yearly29",
       "plan_id": "80002",
       "title": S.of(Get.context!).yearly,
@@ -88,7 +95,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
   }
 
   void _handleStripePayment() async {
-    var subscription = isYear ? subscriptions["yearly"] : subscriptions["monthly"];
+    var subscription = isYear ? subscriptions["yearly29"] : subscriptions["monthly"];
 
     bool? result = await Navigator.push(
       context,
@@ -120,9 +127,6 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     if (_showPurchasePlan) {
       return Container();
     }
-
-    var monthly = subscriptions["monthly"];
-    var yearly = subscriptions["yearly"];
 
     return GestureDetector(
       onTap: () async {
@@ -174,7 +178,18 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     if (_loading) return Column();
 
     if (_showPurchasePlan) {
-      var currentSubscription = subscriptions[userManager.user!.userSubscription['plan_type']];
+      var subscription = userManager.user!.userSubscription;
+      var planId = subscription['plan_id']?.toString();
+      var appleId = subscription['apple_store_plan_id']?.toString();
+      var currentSubscription;
+      if (!TextUtil.isEmpty(appleId)) {
+        currentSubscription = subscriptions.values.toList().pick((t) => t['id'] == appleId);
+      } else if (!TextUtil.isEmpty(planId)) {
+        currentSubscription = subscriptions.values.toList().pick((t) => t['plan_id'] == planId);
+      }
+      if (currentSubscription == null) {
+        return Container();
+      }
       return buyPlanItem(
         context,
         plan: currentSubscription,
@@ -189,7 +204,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     }
 
     var monthly = subscriptions["monthly"];
-    var yearly = subscriptions["yearly"];
+    var yearly = subscriptions["yearly29"];
 
     if (monthly == null && yearly == null) {
       return TitleTextWidget("Load Data Failed\n Click to reload", ColorConstant.White, FontWeight.normal, $(16), maxLines: 2)
@@ -434,22 +449,6 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                   },
                   child: TitleTextWidget("\$${plan["price"]}", ColorConstant.White, FontWeight.w500, $(26), align: TextAlign.center),
                 ),
-                Text(
-                  S.of(context).most_popular,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Poppins',
-                    fontSize: $(10),
-                  ),
-                )
-                    .intoContainer(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(vertical: $(4)),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFFED700),
-                          borderRadius: BorderRadius.circular($(4)),
-                        ))
-                    .visibility(visible: false),
                 SizedBox(height: $(12)),
               ],
             ).intoContainer(

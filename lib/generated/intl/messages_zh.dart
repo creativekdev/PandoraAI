@@ -351,6 +351,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "no_ads": MessageLookupByLibrary.simpleMessage("无广告"),
         "no_internet_msg": MessageLookupByLibrary.simpleMessage("请求失败！请检查您的网络"),
         "no_messages_yet": MessageLookupByLibrary.simpleMessage("暂无新消息"),
+        "no_network": MessageLookupByLibrary.simpleMessage("未检测到网络连接"),
         "no_thanks": MessageLookupByLibrary.simpleMessage("暂时不用了"),
         "no_watermark": MessageLookupByLibrary.simpleMessage("（高清、无水印图片）"),
         "no_watermark1": MessageLookupByLibrary.simpleMessage("无水印"),

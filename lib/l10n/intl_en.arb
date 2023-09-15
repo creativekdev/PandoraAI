@@ -518,5 +518,6 @@
   "input_comments": "Please input comments",
   "password_not_match": "Password is not matched",
   "input_password": "Please enter your password",
-  "input_valid_email": "Please enter a valid e-mail address"
+  "input_valid_email": "Please enter a valid e-mail address",
+  "no_network": "No network connection detected."
 }
