@@ -102,7 +102,10 @@ class Images {
   static const String ic_landscape_selected = 'assets/images/ic_landscape_selected.png';
   static const String ic_launcher_bg = 'assets/images/ic_launcher_bg.png';
   static const String ic_letter = 'assets/images/ic_letter.png';
+  static const String ic_limit_background = 'assets/images/ic_limit_background.png';
+  static const String ic_limit_guest_icon = 'assets/images/ic_limit_guest_icon.png';
   static const String ic_limit_icon = 'assets/images/ic_limit_icon.png';
+  static const String ic_limit_normal_icon = 'assets/images/ic_limit_normal_icon.png';
   static const String ic_loading_filled = 'assets/images/ic_loading_filled.png';
   static const String ic_mark1 = 'assets/images/ic_mark1.png';
   static const String ic_mark2 = 'assets/images/ic_mark2.png';

@@ -9,6 +9,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/widgets/outline_widget.dart';
 import 'package:common_utils/common_utils.dart';
 
+import '../../utils/utils.dart';
 import '../account/LoginScreen.dart';
 import 'StripePaymentScreen.dart';
 import 'widgets/payment_attrs_list.dart';
@@ -125,7 +126,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
 
   Widget _buildPurchaseButton() {
     if (_showPurchasePlan) {
-      return Container();
+      return Container(height: 50);
     }
 
     return GestureDetector(
@@ -175,7 +176,17 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
   }
 
   Widget _buildProductList() {
-    if (_loading) return Column();
+    if (_loading) {
+      if (isVip()) {
+        return Container(
+          height: $(72),
+        );
+      } else {
+        return Container(
+          height: $(144),
+        );
+      }
+    }
 
     if (_showPurchasePlan) {
       var subscription = userManager.user!.userSubscription;

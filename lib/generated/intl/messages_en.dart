@@ -368,6 +368,24 @@ class MessageLookup extends MessageLookupByLibrary {
         "last_one":
             MessageLookupByLibrary.simpleMessage("Already the last one"),
         "like": MessageLookupByLibrary.simpleMessage("Like"),
+        "limit_inv_desc": MessageLookupByLibrary.simpleMessage(
+            "Share the invitation code for extra credit"),
+        "limit_login_desc": MessageLookupByLibrary.simpleMessage(
+            "Get extra credits every day Multiple free image generation opportunities per effect Become a registered user and enjoy exclusive benefits for registered users."),
+        "limit_login_title": MessageLookupByLibrary.simpleMessage(
+            "Log in to get daily extra credits"),
+        "limit_login_title_extra": MessageLookupByLibrary.simpleMessage(
+            "Today’s quota for this feature has been exhausted."),
+        "limit_pro_btn":
+            MessageLookupByLibrary.simpleMessage("Become a member for only "),
+        "limit_pro_desc": MessageLookupByLibrary.simpleMessage(
+            "Photo editor & Exclusive effects & Weekly updates."),
+        "limit_pro_title":
+            MessageLookupByLibrary.simpleMessage("Upgrade to a member"),
+        "limit_pro_title_extra": MessageLookupByLibrary.simpleMessage(
+            "or come again tomorrow for additional credits."),
+        "limit_register_btn": MessageLookupByLibrary.simpleMessage(
+            "One-click registration for more credits"),
         "login": MessageLookupByLibrary.simpleMessage("Sign In"),
         "loginToThePlatformAccount": MessageLookupByLibrary.simpleMessage(
             "Log in to the platform account"),
@@ -481,8 +499,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation1":
             MessageLookupByLibrary.simpleMessage("Password not matched"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),
+        "password_length_tips": MessageLookupByLibrary.simpleMessage(
+            "Password length needs to be 6-16 characters"),
         "password_not_match":
             MessageLookupByLibrary.simpleMessage("Password is not matched"),
+        "password_strong_detected": MessageLookupByLibrary.simpleMessage(
+            "Avoid pure numbers/letters/special characters"),
         "pay": MessageLookupByLibrary.simpleMessage("Pay"),
         "pay_now": MessageLookupByLibrary.simpleMessage("Pay Now"),
         "pay_with_new_card":
@@ -551,6 +573,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("?"),
         "quantity": MessageLookupByLibrary.simpleMessage("Quantity"),
+        "quatity": MessageLookupByLibrary.simpleMessage("Quantity"),
         "rate_average": MessageLookupByLibrary.simpleMessage("Average"),
         "rate_bad": MessageLookupByLibrary.simpleMessage("Bad"),
         "rate_description": MessageLookupByLibrary.simpleMessage(
@@ -739,7 +762,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "unpaid": MessageLookupByLibrary.simpleMessage("Unpaid"),
         "update": MessageLookupByLibrary.simpleMessage("Update"),
         "update_address_success": MessageLookupByLibrary.simpleMessage(
-            "Address deleted successfully"),
+            "Address updated successfully"),
         "update_now": MessageLookupByLibrary.simpleMessage("Update now"),
         "update_pass": MessageLookupByLibrary.simpleMessage("Update Password"),
         "update_profile":

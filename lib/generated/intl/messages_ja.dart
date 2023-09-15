@@ -56,7 +56,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "activate_failed": MessageLookupByLibrary.simpleMessage("アクティベーション失敗"),
         "activate_successfully":
             MessageLookupByLibrary.simpleMessage("アクティベーション成功！"),
+        "add_address": MessageLookupByLibrary.simpleMessage("配送先住所を追加"),
         "address": MessageLookupByLibrary.simpleMessage("配送先"),
+        "addresses": MessageLookupByLibrary.simpleMessage("住所"),
         "after": MessageLookupByLibrary.simpleMessage("After"),
         "agree_text1": MessageLookupByLibrary.simpleMessage("あなたに登録する"),
         "agree_text2": MessageLookupByLibrary.simpleMessage("パンドラAIの"),
@@ -186,6 +188,8 @@ class MessageLookup extends MessageLookupByLibrary {
                 "アカウントは削除されました、次回のご利用を楽しみにしています！"),
         "delete_account_tips":
             MessageLookupByLibrary.simpleMessage("アカウントを永久的に削除しますか？"),
+        "delete_address_success":
+            MessageLookupByLibrary.simpleMessage("アドレスが正常に削除されました"),
         "delete_succeed": MessageLookupByLibrary.simpleMessage("削除成功"),
         "deleted_comment": MessageLookupByLibrary.simpleMessage("コメントは削除されました"),
         "deny": MessageLookupByLibrary.simpleMessage("拒否"),
@@ -212,6 +216,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
         "downloading": MessageLookupByLibrary.simpleMessage("ダウンロード..."),
         "edit": MessageLookupByLibrary.simpleMessage("編集"),
+        "edit_address": MessageLookupByLibrary.simpleMessage("住所の編集"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("情報を編集する"),
         "effectRecentEmptyHint":
             MessageLookupByLibrary.simpleMessage("レコードの変換はありません。変換履歴はこちら"),
@@ -321,6 +326,22 @@ class MessageLookup extends MessageLookupByLibrary {
         "last_name": MessageLookupByLibrary.simpleMessage("名"),
         "last_one": MessageLookupByLibrary.simpleMessage("もう最後のもの"),
         "like": MessageLookupByLibrary.simpleMessage("いいね"),
+        "limit_inv_desc":
+            MessageLookupByLibrary.simpleMessage("招待コードを共有して追加クレジットを獲得する"),
+        "limit_login_desc": MessageLookupByLibrary.simpleMessage(
+            "毎日追加のクレジットを獲得 エフェクトごとに複数の無料画像生成の機会 登録ユーザーになり、登録ユーザー限定の特典をお楽しみください。"),
+        "limit_login_title":
+            MessageLookupByLibrary.simpleMessage("ログインして毎日追加のクレジットを獲得してください"),
+        "limit_login_title_extra":
+            MessageLookupByLibrary.simpleMessage("この機能に対する今日の割り当ては使い果たされました。"),
+        "limit_pro_btn": MessageLookupByLibrary.simpleMessage("会員になるには "),
+        "limit_pro_desc":
+            MessageLookupByLibrary.simpleMessage("写真エディター、独自のエフェクト、毎週の更新。"),
+        "limit_pro_title": MessageLookupByLibrary.simpleMessage("メンバーにアップグレード"),
+        "limit_pro_title_extra": MessageLookupByLibrary.simpleMessage(
+            "または、明日もう一度来て追加のクレジットを取得してください。"),
+        "limit_register_btn":
+            MessageLookupByLibrary.simpleMessage("ワンクリックで登録してクレジットを増やす"),
         "login": MessageLookupByLibrary.simpleMessage("ログイン"),
         "loginToThePlatformAccount":
             MessageLookupByLibrary.simpleMessage("第三者アカウントにログインする"),
@@ -420,8 +441,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("パスワードを入力してください"),
         "pass_validation1": MessageLookupByLibrary.simpleMessage("パスワードが正しくない"),
         "password": MessageLookupByLibrary.simpleMessage("パスワード"),
+        "password_length_tips": MessageLookupByLibrary.simpleMessage(
+            "パスワードの長さは 6 ～ 16 文字である必要があります"),
         "password_not_match":
             MessageLookupByLibrary.simpleMessage("2つのパスワードが一致しません"),
+        "password_strong_detected":
+            MessageLookupByLibrary.simpleMessage("純粋な数字/文字/特殊文字は避けてください"),
         "pay": MessageLookupByLibrary.simpleMessage("支払い"),
         "pay_now": MessageLookupByLibrary.simpleMessage("今払う"),
         "pay_with_new_card":
@@ -481,6 +506,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("プロ"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("数量"),
+        "quatity": MessageLookupByLibrary.simpleMessage("数量"),
         "rate_average": MessageLookupByLibrary.simpleMessage("平均"),
         "rate_bad": MessageLookupByLibrary.simpleMessage("悪い"),
         "rate_description":
@@ -536,6 +562,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("サブスクリプションをキャンセルしてもよろしいですか？"),
         "retry": MessageLookupByLibrary.simpleMessage("再試行"),
         "saturday": MessageLookupByLibrary.simpleMessage("土曜日"),
+        "save": MessageLookupByLibrary.simpleMessage("保存"),
+        "save_address_success":
+            MessageLookupByLibrary.simpleMessage("アドレスが正常に保存されました"),
         "save_album_tips":
             MessageLookupByLibrary.simpleMessage(" %d 枚の写真を保存しますか"),
         "save_hd_image":
@@ -646,6 +675,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "unique_avatars": MessageLookupByLibrary.simpleMessage("異なるアバター"),
         "unpaid": MessageLookupByLibrary.simpleMessage("支払い未完了"),
         "update": MessageLookupByLibrary.simpleMessage("アップデート"),
+        "update_address_success":
+            MessageLookupByLibrary.simpleMessage("アドレスが正常に更新されました"),
         "update_now": MessageLookupByLibrary.simpleMessage("今すぐアップグレード"),
         "update_pass": MessageLookupByLibrary.simpleMessage("パスワードを更新する"),
         "update_profile": MessageLookupByLibrary.simpleMessage("個人情報を更新する"),

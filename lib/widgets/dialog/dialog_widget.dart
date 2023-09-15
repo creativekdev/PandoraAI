@@ -14,15 +14,17 @@ import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment/payment.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'limit_dialog_content.dart';
+
 extension DialogWidgetEx on Widget {
-  Widget customDialogStyle({Color color = ColorConstant.EffectFunctionGrey}) {
+  Widget customDialogStyle({Color color = ColorConstant.EffectFunctionGrey, EdgeInsets padding = const EdgeInsets.only(left: 16, right: 16, top: 10)}) {
     return this
         .intoMaterial(
           color: color,
           borderRadius: BorderRadius.circular($(16)),
         )
         .intoContainer(
-          padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
+          padding: padding,
           margin: EdgeInsets.symmetric(horizontal: $(25)),
         )
         .intoCenter();
@@ -283,89 +285,28 @@ showMicroPhonePermissionDialog(BuildContext context) {
 
 showLimitDialog(BuildContext context, {required AccountLimitType type, required String function, required String source}) {
   var userManager = AppDelegate().getManager<UserManager>();
+  if (type == AccountLimitType.vip) {
+    CommonExtension().showToast(S.of(context).DAILY_IP_LIMIT_EXCEEDED);
+    return;
+  }
   showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: $(27)),
-              Image.asset(
-                Images.ic_limit_icon,
-              ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(22))),
-              SizedBox(height: $(16)),
-              TitleTextWidget(S.of(context).generate_reached_limit_title, Colors.white, FontWeight.w600, $(18), maxLines: 4).intoContainer(
-                width: double.maxFinite,
-                padding: EdgeInsets.only(left: $(10), right: $(10)),
-                alignment: Alignment.center,
-              ),
-              SizedBox(height: $(16)),
-              TitleTextWidget(
-                type.getContent(context),
-                ColorConstant.White,
-                FontWeight.w500,
-                $(13),
-                maxLines: 100,
-                align: TextAlign.center,
-              ).intoContainer(
-                width: double.maxFinite,
-                padding: EdgeInsets.only(
-                  bottom: $(30),
-                  left: $(30),
-                  right: $(30),
-                ),
-                alignment: Alignment.center,
-              ),
-              if (type == AccountLimitType.normal && !userManager.user!.isReferred)
-                Text(
-                  S.of(context).upgrade_now,
-                  style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-                )
-                    .intoContainer(
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: ColorConstant.DiscoveryBtn),
-                  padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-                  alignment: Alignment.center,
-                )
-                    .intoGestureDetector(onTap: () {
-                  Navigator.of(_).pop(false);
-                }),
-              Text(
-                type.getSubmitText(context),
-                style: TextStyle(
-                    fontFamily: 'Poppins',
-                    color: type == AccountLimitType.normal && !userManager.user!.isReferred ? ColorConstant.BlueColor : ColorConstant.White,
-                    fontSize: $(14)),
-              )
-                  .intoContainer(
-                width: double.maxFinite,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular($(8)), color: type == AccountLimitType.normal && !userManager.user!.isReferred ? Colors.white : ColorConstant.DiscoveryBtn),
-                padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-                alignment: Alignment.center,
-                margin: EdgeInsets.only(top: $(10)),
-              )
-                  .intoGestureDetector(onTap: () {
-                Navigator.of(_).pop(true);
-              }),
-              Text(
-                S.of(context).cancel,
-                style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-              )
-                  .intoContainer(
-                width: double.maxFinite,
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: Color(0xff292929)),
-                padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-                margin: EdgeInsets.only(top: $(16), bottom: $(24)),
-                alignment: Alignment.center,
-              )
-                  .intoGestureDetector(onTap: () {
-                Navigator.pop(_);
-              })
-            ],
-          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))).customDialogStyle()).then((value) {
+      builder: (_) => LimitDialogContent(
+            type: type,
+            onNegativeTap: () {
+              Navigator.of(_).pop(false);
+            },
+            onPositiveTap: () {
+              Navigator.of(_).pop(true);
+            },
+            onInviteTap: () {
+              Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+              EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.MINE.id()]));
+              delay(() => SubmitInvitedCodeScreen.push(Get.context!), milliseconds: 200);
+            },
+          )).then((value) {
     if (value == null) {
-      EventBusHelper().eventBus.fire(OnLimitDialogCancelEvent());
       // do nothing
     } else if (value) {
       switch (type) {
@@ -373,20 +314,13 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
           userManager.doOnLogin(Get.context!, logPreLoginAction: '${function}_generate_limit', toSignUp: true);
           break;
         case AccountLimitType.normal:
-          if (userManager.user!.isReferred) {
-            PaymentUtils.pay(Get.context!, source);
-          } else {
-            Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-            EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.MINE.id()]));
-            delay(() => SubmitInvitedCodeScreen.push(Get.context!), milliseconds: 200);
-            // Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-          }
+          PaymentUtils.pay(Get.context!, source);
           break;
         case AccountLimitType.vip:
           break;
       }
     } else {
-      PaymentUtils.pay(Get.context!, source);
+      EventBusHelper().eventBus.fire(OnLimitDialogCancelEvent());
     }
   });
 }

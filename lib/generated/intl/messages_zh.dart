@@ -306,6 +306,21 @@ class MessageLookup extends MessageLookupByLibrary {
         "last_name": MessageLookupByLibrary.simpleMessage("姓氏"),
         "last_one": MessageLookupByLibrary.simpleMessage("已经是最后一个了"),
         "like": MessageLookupByLibrary.simpleMessage("点赞"),
+        "limit_inv_desc": MessageLookupByLibrary.simpleMessage("分享邀请码以获得额外次数"),
+        "limit_login_desc": MessageLookupByLibrary.simpleMessage(
+            "每天获得额外积分 每个效果有多个免费图像生成机会 成为注册用户并享受注册用户的专属福利。"),
+        "limit_login_title":
+            MessageLookupByLibrary.simpleMessage("登录即可获得每日额外积分"),
+        "limit_login_title_extra":
+            MessageLookupByLibrary.simpleMessage("今天此功能的使用次数已用完。"),
+        "limit_pro_btn": MessageLookupByLibrary.simpleMessage("现在成为会员仅需 "),
+        "limit_pro_desc":
+            MessageLookupByLibrary.simpleMessage("照片编辑器和独家效果和每周更新。"),
+        "limit_pro_title": MessageLookupByLibrary.simpleMessage("升级成为会员"),
+        "limit_pro_title_extra":
+            MessageLookupByLibrary.simpleMessage("或者明天再来获取额外次数。"),
+        "limit_register_btn":
+            MessageLookupByLibrary.simpleMessage("一键注册获得更多积分"),
         "login": MessageLookupByLibrary.simpleMessage("登录"),
         "loginToThePlatformAccount":
             MessageLookupByLibrary.simpleMessage("登录第三方账号"),
@@ -396,8 +411,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation": MessageLookupByLibrary.simpleMessage("请输入密码"),
         "pass_validation1": MessageLookupByLibrary.simpleMessage("密码不正确"),
         "password": MessageLookupByLibrary.simpleMessage("密码"),
+        "password_length_tips":
+            MessageLookupByLibrary.simpleMessage("密码长度需6-16位"),
         "password_not_match":
             MessageLookupByLibrary.simpleMessage("两次输入密码不一致，请重新输入"),
+        "password_strong_detected":
+            MessageLookupByLibrary.simpleMessage("避免纯数字/字母/特殊字符"),
         "pay": MessageLookupByLibrary.simpleMessage("支付"),
         "pay_now": MessageLookupByLibrary.simpleMessage("去支付"),
         "pay_with_new_card": MessageLookupByLibrary.simpleMessage("使用新卡支付"),
@@ -449,6 +468,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("数量"),
+        "quatity": MessageLookupByLibrary.simpleMessage("数量"),
         "rate_average": MessageLookupByLibrary.simpleMessage("一般"),
         "rate_bad": MessageLookupByLibrary.simpleMessage("吐个槽"),
         "rate_description": MessageLookupByLibrary.simpleMessage(

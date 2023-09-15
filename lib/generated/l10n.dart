@@ -4460,6 +4460,16 @@ class S {
     );
   }
 
+  /// `Quantity`
+  String get quatity {
+    return Intl.message(
+      'Quantity',
+      name: 'quatity',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Pending`
   String get pending {
     return Intl.message(
@@ -4790,10 +4800,10 @@ class S {
     );
   }
 
-  /// `Address deleted successfully`
+  /// `Address updated successfully`
   String get update_address_success {
     return Intl.message(
-      'Address deleted successfully',
+      'Address updated successfully',
       name: 'update_address_success',
       desc: '',
       args: [],
@@ -5255,6 +5265,116 @@ class S {
     return Intl.message(
       'No network connection detected.',
       name: 'no_network',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Log in to get daily extra credits`
+  String get limit_login_title {
+    return Intl.message(
+      'Log in to get daily extra credits',
+      name: 'limit_login_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today’s quota for this feature has been exhausted.`
+  String get limit_login_title_extra {
+    return Intl.message(
+      'Today’s quota for this feature has been exhausted.',
+      name: 'limit_login_title_extra',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get extra credits every day Multiple free image generation opportunities per effect Become a registered user and enjoy exclusive benefits for registered users.`
+  String get limit_login_desc {
+    return Intl.message(
+      'Get extra credits every day Multiple free image generation opportunities per effect Become a registered user and enjoy exclusive benefits for registered users.',
+      name: 'limit_login_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One-click registration for more credits`
+  String get limit_register_btn {
+    return Intl.message(
+      'One-click registration for more credits',
+      name: 'limit_register_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upgrade to a member`
+  String get limit_pro_title {
+    return Intl.message(
+      'Upgrade to a member',
+      name: 'limit_pro_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `or come again tomorrow for additional credits.`
+  String get limit_pro_title_extra {
+    return Intl.message(
+      'or come again tomorrow for additional credits.',
+      name: 'limit_pro_title_extra',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Photo editor & Exclusive effects & Weekly updates.`
+  String get limit_pro_desc {
+    return Intl.message(
+      'Photo editor & Exclusive effects & Weekly updates.',
+      name: 'limit_pro_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Become a member for only `
+  String get limit_pro_btn {
+    return Intl.message(
+      'Become a member for only ',
+      name: 'limit_pro_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share the invitation code for extra credit`
+  String get limit_inv_desc {
+    return Intl.message(
+      'Share the invitation code for extra credit',
+      name: 'limit_inv_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password length needs to be 6-16 characters`
+  String get password_length_tips {
+    return Intl.message(
+      'Password length needs to be 6-16 characters',
+      name: 'password_length_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Avoid pure numbers/letters/special characters`
+  String get password_strong_detected {
+    return Intl.message(
+      'Avoid pure numbers/letters/special characters',
+      name: 'password_strong_detected',
       desc: '',
       args: [],
     );

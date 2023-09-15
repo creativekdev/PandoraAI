@@ -280,7 +280,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   Widget _buildPurchaseButton() {
     if (_showPurchasePlan) {
-      return Container();
+      return Container(height: 50);
     }
 
     var year, month;
@@ -348,7 +348,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   Widget _buildProductList() {
     if (!_isAvailable) {
-      return Container();
+      if (isVip()) {
+        return Container(
+          height: $(72),
+        );
+      } else {
+        return Container(
+          height: $(144),
+        );
+      }
     }
 
     for (int i = 0; i < _purchases.length; i++) {
