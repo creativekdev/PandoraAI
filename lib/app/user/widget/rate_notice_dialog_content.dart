@@ -1,6 +1,6 @@
 import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
-import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 
 class RateNoticeDialogContent extends StatefulWidget {
@@ -35,7 +35,7 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
         }),
         Container(
           width: $(300),
-          height: $(260),
+          height: $(309),
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage(Images.ic_rate_bg),
@@ -44,33 +44,28 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TitleTextWidget(S.of(context).rate_pandora_ai, Colors.black, FontWeight.w900, $(20)).intoContainer(
-                padding: EdgeInsets.only(top: $(28), bottom: $(14), left: $(15), right: $(15)),
+              TitleTextWidget(S.of(context).rate_pandora_ai, Colors.white, FontWeight.w800, $(18)).intoContainer(
+                padding: EdgeInsets.only(top: $(75), bottom: $(16), left: $(15), right: $(15)),
               ),
               TitleTextWidget(
                 S.of(context).rate_description,
-                Color(0xFF271C6F),
+                Color(0xFFC4C6EE),
                 FontWeight.normal,
                 $(12),
                 maxLines: 10,
               ).intoContainer(
-                padding: EdgeInsets.only(bottom: $(14), left: $(15), right: $(15)),
+                padding: EdgeInsets.only(bottom: $(16), left: $(15), right: $(15)),
               ),
               Container(
                 width: $(270),
                 height: $(130),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    stops: [0.0, 1.0],
-                    colors: [
-                      Color.fromRGBO(210, 224, 252, 1.0),
-                      Color.fromRGBO(222, 212, 250, 1.0),
-                    ],
-                    begin: Alignment(-0.07, 0.05), // UnitPoint(x: 0.07, y: -0.05)
-                    end: Alignment(1.02, 1.0), // UnitPoint(x: 1.02, y: 1)
-                  ),
-                  borderRadius: BorderRadius.circular($(8)),
-                ),
+                    color: Color(0xFF15172A),
+                    borderRadius: BorderRadius.circular($(8)),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.1),
+                      width: $(1),
+                    )),
                 child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
                   RateItem(
                     title: S.of(context).rate_bad,
@@ -138,35 +133,27 @@ class RateItem extends StatelessWidget {
           img,
           width: isSelected ? $(48) : $(40),
         ).intoContainer(padding: EdgeInsets.only(bottom: isSelected ? $(12) : $(16), top: isSelected ? $(22) : $(26))),
-        TitleTextWidget(
-          title,
-          isSelected ? ColorConstant.White : Color(0xFF271C6F),
-          FontWeight.normal,
-          $(12),
-        ).intoContainer(
-          alignment: Alignment.center,
-          width: $(65),
-          height: $(26),
-          decoration: isSelected
-              ? BoxDecoration(
-                  borderRadius: BorderRadius.circular($(13)),
-                  gradient: LinearGradient(
-                    stops: [0.0, 0.15, 0.31, 0.47, 0.63, 0.77, 0.93],
-                    colors: [
-                      Color.fromRGBO(31, 239, 245, 1.0), // Color(red: 0.12, green: 0.94, blue: 0.96)
-                      Color.fromRGBO(102, 173, 243, 1.0), // Color(red: 0.4, green: 0.67, blue: 0.95)
-                      Color.fromRGBO(127, 148, 243, 1.0), // Color(red: 0.5, green: 0.58, blue: 0.95)
-                      Color.fromRGBO(151, 140, 235, 1.0), // Color(red: 0.59, green: 0.55, blue: 0.92)
-                      Color.fromRGBO(174, 125, 229, 1.0), // Color(red: 0.68, green: 0.49, blue: 0.9)
-                      Color.fromRGBO(209, 107, 221, 1.0),
-                      Color.fromRGBO(222, 97, 216, 1.0),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                )
-              : BoxDecoration(),
-        ),
+        ShaderMask(
+          shaderCallback: (rect) {
+            return LinearGradient(
+                    colors: isSelected
+                        ? [
+                            ColorConstant.ColorLinearStart,
+                            ColorConstant.ColorLinearEnd,
+                          ]
+                        : [ColorConstant.White, ColorConstant.White])
+                .createShader(rect);
+          },
+          blendMode: BlendMode.srcATop,
+          child: Text(
+            title,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: $(12),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        )
       ],
     );
   }
