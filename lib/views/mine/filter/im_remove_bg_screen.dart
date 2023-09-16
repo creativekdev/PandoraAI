@@ -82,7 +82,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
             _controller.stop();
             if (removeBgUrl != null) {
               ImageInfo imageInfo = await SyncFileImage(file: File(widget.filePath)).getImage();
-              await widget.onGetRemoveBgImage(removeBgUrl!, _width / imageInfo.image.width);
+              await widget.onGetRemoveBgImage(removeBgUrl!, _width > imageInfo.image.width ? _width / imageInfo.image.width : 1.0);
             }
             Navigator.of(context).pop(removeBgUrl != null);
           }
