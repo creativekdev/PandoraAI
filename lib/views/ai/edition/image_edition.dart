@@ -35,7 +35,9 @@ class ImageEdition {
     } else {
       if (record == null) {
         bool isShowRecent = cardType == HomeCardType.imageEdition;
+        bool autoGenerate = true;
         if (initKey == null) {
+          autoGenerate = false;
           RecentController recentController = Get.find();
           var firstWhereOrNull = recentController.recordList.firstWhereOrNull((element) {
             return element is RecentEffectModel || element is RecentStyleMorphModel;
@@ -44,7 +46,7 @@ class ImageEdition {
             initKey = firstWhereOrNull.itemList?.first?.key;
           }
         }
-        await _open(context, source: source, initKey: initKey, style: style, function: function, isShowRecent: isShowRecent);
+        await _open(context, source: source, initKey: initKey, style: style, function: function, isShowRecent: isShowRecent, autoGenerate: autoGenerate);
       } else {
         await _openFromRecent(context, source: source, initKey: initKey, style: style, function: function, record: record);
       }
@@ -58,6 +60,7 @@ class ImageEdition {
     String? initKey,
     required ImageEditionFunction function,
     required bool isShowRecent,
+    required bool autoGenerate,
   }) async {
     var paiCameraEntity = await showPhotoTakeDialog(
       context,
@@ -91,6 +94,7 @@ class ImageEdition {
           filter: FilterEnum.NOR,
           adjustData: [],
           cropRect: Rect.zero,
+          autoGenerate: autoGenerate,
         ),
       ),
     );
@@ -135,6 +139,7 @@ class ImageEdition {
           adjustData: adjustData,
           filter: filter,
           cropRect: cropRect,
+          autoGenerate: false,
         );
       },
     ));

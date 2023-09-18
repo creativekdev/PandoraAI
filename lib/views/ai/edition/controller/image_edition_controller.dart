@@ -22,6 +22,7 @@ class ImageEditionController extends GetxController {
   final String photoType;
   final String source;
   final String? initKey;
+  final bool autoGenerate;
   final ImageEditionFunction initFunction;
   final List<RecentAdjustData> recentAdjust;
   final FilterEnum recentFilter;
@@ -96,6 +97,7 @@ class ImageEditionController extends GetxController {
     required this.recentFilter,
     required this.recentAdjust,
     required this.recentCropRect,
+    required this.autoGenerate,
   }) {
     _originPath = originPath;
   }
@@ -150,7 +152,7 @@ class ImageEditionController extends GetxController {
     super.onReady();
     if (currentItem.function == ImageEditionFunction.effect) {
       var holder = currentItem.holder as TransferBaseController;
-      if (holder.selectedEffect != null && holder.resultFile == null) {
+      if (holder.selectedEffect != null && holder.resultFile == null && autoGenerate) {
         generate(Get.context!, holder);
       }
     }

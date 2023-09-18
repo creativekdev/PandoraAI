@@ -52,9 +52,11 @@ class ImageEditionScreen extends StatefulWidget {
   List<RecentAdjustData> adjustData;
   FilterEnum filter;
   Rect cropRect;
+  bool autoGenerate;
 
   ImageEditionScreen({
     super.key,
+    required this.autoGenerate,
     required this.source,
     required this.filePath,
     required this.initKey,
@@ -99,6 +101,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       recentCropRect: widget.cropRect,
       recentItemList: widget.recentEffectItems,
       imageContainerSize: imageSize,
+      autoGenerate: widget.autoGenerate,
     )..state = this);
     controller.bottomHeight = $(140) + ScreenUtil.getBottomPadding(Get.context!);
     timer = TimerUtil()
