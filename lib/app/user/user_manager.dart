@@ -7,6 +7,7 @@ import 'package:cartoonizer/controller/effect_data_controller.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
 import 'package:cartoonizer/models/ai_server_entity.dart';
+import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
@@ -133,9 +134,9 @@ class UserManager extends BaseManager {
   Future<void> onAllManagerCreate() async {
     super.onAllManagerCreate();
     cacheManager = AppDelegate.instance.getManager();
-    await initUser();
     _rateNoticeOperator = RateNoticeOperator(cacheManager: cacheManager);
     _rateNoticeOperator.init();
+    initUser();
   }
 
   initUser() async {
@@ -155,26 +156,40 @@ class UserManager extends BaseManager {
   }
 
   Future<OnlineModel> refreshUser({BuildContext? context}) async {
-    if (appVersionData == null) {
-      appVersionData = await AppApi.quickResponse().checkAppVersion();
-    }
-    var value = await api.getCurrentUser();
-    adConfig = value.adConfig;
-    cacheManager.featureOperator.refreshFeature(value.feature);
-    if (value.loginSuccess) {
-      user = value.user!;
-      if (context != null && user!.status != 'activated') {
-        // remove all route and push email verification screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) => EmailVerificationScreen(user!.getShownEmail()),
-            settings: RouteSettings(name: "/EmailVerificationScreen"),
-          ),
-        );
+    var list = await Future.wait([
+      AppApi.quickResponse().checkAppVersion(),
+      api.getCurrentUser(),
+    ]);
+    OnlineModel result = OnlineModel(
+      user: null,
+      loginSuccess: false,
+      adConfig: AdConfigEntity(),
+      dailyLimitRuleEntity: DailyLimitRuleEntity(),
+      feature: null,
+    );
+    for (var value in list) {
+      if (value is Map) {
+        appVersionData = value;
+      } else if (value is OnlineModel) {
+        adConfig = value.adConfig;
+        cacheManager.featureOperator.refreshFeature(value.feature);
+        if (value.loginSuccess) {
+          user = value.user!;
+          if (context != null && user!.status != 'activated') {
+            // remove all route and push email verification screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => EmailVerificationScreen(user!.getShownEmail()),
+                settings: RouteSettings(name: "/EmailVerificationScreen"),
+              ),
+            );
+          }
+        }
+        result = value;
       }
     }
-    return value;
+    return result;
   }
 
   Future<BaseEntity?> login(String email, String password) async {

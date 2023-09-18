@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:dio/src/adapters/io_adapter.dart';
 import 'package:flutter/foundation.dart';
 
-
 const _receiveTimeout = 60000;
 const _connectTimeout = 30000;
 const _responseType = ResponseType.json;
@@ -21,6 +20,7 @@ class DioNode {
 
   static DioNode get instance => _getInstance();
   static DioNode? _instance;
+  static Map<String, int> _timeRecord = {};
 
   late Dio client;
 
@@ -49,6 +49,7 @@ class DioNode {
         return handler.next(options);
       }
       var tag = _generateRequestTag(options);
+      _timeRecord[tag] = DateTime.now().millisecondsSinceEpoch;
       String url = options.baseUrl + options.path;
       LogUtil.v('request: $url  headers: ${options.generateHeaders()}', tag: tag);
       var getParams = options._generateGetParams();
@@ -78,7 +79,11 @@ class DioNode {
         result = response.data?.toString() ?? 'unsupported response data';
       }
       var tag = _generateRequestTag(response.requestOptions);
-      LogUtil.v('response: $url  response: $result', tag: tag);
+      int spend = -1;
+      if (_timeRecord[tag] != null) {
+        spend = DateTime.now().millisecondsSinceEpoch - _timeRecord.remove(tag)!;
+      }
+      LogUtil.v('response: $url  spend: $spend,  response: $result', tag: tag);
       return handler.next(response);
     }, onError: (e, handler) {
       if (kReleaseMode || !logResponseEnable) {
@@ -86,7 +91,11 @@ class DioNode {
       }
       String url = e.requestOptions.baseUrl + e.requestOptions.path;
       var tag = _generateRequestTag(e.requestOptions);
-      LogUtil.v('response: $url  error: ${e.toString()}', tag: tag);
+      int spend = -1;
+      if (_timeRecord[tag] != null) {
+        spend = DateTime.now().millisecondsSinceEpoch - _timeRecord.remove(tag)!;
+      }
+      LogUtil.v('response: $url  spend: $spend,  error: ${e.toString()}', tag: tag);
       return handler.next(e);
     }));
     return client;

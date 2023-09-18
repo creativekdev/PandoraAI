@@ -58,7 +58,7 @@ class AppDelegate {
       var managerName = manager.runtimeType.toString();
       var managerStartTime = DateTime.now();
       debugPrint("start init $managerName, currentTime:${managerStartTime.toString()}");
-      managerMap[manager.runtimeType.toString()] = manager;
+      managerMap[managerName] = manager;
       await manager.onCreate();
       var managerEndTime = DateTime.now();
       debugPrint("init $managerName, spend ${managerEndTime.millisecondsSinceEpoch - managerStartTime.millisecondsSinceEpoch} milliseconds");

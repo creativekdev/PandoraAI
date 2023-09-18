@@ -8,7 +8,7 @@ class ImageScaleOperator {
 
   ImageScaleOperator({required this.cacheManager});
 
-  loadCache() {
+  Future<void> loadCache() async {
     _scaleMap.clear();
     Map map = cacheManager.getJson(CacheManager.imageScaled) ?? {};
     map.forEach((key, value) {
