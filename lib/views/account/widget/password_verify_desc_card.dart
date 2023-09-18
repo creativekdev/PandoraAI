@@ -15,11 +15,6 @@ class PasswordVerifyDescCard extends StatelessWidget {
     return Column(
       children: [
         item(context, checked: passwordStrength != PasswordStrength.LengthError, text: S.of(context).password_length_tips),
-        item(
-          context,
-          checked: passwordStrength == PasswordStrength.Medium || passwordStrength == PasswordStrength.Strong,
-          text: S.of(context).password_strong_detected,
-        ),
       ],
     );
   }
@@ -28,7 +23,7 @@ class PasswordVerifyDescCard extends StatelessWidget {
     return Row(
       children: [
         Icon(
-          checked ? Icons.check_circle : Icons.check_circle_outline,
+          checked ? Icons.check_circle : Icons.circle_outlined,
           size: $(18),
           color: checked ? ColorConstant.BlueColor : ColorConstant.loginTitleColor,
         ),

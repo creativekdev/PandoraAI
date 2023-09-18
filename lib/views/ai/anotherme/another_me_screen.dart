@@ -33,7 +33,7 @@ class _AnotherMeScreenState extends State<AnotherMeScreen> {
     if (widget.entity != null) {
       var file = File(widget.entity!.filePath.first);
       SyncFileImage(file: file).getImage().then((value) {
-        var ratio = value.image.height / value.image.width;
+        var ratio = value.image.width / value.image.height;
         startTransfer(context, File(widget.entity!.originalPath!), ratio, file, 'recently');
       });
     }

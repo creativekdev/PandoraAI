@@ -74,6 +74,7 @@ void main() async {
   // run app
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  AppDelegate.instance.init();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
 
@@ -85,7 +86,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppDelegate.instance.init();
     return GetMaterialApp(
       navigatorObservers: [routeObserver],
       theme: ThemeData(
@@ -153,6 +153,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late StreamSubscription onSplashAdLoadingListener;
+  DateTime start = DateTime.now();
 
   @override
   void initState() {
@@ -160,10 +161,9 @@ class _MyHomePageState extends State<MyHomePage> {
     FlutterNativeSplash.remove();
     onSplashAdLoadingListener = EventBusHelper().eventBus.on<OnSplashAdLoadingChangeEvent>().listen((event) {
       if (!AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.isLoadingAd) {
-        openApp();
+        // openApp();
       }
     });
-
     waitAppInitialize();
   }
 
@@ -289,9 +289,9 @@ class _MyHomePageState extends State<MyHomePage> {
     var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
     if (value) {
       _checkAppVersion().then((value) {
-        var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
-        thirdpartManager.adsHolder.initHolder();
-        delay(() => openApp(force: true), milliseconds: 2000);
+        // var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
+        // thirdpartManager.adsHolder.initHolder();
+        delay(() => openApp(force: true), milliseconds: 100);
       });
     } else {
       Navigator.pushAndRemoveUntil(
@@ -304,6 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void openApp({bool force = false}) {
     var forward = () {
+      LogUtil.d("launch spend: ${DateTime.now().millisecondsSinceEpoch - start.millisecondsSinceEpoch}", tag: "launchApp");
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(

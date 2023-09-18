@@ -22,6 +22,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -154,19 +155,23 @@ class _SignupScreenState extends AppState<SignupScreen> {
     var pass = passController.text.trim();
     var cpass = cPassController.text.trim();
     if (!email.contains('@')) {
-      CommonExtension().showToast(S.of(context).input_valid_email);
+      CommonExtension().showToast(S.of(context).input_valid_email, gravity: ToastGravity.CENTER);
       return;
     }
     if (TextUtil.isEmpty(pass)) {
-      CommonExtension().showToast(S.of(context).input_password);
+      CommonExtension().showToast(S.of(context).input_password, gravity: ToastGravity.CENTER);
+      return;
+    }
+    if (_passwordStrength == PasswordStrength.LengthError) {
+      CommonExtension().showToast(S.of(context).password_length_tips, gravity: ToastGravity.CENTER);
       return;
     }
     if (pass != cpass) {
-      CommonExtension().showToast(S.of(context).password_not_match);
+      CommonExtension().showToast(S.of(context).password_not_match, gravity: ToastGravity.CENTER);
       return;
     }
     if (!agreementCheck) {
-      CommonExtension().showToast(S.of(context).pleaseReadAndAgreePrivacyAndTermsOfUse);
+      CommonExtension().showToast(S.of(context).pleaseReadAndAgreePrivacyAndTermsOfUse, gravity: ToastGravity.CENTER);
       return;
     }
     await showLoading();

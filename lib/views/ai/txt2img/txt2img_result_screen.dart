@@ -72,6 +72,9 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
             Events.txt2imgCompleteGenerateAgain(time: generateCount - 1);
           }
         });
+
+        UserManager userManager = AppDelegate.instance.getManager();
+        userManager.rateNoticeOperator.onSwitch(Get.context!, true);
       } else {
         if (value.error != null) {
           Navigator.of(context).pop();
@@ -87,10 +90,6 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
       if (value != null) {
         if (value.data != null) {
           progressController.loadComplete();
-          delay(() {
-            UserManager userManager = AppDelegate.instance.getManager();
-            userManager.rateNoticeOperator.onSwitch(Get.context!, true);
-          }, milliseconds: 1000);
         } else {
           progressController.onError(error: value.error);
         }

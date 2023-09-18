@@ -82,6 +82,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         controller.sourcePhoto = file;
         controller.transKey = transResult!.path;
         controller.onSuccess();
+        // 增加次数判断，看是否显示rate_us
+        UserManager userManager = AppDelegate.instance.getManager();
+        userManager.rateNoticeOperator.onSwitch(Get.context!, true);
       }
     });
   }
@@ -132,9 +135,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                 recentController.onMetaverseUsed(file, image);
                 transResult = image;
                 simulateProgressBarController.loadComplete();
-                // 增加次数判断，看是否显示rate_us
-                UserManager userManager = AppDelegate.instance.getManager();
-                userManager.rateNoticeOperator.onSwitch(Get.context!, true);
               } else {
                 simulateProgressBarController.onError(error: value.type);
               }
@@ -155,7 +155,11 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         ratio: ratio,
       ),
       settings: RouteSettings(name: '/TransResultAnimScreen'),
-    ));
+    )).whenComplete(() {
+      // 增加次数判断，看是否显示rate_us
+      UserManager userManager = AppDelegate.instance.getManager();
+      userManager.rateNoticeOperator.onSwitch(Get.context!, true);
+    });
   }
 
   @override
@@ -188,7 +192,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                   }),
                   controller.error()
                       ? Positioned(
-                          bottom: ScreenUtil.getBottomPadding(context, padding: 32),
+                          bottom: ScreenUtil.getBottomPadding(context) == 0 ? $(32) : ScreenUtil.getBottomPadding(context),
                           child: OutlineWidget(
                             radius: $(12),
                             strokeWidth: $(2),

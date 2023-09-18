@@ -370,10 +370,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "like": MessageLookupByLibrary.simpleMessage("Like"),
         "limit_inv_desc": MessageLookupByLibrary.simpleMessage(
             "Share the invitation code for extra credit"),
-        "limit_login_desc": MessageLookupByLibrary.simpleMessage(
-            "Get extra credits every day Multiple free image generation opportunities per effect Become a registered user and enjoy exclusive benefits for registered users."),
+        "limit_login_btn": MessageLookupByLibrary.simpleMessage("log in"),
+        "limit_login_desc":
+            MessageLookupByLibrary.simpleMessage("Already has an account, "),
+        "limit_login_desc_end": MessageLookupByLibrary.simpleMessage(
+            " here to enjoy all features."),
         "limit_login_title": MessageLookupByLibrary.simpleMessage(
-            "Log in to get daily extra credits"),
+            "With every daily log in,\n you unlock free credits"),
         "limit_login_title_extra": MessageLookupByLibrary.simpleMessage(
             "Today’s quota for this feature has been exhausted."),
         "limit_pro_btn":
@@ -499,8 +502,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pass_validation1":
             MessageLookupByLibrary.simpleMessage("Password not matched"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),
-        "password_length_tips": MessageLookupByLibrary.simpleMessage(
-            "Password length needs to be 6-16 characters"),
+        "password_length_tips":
+            MessageLookupByLibrary.simpleMessage("Length needs to be 6-16."),
         "password_not_match":
             MessageLookupByLibrary.simpleMessage("Password is not matched"),
         "password_strong_detected": MessageLookupByLibrary.simpleMessage(

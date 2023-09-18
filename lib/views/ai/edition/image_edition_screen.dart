@@ -52,9 +52,11 @@ class ImageEditionScreen extends StatefulWidget {
   List<RecentAdjustData> adjustData;
   FilterEnum filter;
   Rect cropRect;
+  bool autoGenerate;
 
   ImageEditionScreen({
     super.key,
+    required this.autoGenerate,
     required this.source,
     required this.filePath,
     required this.initKey,
@@ -99,6 +101,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       recentCropRect: widget.cropRect,
       recentItemList: widget.recentEffectItems,
       imageContainerSize: imageSize,
+      autoGenerate: widget.autoGenerate,
     )..state = this);
     controller.bottomHeight = $(140) + ScreenUtil.getBottomPadding(Get.context!);
     timer = TimerUtil()
@@ -282,7 +285,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     super.dispose();
   }
 
-  PreferredSizeWidget? buildNavigationBar(BuildContext context) {
+  PreferredSizeWidget buildNavigationBar(BuildContext context) {
     return AppNavigationBar(
       backAction: () {
         _willPopCallback(context);
@@ -314,33 +317,35 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         child: GetBuilder<ImageEditionController>(
           builder: (controller) {
             return Scaffold(
-              appBar: buildNavigationBar(context),
-              body: Stack(
-                fit: StackFit.expand,
-                children: [
-                  buildContent(context, controller).intoContainer(
-                    margin: EdgeInsets.only(bottom: $(140) + ScreenUtil.getBottomPadding(context)),
-                  ),
-                  Align(
-                    child: buildOptions(context, controller).intoContainer(
-                      padding: EdgeInsets.only(top: $(15)),
-                      height: $(140) + ScreenUtil.getBottomPadding(context),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-                        ColorConstant.BackgroundColor.withOpacity(0),
-                        ColorConstant.BackgroundColor.withOpacity(0.2),
-                        ColorConstant.BackgroundColor.withOpacity(0.4),
-                        ColorConstant.BackgroundColor.withOpacity(0.6),
-                        ColorConstant.BackgroundColor.withOpacity(0.8),
-                        ColorConstant.BackgroundColor,
-                        ColorConstant.BackgroundColor,
-                        ColorConstant.BackgroundColor,
-                      ])),
+              body: Column(children: [
+                buildNavigationBar(context),
+                Expanded(child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    buildContent(context, controller).intoContainer(
+                      margin: EdgeInsets.only(bottom: $(140) + ScreenUtil.getBottomPadding(context)),
                     ),
-                    alignment: Alignment.bottomCenter,
-                  )
-                ],
-              ),
+                    Align(
+                      child: buildOptions(context, controller).intoContainer(
+                        padding: EdgeInsets.only(top: $(15)),
+                        height: $(140) + ScreenUtil.getBottomPadding(context),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+                              ColorConstant.BackgroundColor.withOpacity(0),
+                              ColorConstant.BackgroundColor.withOpacity(0.2),
+                              ColorConstant.BackgroundColor.withOpacity(0.4),
+                              ColorConstant.BackgroundColor.withOpacity(0.6),
+                              ColorConstant.BackgroundColor.withOpacity(0.8),
+                              ColorConstant.BackgroundColor,
+                              ColorConstant.BackgroundColor,
+                              ColorConstant.BackgroundColor,
+                            ])),
+                      ),
+                      alignment: Alignment.bottomCenter,
+                    )
+                  ],
+                )),
+              ],),
             );
           },
           init: Get.find<ImageEditionController>(),
@@ -415,12 +420,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         Obx(
           () => Align(
             child: generateAgainBtn(context, () {
-              if (controller.currentItem == ImageEditionFunction.effect) {
+              if (controller.currentItem.function == ImageEditionFunction.effect) {
                 controller.generate(context, controller.currentItem.holder);
-              } else if (controller.currentItem == ImageEditionFunction.removeBg) {
+              } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
                 controller.removeBgHolder.initData();
               }
-            }),
+            }).intoContainer(padding: EdgeInsets.only(bottom: (imageSize.height - controller.showImageSize.value.height) / 2)),
             alignment: Alignment.bottomCenter,
           ).visibility(visible: generateAgainVisible.value),
         ),

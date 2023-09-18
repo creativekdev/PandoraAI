@@ -79,7 +79,7 @@ class ScreenUtil {
     return MediaQuery.of(context).viewInsets.bottom;
   }
 
-  static double getBottomPadding(BuildContext context, {double? padding}) {
+  static double getBottomPadding(BuildContext context) {
     return MediaQuery.of(context).padding.bottom;
   }
 }

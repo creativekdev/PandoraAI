@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/widgets/mask/app_mask.dart';
 
@@ -37,7 +39,7 @@ class _TransResultAnimScreenState extends State<TransResultAnimScreen> with Sing
     result = widget.result;
     ratio = widget.ratio;
     width = ScreenUtil.screenSize.width;
-    height = width * ratio;
+    height = width / ratio;
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 2000));
     animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutQuint);
     _controller.addStatusListener(

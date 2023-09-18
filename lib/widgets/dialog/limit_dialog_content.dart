@@ -11,7 +11,7 @@ import 'package:cartoonizer/widgets/widget_extensions.dart';
 import 'package:flutter/material.dart';
 
 class LimitDialogContent extends StatelessWidget {
-  final Function onPositiveTap;
+  final Function(bool toSign) onPositiveTap;
   final Function onNegativeTap;
   final Function onInviteTap;
   final AccountLimitType type;
@@ -46,7 +46,7 @@ class LimitDialogContent extends StatelessWidget {
 }
 
 class GuestLimitDialogContent extends StatelessWidget {
-  final Function onPositiveTap;
+  final Function(bool toSign) onPositiveTap;
   final Function onNegativeTap;
 
   const GuestLimitDialogContent({super.key, required this.onNegativeTap, required this.onPositiveTap});
@@ -61,12 +61,9 @@ class GuestLimitDialogContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TitleTextWidget(S.of(context).limit_login_title, Colors.white, FontWeight.bold, $(20), maxLines: 3),
-            SizedBox(height: $(12)),
-            TitleTextWidget(S.of(context).limit_login_title_extra, Colors.white, FontWeight.normal, $(12), maxLines: 3),
-            SizedBox(height: $(12)),
+            SizedBox(height: $(40)),
             Image.asset(Images.ic_limit_guest_icon),
-            SizedBox(height: $(15)),
-            TitleTextWidget(S.of(context).limit_login_desc, Colors.white, FontWeight.normal, $(9), maxLines: 10),
+            SizedBox(height: $(40)),
             ShaderMask(
               shaderCallback: (rect) {
                 return LinearGradient(
@@ -76,17 +73,25 @@ class GuestLimitDialogContent extends StatelessWidget {
                 ).createShader(rect);
               },
               blendMode: BlendMode.srcATop,
-              child: TitleTextWidget(S.of(context).limit_register_btn, Colors.white, FontWeight.w500, $(12), maxLines: 1),
+              child: TitleTextWidget(S.of(context).sign_up, Colors.white, FontWeight.w500, $(12), maxLines: 1).intoContainer(width: double.maxFinite),
             )
                 .intoContainer(
-                    margin: EdgeInsets.only(top: $(37)),
                     padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(12)),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular($(32)),
                     ))
                 .intoGestureDetector(onTap: () {
-              onPositiveTap.call();
+              onPositiveTap.call(true);
+            }),
+            SizedBox(height: $(15)),
+            RichText(
+              text: TextSpan(text: S.of(context).limit_login_desc, style: TextStyle(color: Colors.white, fontSize: $(9), fontFamily: 'Poppins'), children: [
+                TextSpan(text: S.of(context).limit_login_btn, style: TextStyle(decoration: TextDecoration.underline)),
+                TextSpan(text: S.of(context).limit_login_desc_end),
+              ]),
+            ).intoGestureDetector(onTap: () {
+              onPositiveTap.call(false);
             }),
           ],
         ).intoContainer(
@@ -108,7 +113,7 @@ class GuestLimitDialogContent extends StatelessWidget {
 }
 
 class UserLimitDialogContent extends StatelessWidget {
-  final Function onPositiveTap;
+  final Function(bool toSign) onPositiveTap;
   final Function onInviteTap;
   final Function onNegativeTap;
 
@@ -156,7 +161,7 @@ class UserLimitDialogContent extends StatelessWidget {
                       borderRadius: BorderRadius.circular($(32)),
                     ))
                 .intoGestureDetector(onTap: () {
-              onPositiveTap.call();
+              onPositiveTap.call(false);
             }),
             Text(
               S.of(context).limit_inv_desc,

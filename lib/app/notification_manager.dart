@@ -40,11 +40,10 @@ class NotificationManager extends BaseManager {
   @override
   Future<void> onCreate() async {
     await super.onCreate();
-
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     requireFirebasePermission();
-    await setupFlutterNotifications();
+    setupFlutterNotifications();
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       LogUtil.d('onNewMessage: ${message.data.toString()}');
@@ -54,14 +53,14 @@ class NotificationManager extends BaseManager {
       LogUtil.d('onNewMessageOpenedApp: ${message.data.toString()}');
       onHandleNotificationClick(message);
     });
-    FirebaseMessaging.instance.getAPNSToken().then((value) {
-      LogUtil.d('APNS------------------$value');
-    });
   }
 
   @override
   Future<void> onAllManagerCreate() async {
     cacheManager = getManager();
+    FirebaseMessaging.instance.getAPNSToken().then((value) {
+      LogUtil.d('APNS------------------$value');
+    });
     FirebaseMessaging.instance.getToken().then((value) {
       LogUtil.d('Token------------------$value');
       cacheManager.setString(CacheManager.pushToken, value);

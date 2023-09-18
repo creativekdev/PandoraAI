@@ -102,6 +102,9 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
       } else if (value.result) {
         setState(() {});
         Events.aidrawCompleteSuccess(source: source, photoType: photoType);
+        // 增加次数判断，看是否显示rate_us
+        UserManager userManager = AppDelegate.instance.getManager();
+        userManager.rateNoticeOperator.onSwitch(Get.context!, true);
       } else {
         Navigator.of(context).pop();
       }
@@ -140,11 +143,6 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
             drawableController.resultFilePaths = value.filePath;
             resultFilePath = drawableController.resultFilePaths.first;
             progressBarController.loadComplete();
-            // 增加次数判断，看是否显示rate_us
-            delay(() {
-              UserManager userManager = AppDelegate.instance.getManager();
-              userManager.rateNoticeOperator.onSwitch(Get.context!, true);
-            }, milliseconds: 1000);
           } else {
             progressBarController.onError();
           }
