@@ -82,6 +82,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         controller.sourcePhoto = file;
         controller.transKey = transResult!.path;
         controller.onSuccess();
+        // 增加次数判断，看是否显示rate_us
+        UserManager userManager = AppDelegate.instance.getManager();
+        userManager.rateNoticeOperator.onSwitch(Get.context!, true);
       }
     });
   }
@@ -152,7 +155,11 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         ratio: ratio,
       ),
       settings: RouteSettings(name: '/TransResultAnimScreen'),
-    ));
+    )).whenComplete(() {
+      // 增加次数判断，看是否显示rate_us
+      UserManager userManager = AppDelegate.instance.getManager();
+      userManager.rateNoticeOperator.onSwitch(Get.context!, true);
+    });
   }
 
   @override

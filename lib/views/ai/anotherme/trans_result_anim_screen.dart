@@ -39,7 +39,7 @@ class _TransResultAnimScreenState extends State<TransResultAnimScreen> with Sing
     result = widget.result;
     ratio = widget.ratio;
     width = ScreenUtil.screenSize.width;
-    height = width * ratio;
+    height = width / ratio;
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 2000));
     animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutQuint);
     _controller.addStatusListener(
@@ -56,9 +56,6 @@ class _TransResultAnimScreenState extends State<TransResultAnimScreen> with Sing
       },
     );
     delay(() => _controller.forward(), milliseconds: 1000);
-    // 增加次数判断，看是否显示rate_us
-    UserManager userManager = AppDelegate.instance.getManager();
-    userManager.rateNoticeOperator.onSwitch(Get.context!, true);
   }
 
   @override
