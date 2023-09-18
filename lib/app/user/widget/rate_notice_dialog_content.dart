@@ -76,6 +76,7 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
                       if (Navigator.canPop(context)) {
                         Navigator.pop(context);
                         onResult.call(false);
+                        FeedbackUtils.open(context);
                       }
                     }
                   }),
