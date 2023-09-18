@@ -307,8 +307,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "last_one": MessageLookupByLibrary.simpleMessage("已经是最后一个了"),
         "like": MessageLookupByLibrary.simpleMessage("点赞"),
         "limit_inv_desc": MessageLookupByLibrary.simpleMessage("分享邀请码以获得额外次数"),
-        "limit_login_desc": MessageLookupByLibrary.simpleMessage(
-            "每天获得额外积分 每个效果有多个免费图像生成机会 成为注册用户并享受注册用户的专属福利。"),
+        "limit_login_btn": MessageLookupByLibrary.simpleMessage("去登录"),
+        "limit_login_desc": MessageLookupByLibrary.simpleMessage("已经拥有账号，"),
+        "limit_login_desc_end": MessageLookupByLibrary.simpleMessage("解锁所有功能"),
         "limit_login_title":
             MessageLookupByLibrary.simpleMessage("登录即可获得每日额外积分"),
         "limit_login_title_extra":

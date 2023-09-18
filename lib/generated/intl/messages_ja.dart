@@ -328,8 +328,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "like": MessageLookupByLibrary.simpleMessage("いいね"),
         "limit_inv_desc":
             MessageLookupByLibrary.simpleMessage("招待コードを共有して追加クレジットを獲得する"),
-        "limit_login_desc": MessageLookupByLibrary.simpleMessage(
-            "毎日追加のクレジットを獲得 エフェクトごとに複数の無料画像生成の機会 登録ユーザーになり、登録ユーザー限定の特典をお楽しみください。"),
+        "limit_login_btn": MessageLookupByLibrary.simpleMessage("ログイン"),
+        "limit_login_desc":
+            MessageLookupByLibrary.simpleMessage("すでにアカウントをお持ちの場合は、"),
+        "limit_login_desc_end":
+            MessageLookupByLibrary.simpleMessage("してすべての機能のロックを解除してください。"),
         "limit_login_title":
             MessageLookupByLibrary.simpleMessage("ログインして毎日追加のクレジットを獲得してください"),
         "limit_login_title_extra":
@@ -441,8 +444,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("パスワードを入力してください"),
         "pass_validation1": MessageLookupByLibrary.simpleMessage("パスワードが正しくない"),
         "password": MessageLookupByLibrary.simpleMessage("パスワード"),
-        "password_length_tips": MessageLookupByLibrary.simpleMessage(
-            "パスワードの長さは 6 ～ 16 文字である必要があります"),
+        "password_length_tips":
+            MessageLookupByLibrary.simpleMessage("パスワードの長さ: 6 ～ 16"),
         "password_not_match":
             MessageLookupByLibrary.simpleMessage("2つのパスワードが一致しません"),
         "password_strong_detected":

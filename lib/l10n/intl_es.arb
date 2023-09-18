@@ -523,13 +523,15 @@
   "no_network": "No se detectó ninguna conexión de red",
   "limit_login_title": "Inicia sesión para obtener créditos adicionales diarios",
   "limit_login_title_extra": "La cuota de hoy para esta función se ha agotado.",
-  "limit_login_desc": "Obtenga créditos adicionales todos los días Múltiples oportunidades de generación de imágenes gratuitas por efecto Conviértase en un usuario registrado y disfrute de beneficios exclusivos para usuarios registrados.",
+  "limit_login_desc": "Ya tiene una cuenta, ",
+  "limit_login_btn": "inicie",
+  "limit_login_desc_end": " sesión aquí para disfrutar de todas las funciones.",
   "limit_register_btn": "Registro con un clic para obtener más créditos",
   "limit_pro_title": "Actualizar a miembro",
   "limit_pro_title_extra": "o vuelva mañana para obtener créditos adicionales.",
   "limit_pro_desc": "Editor de fotos, efectos exclusivos y actualizaciones semanales.",
   "limit_pro_btn": "Hazte socio por sólo ",
   "limit_inv_desc": "Comparte el código de invitación para obtener crédito adicional",
-  "password_length_tips": "La longitud de la contraseña debe ser de 6 a 16 caracteres.",
+  "password_length_tips": "La longitud debe ser de 6 a 16.",
   "password_strong_detected": "Evite números/letras/caracteres especiales puros"
 }

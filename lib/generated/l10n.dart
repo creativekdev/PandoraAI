@@ -5270,10 +5270,10 @@ class S {
     );
   }
 
-  /// `Log in to get daily extra credits`
+  /// `With every daily log in,\n you unlock free credits`
   String get limit_login_title {
     return Intl.message(
-      'Log in to get daily extra credits',
+      'With every daily log in,\n you unlock free credits',
       name: 'limit_login_title',
       desc: '',
       args: [],
@@ -5290,11 +5290,31 @@ class S {
     );
   }
 
-  /// `Get extra credits every day Multiple free image generation opportunities per effect Become a registered user and enjoy exclusive benefits for registered users.`
+  /// `Already has an account, `
   String get limit_login_desc {
     return Intl.message(
-      'Get extra credits every day Multiple free image generation opportunities per effect Become a registered user and enjoy exclusive benefits for registered users.',
+      'Already has an account, ',
       name: 'limit_login_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `log in`
+  String get limit_login_btn {
+    return Intl.message(
+      'log in',
+      name: 'limit_login_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` here to enjoy all features.`
+  String get limit_login_desc_end {
+    return Intl.message(
+      ' here to enjoy all features.',
+      name: 'limit_login_desc_end',
       desc: '',
       args: [],
     );
@@ -5360,10 +5380,10 @@ class S {
     );
   }
 
-  /// `Password length needs to be 6-16 characters`
+  /// `Length needs to be 6-16.`
   String get password_length_tips {
     return Intl.message(
-      'Password length needs to be 6-16 characters',
+      'Length needs to be 6-16.',
       name: 'password_length_tips',
       desc: '',
       args: [],

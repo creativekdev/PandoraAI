@@ -391,8 +391,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "like": MessageLookupByLibrary.simpleMessage("Gustar"),
         "limit_inv_desc": MessageLookupByLibrary.simpleMessage(
             "Comparte el código de invitación para obtener crédito adicional"),
-        "limit_login_desc": MessageLookupByLibrary.simpleMessage(
-            "Obtenga créditos adicionales todos los días Múltiples oportunidades de generación de imágenes gratuitas por efecto Conviértase en un usuario registrado y disfrute de beneficios exclusivos para usuarios registrados."),
+        "limit_login_btn": MessageLookupByLibrary.simpleMessage("inicie"),
+        "limit_login_desc":
+            MessageLookupByLibrary.simpleMessage("Ya tiene una cuenta, "),
+        "limit_login_desc_end": MessageLookupByLibrary.simpleMessage(
+            " sesión aquí para disfrutar de todas las funciones."),
         "limit_login_title": MessageLookupByLibrary.simpleMessage(
             "Inicia sesión para obtener créditos adicionales diarios"),
         "limit_login_title_extra": MessageLookupByLibrary.simpleMessage(
@@ -525,7 +528,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("La contraseña es incorrecta"),
         "password": MessageLookupByLibrary.simpleMessage("contraseña"),
         "password_length_tips": MessageLookupByLibrary.simpleMessage(
-            "La longitud de la contraseña debe ser de 6 a 16 caracteres."),
+            "La longitud debe ser de 6 a 16."),
         "password_not_match": MessageLookupByLibrary.simpleMessage(
             "Dos contraseñas no coinciden, vuelva a introducirlas"),
         "password_strong_detected": MessageLookupByLibrary.simpleMessage(

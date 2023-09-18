@@ -415,12 +415,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         Obx(
           () => Align(
             child: generateAgainBtn(context, () {
-              if (controller.currentItem == ImageEditionFunction.effect) {
+              if (controller.currentItem.function == ImageEditionFunction.effect) {
                 controller.generate(context, controller.currentItem.holder);
-              } else if (controller.currentItem == ImageEditionFunction.removeBg) {
+              } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
                 controller.removeBgHolder.initData();
               }
-            }),
+            }).intoContainer(padding: EdgeInsets.only(bottom: (imageSize.height - controller.showImageSize.value.height) / 2)),
             alignment: Alignment.bottomCenter,
           ).visibility(visible: generateAgainVisible.value),
         ),

@@ -43,6 +43,8 @@ class ImageUtils {
     int size = 512,
     bool showLoading = false,
     int maxM = 8,
+    Size imageSize = Size.zero,
+    Size cropSize = Size.zero,
   }) async {
     if (showLoading) {
       Completer<String> callback = Completer();
@@ -64,6 +66,9 @@ class ImageUtils {
           } else {
             await source.copy(path);
           }
+        }
+        if (!cropSize.isEmpty) {
+          path = await onPrePickImage(path, imageSize.width.toInt(), imageSize.height.toInt(), cropSize);
         }
         _complete(callback, path);
       }), settings: RouteSettings(name: '/_Loading')));
@@ -87,8 +92,26 @@ class ImageUtils {
           await source.copy(path);
         }
       }
+      if (!cropSize.isEmpty) {
+        path = await onPrePickImage(path, imageSize.width.toInt(), imageSize.height.toInt(), cropSize);
+      }
       return path;
     }
+  }
+
+  static Future<String> onPrePickImage(String path, int width, int height, Size shownImageSize) async {
+    var containerRatio = shownImageSize.width / shownImageSize.height;
+    var imageRatio = width / height;
+    if (imageRatio < containerRatio) {
+      //图片更细长，需要裁减缩放, 先获取图片裁减区域
+      var targetCoverRect = ImageUtils.getTargetCoverRect(Size(width.toDouble(), height.toDouble()), shownImageSize);
+      var imageInfo = await SyncFileImage(file: File(path)).getImage();
+      var uint8list = await cropFile(imageInfo.image, targetCoverRect);
+      var s = path + "crop_${containerRatio}." + getFileType(path);
+      await File(s).writeAsBytes(uint8list);
+      return s;
+    }
+    return path;
   }
 
   // Calculate the area that the artwork should display based on the target coordinates

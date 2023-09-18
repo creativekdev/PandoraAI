@@ -289,16 +289,18 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
     CommonExtension().showToast(S.of(context).DAILY_IP_LIMIT_EXCEEDED);
     return;
   }
-  showDialog<bool>(
+  showDialog<_LimitDialogResult>(
       context: context,
       barrierDismissible: false,
       builder: (_) => LimitDialogContent(
             type: type,
             onNegativeTap: () {
-              Navigator.of(_).pop(false);
+              Navigator.of(_).pop(_LimitDialogResult()..positive = false);
             },
-            onPositiveTap: () {
-              Navigator.of(_).pop(true);
+            onPositiveTap: (toSign) {
+              Navigator.of(_).pop(_LimitDialogResult()
+                ..positive = true
+                ..toSign = toSign);
             },
             onInviteTap: () {
               Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
@@ -308,10 +310,10 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
           )).then((value) {
     if (value == null) {
       // do nothing
-    } else if (value) {
+    } else if (value.positive ?? false) {
       switch (type) {
         case AccountLimitType.guest:
-          userManager.doOnLogin(Get.context!, logPreLoginAction: '${function}_generate_limit', toSignUp: true);
+          userManager.doOnLogin(Get.context!, logPreLoginAction: '${function}_generate_limit', toSignUp: value.toSign ?? true);
           break;
         case AccountLimitType.normal:
           PaymentUtils.pay(Get.context!, source);
@@ -323,6 +325,13 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
       EventBusHelper().eventBus.fire(OnLimitDialogCancelEvent());
     }
   });
+}
+
+class _LimitDialogResult {
+  _LimitDialogResult();
+
+  bool? positive;
+  bool? toSign;
 }
 
 enum PhotoTakeDialogType {

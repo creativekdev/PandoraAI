@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/widgets/mask/app_mask.dart';
 
@@ -54,6 +56,9 @@ class _TransResultAnimScreenState extends State<TransResultAnimScreen> with Sing
       },
     );
     delay(() => _controller.forward(), milliseconds: 1000);
+    // 增加次数判断，看是否显示rate_us
+    UserManager userManager = AppDelegate.instance.getManager();
+    userManager.rateNoticeOperator.onSwitch(Get.context!, true);
   }
 
   @override
