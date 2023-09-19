@@ -39,17 +39,7 @@ class FilterOptions extends StatelessWidget {
               ),
             ),
           ],
-        ).intoContainer(height: itemWidth + (12), width: ScreenUtil.screenSize.width),
-        Text(
-          controller.filterOperator.currentFilter.title(),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: $(13),
-            fontWeight: FontWeight.bold,
-            // fontWeight: controller.currentFunction == function ? FontWeight.bold : FontWeight.normal,
-          ),
-          textAlign: TextAlign.center,
-        ).intoContainer(alignment: Alignment.center),
+        ).intoContainer(height: itemWidth + (24), width: ScreenUtil.screenSize.width),
       ],
     );
   }
@@ -78,7 +68,6 @@ class FilterOptions extends StatelessWidget {
     return GestureDetector(
         onTap: () {
           controller.filterOperator.currentFilter = function;
-          EventBusHelper().eventBus.fire(OnEditionRightTabSwitchEvent(data: function.title()));
           parentState.showLoading().whenComplete(() {
             controller.buildCropImage();
             controller.buildImage().then((value) {
@@ -89,6 +78,7 @@ class FilterOptions extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            TitleTextWidget(function.title(), controller.filterOperator.currentFilter == function ? Colors.white : ColorConstant.EffectGrey, FontWeight.normal, 9.sp),
             SizedBox(height: $(2)),
             controller.filterOperator.currentFilter == function
                 ? item.intoContainer(
