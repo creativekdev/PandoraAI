@@ -68,7 +68,7 @@ class ImageUtils {
           }
         }
         if (!cropSize.isEmpty) {
-          path = await onPrePickImage(path, imageSize.width.toInt(), imageSize.height.toInt(), cropSize);
+          path = await onPrePickImage(path, imageSize.width / imageSize.height, cropSize);
         }
         _complete(callback, path);
       }), settings: RouteSettings(name: '/_Loading')));
@@ -93,21 +93,23 @@ class ImageUtils {
         }
       }
       if (!cropSize.isEmpty) {
-        path = await onPrePickImage(path, imageSize.width.toInt(), imageSize.height.toInt(), cropSize);
+        path = await onPrePickImage(path, imageSize.width / imageSize.height, cropSize);
       }
       return path;
     }
   }
 
-  static Future<String> onPrePickImage(String path, int width, int height, Size shownImageSize) async {
+  static Future<String> onPrePickImage(String path, double imageRatio, Size shownImageSize) async {
     var containerRatio = shownImageSize.width / shownImageSize.height;
-    var imageRatio = width / height;
     if (imageRatio < containerRatio) {
       //图片更细长，需要裁减缩放, 先获取图片裁减区域
-      var targetCoverRect = ImageUtils.getTargetCoverRect(Size(width.toDouble(), height.toDouble()), shownImageSize);
-      var imageInfo = await SyncFileImage(file: File(path)).getImage();
-      var uint8list = await cropFile(imageInfo.image, targetCoverRect);
       var s = path + "crop_${containerRatio}." + getFileType(path);
+      if (File(s).existsSync()) {
+        return s;
+      }
+      var imageInfo = await SyncFileImage(file: File(path)).getImage();
+      var targetCoverRect = ImageUtils.getTargetCoverRect(Size(imageInfo.image.width.toDouble(), imageInfo.image.height.toDouble()), shownImageSize);
+      var uint8list = await cropFile(imageInfo.image, targetCoverRect);
       await File(s).writeAsBytes(uint8list);
       return s;
     }

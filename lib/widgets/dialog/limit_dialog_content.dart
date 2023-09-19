@@ -1,5 +1,3 @@
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/ThemeConstant.dart';
 import 'package:cartoonizer/generated/l10n.dart';
 import 'package:cartoonizer/images-res.dart';

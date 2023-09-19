@@ -66,7 +66,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   bool _isAvailable = false;
   bool _purchasePending = false;
   bool _loading = true;
-  bool _showPurchasePlan = false;
+  bool _showPurchasePlan = true;
   String? _queryProductError;
   UserManager userManager = AppDelegate().getManager();
   bool purchaseSuccess = false;
@@ -172,6 +172,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             } else {
               _handleInvalidPurchase(purchaseDetails);
               setState(() {
+                _showPurchasePlan = false;
                 _loading = false;
               });
             }
@@ -230,11 +231,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     await userManager.refreshUser();
     var user = userManager.user!;
-    if (user.userSubscription.containsKey('id')) {
-      setState(() {
-        _showPurchasePlan = true;
-      });
-    }
+    setState(() {
+      _showPurchasePlan = user.userSubscription.containsKey('id');
+    });
 
     ProductDetailsResponse productDetailResponse = await _inAppPurchase.queryProductDetails(productMap.map((e) => e['apple_id'].toString()).toSet());
     print(productDetailResponse.productDetails);
@@ -280,7 +279,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   Widget _buildPurchaseButton() {
     if (_showPurchasePlan) {
-      return Container(height: 50);
+      return Container(height: 50.dp);
     }
 
     var year, month;
@@ -329,9 +328,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               ),
             ).intoContainer(
               width: double.maxFinite,
+              height: 50.dp,
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: $(15)),
-              padding: EdgeInsets.symmetric(vertical: $(10)),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -348,15 +347,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   Widget _buildProductList() {
     if (!_isAvailable) {
-      if (isVip()) {
-        return Container(
-          height: $(72),
-        );
-      } else {
-        return Container(
-          height: $(144),
-        );
-      }
+      return Container(
+        height: 170.dp,
+      );
     }
 
     for (int i = 0; i < _purchases.length; i++) {
@@ -418,15 +411,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         popular: false,
       ).intoContainer(
           margin: EdgeInsets.only(
-        left: $(15),
-        right: $(15),
-        top: $(15),
+        left: 15.dp,
+        right: 15.dp,
+        top: 20.dp,
+        bottom: 90.dp,
       ));
     }
 
     return Column(
       children: [
-        SizedBox(height: $(20)),
         buyPlanItem(
           context,
           plan: month,
@@ -456,7 +449,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           });
         }),
       ],
-    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15)));
+    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(20)));
   }
 
   @override
@@ -690,7 +683,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                 SizedBox(height: $(12)),
               ],
             ).intoContainer(
-              padding: EdgeInsets.symmetric(horizontal: $(10), vertical: $(6)),
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: $(10)),
               margin: EdgeInsets.all($(1.5)),
               decoration: BoxDecoration(
                 color: Color(0xff040404),
@@ -728,7 +722,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             right: 0,
           ),
       ],
-    );
+    ).intoContainer(height: 60.dp);
   }
 }
 

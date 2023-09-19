@@ -126,7 +126,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
 
   Widget _buildPurchaseButton() {
     if (_showPurchasePlan) {
-      return Container(height: 50);
+      return Container(height: 50.dp);
     }
 
     return GestureDetector(
@@ -158,9 +158,9 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
               ),
             ).intoContainer(
               width: double.maxFinite,
+              height: 50.dp,
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(horizontal: $(15)),
-              padding: EdgeInsets.symmetric(vertical: $(10)),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -177,15 +177,9 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
 
   Widget _buildProductList() {
     if (_loading) {
-      if (isVip()) {
-        return Container(
-          height: $(72),
-        );
-      } else {
-        return Container(
-          height: $(144),
-        );
-      }
+      return Container(
+        height: 170.dp,
+      );
     }
 
     if (_showPurchasePlan) {
@@ -208,9 +202,10 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
         popular: false,
       ).intoContainer(
           margin: EdgeInsets.only(
-        left: $(15),
-        right: $(15),
-        top: $(15),
+        left: 15.dp,
+        right: 15.dp,
+        top: 20.dp,
+        bottom: 90.dp,
       ));
     }
 
@@ -242,7 +237,6 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     }
     return Column(
       children: [
-        SizedBox(height: $(20)),
         buyPlanItem(
           context,
           plan: monthly,
@@ -272,7 +266,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
           });
         }),
       ],
-    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15)));
+    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(20)));
   }
 
   @override
@@ -463,7 +457,8 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                 SizedBox(height: $(12)),
               ],
             ).intoContainer(
-              padding: EdgeInsets.symmetric(horizontal: $(10), vertical: $(6)),
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: $(10)),
               margin: EdgeInsets.all($(1.5)),
               decoration: BoxDecoration(
                 color: Color(0xff040404),
@@ -501,6 +496,6 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
             right: 0,
           )
       ],
-    );
+    ).intoContainer(height: 60.dp);
   }
 }
