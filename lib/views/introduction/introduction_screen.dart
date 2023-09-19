@@ -95,7 +95,9 @@ class IntroductionScreenState extends State<IntroductionScreen> {
                 Row(children: buildPoint(), mainAxisSize: MainAxisSize.min),
                 SizedBox(height: $(20)),
                 GestureDetector(
-                  onTap: () => _onContinueClick(context),
+                  onTap: () {
+                    _onContinueClick(context);
+                  },
                   child: Container(
                     width: 100.w,
                     height: 54,

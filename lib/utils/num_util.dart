@@ -82,7 +82,11 @@ extension NumEx on num {
     return ScreenUtil.screenSize.height / 100 * this;
   }
 
-  double get sp {
+  double get dp {
     return $(this.toDouble());
+  }
+
+  double get sp {
+    return $sp(this.toDouble());
   }
 }

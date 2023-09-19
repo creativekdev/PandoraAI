@@ -50,6 +50,10 @@ class ScreenUtil {
     return number * _ratio;
   }
 
+  static sp(number) {
+    return dp(number) * (mediaQuery?.textScaleFactor ?? 1);
+  }
+
   static Size get screenSize {
     return mediaQuery?.size ?? Size(_designWidth, _designHeight);
   }
@@ -85,3 +89,4 @@ class ScreenUtil {
 }
 
 double $(double value) => ScreenUtil.dp(value);
+double $sp(double value) => ScreenUtil.sp(value);

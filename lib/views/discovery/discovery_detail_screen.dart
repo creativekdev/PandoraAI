@@ -318,7 +318,7 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
       ],
     )
         .intoContainer(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom == 0 ? $(15) : MediaQuery.of(context).padding.bottom),
         )
         .intoMaterial(elevation: 2, color: ColorConstant.DiscoveryCommentBackground);
   }

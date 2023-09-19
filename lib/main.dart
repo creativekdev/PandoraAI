@@ -74,7 +74,6 @@ void main() async {
   // run app
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  AppDelegate.instance.init();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
 
@@ -158,6 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    AppDelegate.instance.init();
     FlutterNativeSplash.remove();
     onSplashAdLoadingListener = EventBusHelper().eventBus.on<OnSplashAdLoadingChangeEvent>().listen((event) {
       if (!AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.isLoadingAd) {
