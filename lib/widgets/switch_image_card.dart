@@ -78,6 +78,7 @@ class _SwitchImageCardState extends State<SwitchImageCard> {
         Image.file(
           origin!,
           fit: BoxFit.contain,
+          width: ScreenUtil.getCurrentWidgetSize(context).width,
         ).intoCenter().blur(),
       ],
     );
@@ -92,6 +93,7 @@ class _SwitchImageCardState extends State<SwitchImageCard> {
         Image.file(
           showFile,
           fit: BoxFit.contain,
+          width: currentSize.width,
         ).intoCenter().blur(),
         Positioned(
           child: Listener(

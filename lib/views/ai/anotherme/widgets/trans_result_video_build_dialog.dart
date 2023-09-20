@@ -51,7 +51,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     result = widget.result;
     ratio = widget.ratio;
     designWidth = 420;
-    designHeight = designWidth * ratio;
+    designHeight = designWidth / ratio;
     String dirName = EncryptUtil.encodeMd5(result.path);
     var savePath = cacheManager.storageOperator.recordMetaverseDir.path + dirName;
     fileName = '$savePath/${EncryptUtil.encodeMd5(savePath).substring(0, 8)}.mp4';
@@ -104,8 +104,8 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
                   children: [
                     RepaintBoundary(
                       key: cropKey,
-                      child: TransProgressScreenShotWidget(origin: origin, result: result, width: designWidth, height: designWidth * ratio, progress: progress / 100),
-                    ).intoContainer(width: designWidth, height: designWidth * ratio)
+                      child: TransProgressScreenShotWidget(origin: origin, result: result, width: designWidth, height: designWidth / ratio, progress: progress / 100),
+                    ).intoContainer(width: designWidth, height: designWidth / ratio)
                   ],
                 ),
               ).intoContainer(width: 1),
