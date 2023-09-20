@@ -387,7 +387,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     var yearlyPrice = double.tryParse(year.rawPrice?.toString() ?? '0') ?? 0;
     double originYearlyPrice = 0;
     if (yearlyPrice != 0) {
-      originYearlyPrice = yearlyPrice / 0.65;
+      originYearlyPrice = yearlyPrice / 0.75;
     }
 
     var currentPlan;
