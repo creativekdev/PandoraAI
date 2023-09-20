@@ -8,6 +8,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/widgets/outline_widget.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../utils/utils.dart';
 import '../account/LoginScreen.dart';
@@ -66,20 +67,15 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
   Future<void> initStoreInfo() async {
     // reload user by get login
     userManager.refreshUser().then((value) {
-      setState(() {
-        _loading = false;
-      });
+      _loading = false;
       if (userManager.user != null) {
         if (userManager.user!.userSubscription.containsKey('id')) {
-          setState(() {
-            _showPurchasePlan = true;
-          });
+          _showPurchasePlan = true;
         } else {
-          setState(() {
-            _showPurchasePlan = false;
-          });
+          _showPurchasePlan = false;
         }
       }
+      safeSetState(() {});
     });
   }
 
@@ -125,7 +121,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
   }
 
   Widget _buildPurchaseButton() {
-    if (_showPurchasePlan) {
+    if (_showPurchasePlan || _loading) {
       return Container(height: 50.dp);
     }
 
@@ -271,11 +267,11 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return LoadingOverlay(
-      isLoading: _loading || _purchasePending,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Column(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: LoadingOverlay(
+        isLoading: _loading || _purchasePending,
+        child: Column(
           children: [
             Row(
               children: [

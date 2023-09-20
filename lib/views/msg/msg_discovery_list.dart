@@ -157,6 +157,8 @@ class MsgDiscoveryListState extends AppState<MsgDiscoveryList> with AutomaticKee
               });
             });
           }
+        } else {
+          hideLoading();
         }
       });
     });

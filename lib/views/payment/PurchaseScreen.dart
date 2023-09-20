@@ -64,9 +64,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   List<PurchaseDetails> _purchases = [];
   List<String> _consumables = [];
   bool _isAvailable = false;
-  bool _purchasePending = false;
+  bool _purchasePending = true;
   bool _loading = true;
-  bool _showPurchasePlan = true;
+  bool _showPurchasePlan = false;
   String? _queryProductError;
   UserManager userManager = AppDelegate().getManager();
   bool purchaseSuccess = false;
@@ -278,7 +278,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   }
 
   Widget _buildPurchaseButton() {
-    if (_showPurchasePlan) {
+    if (_showPurchasePlan || _purchasePending) {
       return Container(height: 50.dp);
     }
 
@@ -387,7 +387,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     var yearlyPrice = double.tryParse(year.rawPrice?.toString() ?? '0') ?? 0;
     double originYearlyPrice = 0;
     if (yearlyPrice != 0) {
-      originYearlyPrice = yearlyPrice / 0.65;
+      originYearlyPrice = yearlyPrice / 0.75;
     }
 
     var currentPlan;
@@ -465,11 +465,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        child: LoadingOverlay(
-          isLoading: _loading,
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Column(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: LoadingOverlay(
+            isLoading: _loading,
+            child: Column(
               children: [
                 Row(
                   children: [
@@ -736,13 +736,4 @@ class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
   bool shouldShowPriceConsent() {
     return false;
   }
-}
-
-int getPlanLimit(HomeCardType type) {
-  EffectDataController effectDataController = Get.find();
-  var pick = effectDataController.data?.aiConfig.pick((t) => t.key == type.value());
-  if (pick == null) {
-    return 0;
-  }
-  return pick.planDailyLimit;
 }
