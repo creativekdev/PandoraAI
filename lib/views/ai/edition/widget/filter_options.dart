@@ -1,9 +1,8 @@
-import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/widgets/background_card.dart';
-import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
+import 'package:cartoonizer/widgets/background_card.dart';
+import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:skeletons/skeletons.dart';
 
 class FilterOptions extends StatelessWidget {

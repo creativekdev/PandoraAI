@@ -218,9 +218,9 @@ class ImageEditionController extends GetxController {
   }
 
   switchBack(BuildContext context) async {
-    if (_lastItem == null && currentItem == ImageEditionFunction.removeBg) {
+    if (_lastItem == null && currentItem.function == ImageEditionFunction.removeBg) {
       Navigator.of(context).pop();
-    } else if (_lastItem != null) {
+    } else if (_lastItem != null && currentItem.function == ImageEditionFunction.removeBg) {
       currentItem = _lastItem!;
     }
   }

@@ -46,7 +46,8 @@ class SocialUserInfo {
 
     for (int i = 0; i < subscription.length; i++) {
       Map<String, dynamic> item = subscription[i];
-      if (item['plan_category'] == 'creator' && (item['status'] == 'success' || item['status'] == 'pending')) {
+      int planId = item['plan_id'];
+      if ((planId == 80001 || planId == 80002 || planId == 80000) && (item['status'] == 'success' || item['status'] == 'changed')) {
         userSubscription = item;
       }
     }
