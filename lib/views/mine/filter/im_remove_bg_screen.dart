@@ -23,16 +23,19 @@ import '../../../widgets/dialog/dialog_widget.dart';
 typedef OnGetRemoveBgImage = Future Function(String removeBgUrl, double imageRatio);
 
 class ImRemoveBgScreen extends StatefulWidget {
-  const ImRemoveBgScreen(
-      {super.key,
-      required this.onGetRemoveBgImage,
-      required this.filePath,
-      required this.imageRatio,
-      this.bottomPadding = 0,
-      this.switchButtonBottomToScreen = 0,
-      required this.imageHeight,
-      required this.imageWidth,
-      required this.size});
+  const ImRemoveBgScreen({
+    super.key,
+    required this.onGetRemoveBgImage,
+    required this.filePath,
+    required this.imageRatio,
+    this.bottomPadding = 0,
+    this.switchButtonBottomToScreen = 0,
+    required this.imageHeight,
+    required this.imageWidth,
+    required this.size,
+    required this.source,
+    required this.type,
+  });
 
   final String filePath;
   final OnGetRemoveBgImage onGetRemoveBgImage;
@@ -42,6 +45,8 @@ class ImRemoveBgScreen extends StatefulWidget {
   final double imageHeight;
   final double imageWidth;
   final Size size;
+  final String source;
+  final String type;
 
   @override
   State<ImRemoveBgScreen> createState() => _ImRemoveBgScreenState();
@@ -150,6 +155,8 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
         isRequset = false;
         if (removeBgUrl == null) {
           Navigator.of(context).pop(false);
+        } else {
+          Events.removeBgSuccess(source: widget.source, type: widget.type);
         }
         safeSetState(() {});
       }
@@ -174,6 +181,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
               });
           if (removeBgUrl != null) {
             isRequset = false;
+            Events.removeBgSuccess(source: widget.source, type: widget.type);
           }
         }
         setState(() {});
