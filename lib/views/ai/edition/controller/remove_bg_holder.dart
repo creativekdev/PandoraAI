@@ -101,6 +101,8 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       Get.context!,
       NoAnimRouter(
         ImRemoveBgScreen(
+          type: parent.photoType,
+          source: parent.source,
           bottomPadding: parent.bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
           filePath: originFilePath!,
           imageRatio: shownImage!.width / shownImage!.height,

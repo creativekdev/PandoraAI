@@ -62,7 +62,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
   double lastScrollPos = 0;
   bool lastScrollDown = false;
 
-  AnimationController? animationController;
+  late AnimationController animationController;
   late StreamSubscription onHomeScrollListener;
 
   @override
@@ -76,13 +76,10 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
       if (scrollDown == null || !mounted) {
         return;
       }
-      if (animationController == null) {
-        return;
-      }
       if (scrollDown) {
-        animationController?.forward();
+        animationController.forward();
       } else if (!scrollDown) {
-        animationController?.reverse();
+        animationController.reverse();
       }
     });
     _connectivity.onConnectivityChanged.listen((event) {
@@ -139,6 +136,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
     onUserLoginListener.cancel();
     onUserStateChangeListener.cancel();
     scrollController.dispose();
+    animationController.dispose();
     super.dispose();
   }
 

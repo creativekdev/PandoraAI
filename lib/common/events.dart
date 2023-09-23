@@ -338,6 +338,15 @@ class Events {
         'type': type,
       });
 
+  static Future<void> removeBgSuccess({
+    required String source,
+    required String type,
+  }) =>
+      logEvent('remove_background_success', eventValues: {
+        'source': source,
+        'type': type,
+      });
+
   static Future<void> styleMorphDownload({required String type}) => logEvent('stylemorph_completed_download', eventValues: {'type': type});
 
   static Future<void> styleMorphGenerateAgain({
