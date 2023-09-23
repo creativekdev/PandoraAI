@@ -64,60 +64,55 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff161719),
-      body: GetBuilder<DiscoveryListController>(
-        init: Get.find<DiscoveryListController>(),
-        builder: (listController) {
-          return Column(
-            children: [
-              Theme(
-                data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
-                child: TabBar(
-                  isScrollable: true,
-                  indicator: LineTabIndicator(
-                    borderSide: BorderSide(width: 4.0, color: ColorConstant.DiscoveryBtn),
-                    strokeCap: StrokeCap.round,
-                    width: 90.dp,
-                  ),
-                  padding: EdgeInsets.only(bottom: 4.dp),
-                  labelColor: Colors.white,
-                  labelStyle: TextStyle(fontWeight: FontWeight.normal),
-                  unselectedLabelColor: Colors.grey.shade400,
-                  unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
-                  tabs: tabs
-                      .map((e) => Text(e, style: TextStyle(fontSize: 18.dp)).intoContainer(
-                            color: Colors.transparent,
-                            padding: EdgeInsets.only(left: 0, top: 8.dp, right: 0, bottom: 8.dp),
-                          ))
-                      .toList(),
-                  controller: tabController,
-                  onTap: (index) {
-                    if (tabController.index != index) {
-                      Events.discoveryTabClick(tab: tabs[index]);
-                    }
-                    pageController.jumpToPage(index);
-                  },
-                ),
-              ).intoContainer(width: ScreenUtil.screenSize.width, alignment: Alignment.center).intoContainer(
-                    padding: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()),
-                    height: headerHeight,
-                    color: ColorConstant.BackgroundColorBlur,
-                  ),
-              PageView(
-                controller: pageController,
-                onPageChanged: (index) {
-                  tabController.animateTo(index, duration: Duration(milliseconds: 300));
-                },
-                children: children,
-              ).intoContainer(
-                height: ScreenUtil.screenSize.height - headerHeight,
-                width: ScreenUtil.screenSize.width,
+      body: Column(
+        children: [
+          Theme(
+            data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+            child: TabBar(
+              isScrollable: true,
+              indicator: LineTabIndicator(
+                borderSide: BorderSide(width: 4.0, color: ColorConstant.DiscoveryBtn),
+                strokeCap: StrokeCap.round,
+                width: 90.dp,
               ),
-            ],
+              padding: EdgeInsets.only(bottom: 4.dp),
+              labelColor: Colors.white,
+              labelStyle: TextStyle(fontWeight: FontWeight.normal),
+              unselectedLabelColor: Colors.grey.shade400,
+              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+              tabs: tabs
+                  .map((e) => Text(e, style: TextStyle(fontSize: 18.dp)).intoContainer(
+                        color: Colors.transparent,
+                        padding: EdgeInsets.only(left: 0, top: 8.dp, right: 0, bottom: 8.dp),
+                      ))
+                  .toList(),
+              controller: tabController,
+              onTap: (index) {
+                if (tabController.index != index) {
+                  Events.discoveryTabClick(tab: tabs[index]);
+                }
+                pageController.jumpToPage(index);
+              },
+            ),
+          ).intoContainer(width: ScreenUtil.screenSize.width, alignment: Alignment.center).intoContainer(
+                padding: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()),
+                height: headerHeight,
+                color: ColorConstant.BackgroundColorBlur,
+              ),
+          PageView(
+            controller: pageController,
+            onPageChanged: (index) {
+              tabController.animateTo(index, duration: Duration(milliseconds: 300));
+            },
+            children: children,
           ).intoContainer(
-            height: ScreenUtil.screenSize.height,
+            height: ScreenUtil.screenSize.height - headerHeight,
             width: ScreenUtil.screenSize.width,
-          );
-        },
+          ),
+        ],
+      ).intoContainer(
+        height: ScreenUtil.screenSize.height,
+        width: ScreenUtil.screenSize.width,
       ),
     );
   }

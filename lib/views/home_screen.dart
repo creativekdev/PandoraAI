@@ -1,22 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/notification_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/controller/album_controller.dart';
 import 'package:cartoonizer/controller/effect_data_controller.dart';
 import 'package:cartoonizer/controller/recent/recent_controller.dart';
-import 'package:cartoonizer/widgets/tabbar/app_tab_bar.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/notification_manager.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
 import 'package:cartoonizer/views/mine/refcode/refcode_controller.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
+import 'package:cartoonizer/widgets/tabbar/app_tab_bar.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -45,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   RecentController recentController = Get.put(RecentController());
   AlbumController albumController = Get.put(AlbumController());
   MsgListController msgController = Get.put(MsgListController());
-  DiscoveryListController discoveryListController = Get.put(DiscoveryListController());
 
   AnimationController? animationController;
 

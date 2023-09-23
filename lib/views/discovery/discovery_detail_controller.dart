@@ -14,7 +14,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../app/user/user_manager.dart';
 import '../input/input_screen.dart';
-import 'discovery_list_controller.dart';
 
 class DiscoveryDetailController extends GetxController {
   DiscoveryListEntity discoveryEntity;
@@ -34,7 +33,6 @@ class DiscoveryDetailController extends GetxController {
   CacheManager cacheManager = AppDelegate().getManager();
   Rx<bool> likeLocalAddAlready = false.obs;
   Rx<bool> liked = false.obs;
-  DiscoveryListController listController = Get.find();
   bool? listLiked;
 
   DiscoveryDetailController({required this.discoveryEntity, this.listLiked});
