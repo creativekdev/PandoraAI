@@ -1,8 +1,12 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
+import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
+
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 
 import 'package:cartoonizer/models/enums/home_card_type.dart';
+
+import 'package:cartoonizer/models/enums/home_item.dart';
 
 
 HomePageEntity $HomePageEntityFromJson(Map<String, dynamic> json) {
@@ -102,5 +106,25 @@ Map<String, dynamic> $HomePageHomepageGalleriesToJson(HomePageHomepageGalleries 
 	data['records'] = entity.records;
 	data['social_posts'] =  entity.socialPosts.map((v) => v.toJson()).toList();
 	data['title'] = entity.title;
+	return data;
+}
+
+HomeItemEntity $HomeItemEntityFromJson(Map<String, dynamic> json) {
+	final HomeItemEntity homeItemEntity = HomeItemEntity();
+	final String? mHomeItemString = jsonConvert.convert<String>(json['key']);
+	if (mHomeItemString != null) {
+		homeItemEntity.mHomeItemString = mHomeItemString;
+	}
+	final dynamic value = jsonConvert.convert<dynamic>(json['value']);
+	if (value != null) {
+		homeItemEntity.value = value;
+	}
+	return homeItemEntity;
+}
+
+Map<String, dynamic> $HomeItemEntityToJson(HomeItemEntity entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['key'] = entity.mHomeItemString;
+	data['value'] = entity.value;
 	return data;
 }

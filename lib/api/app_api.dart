@@ -596,6 +596,7 @@ class AppApi extends RetryAbleRequester {
       canClickRetry: true,
       params: {
         'separate_sticker': 1,
+        'list_format': 1,
       },
     );
     if (baseEntity == null) return null;

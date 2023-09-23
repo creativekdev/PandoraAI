@@ -9,8 +9,11 @@ import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/controller/effect_data_controller.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/home_item.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
+import 'package:cartoonizer/models/home_page_entity.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment/payment.dart';
@@ -163,42 +166,6 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
     return GetBuilder<EffectDataController>(
       init: dataController,
       builder: (_) {
-        List<SliverToBoxAdapter>? contents = _.data?.homepage?.galleries.map((e) {
-          String title = _.data?.locale["app_home"][e.title] ?? e.title;
-          return SliverToBoxAdapter(
-            child: PaiContentView(
-              height: e.title == 'facetoon' ? $(96) : $(172),
-              title: title,
-              onTap: (String category, List<DiscoveryListEntity>? posts, String title) {
-                Navigator.of(context).push<bool>(
-                  MaterialPageRoute(
-                    settings: RouteSettings(name: '/HomeDetailsScreen'),
-                    builder: (context) => HomeDetailsScreen(
-                      posts: posts,
-                      category: category,
-                      source: "home_page",
-                      title: title,
-                      records: e.records ?? 0,
-                    ),
-                  ),
-                );
-              },
-              onTapItem: (int index, String category, List<DiscoveryListEntity>? posts, String title) {
-                Navigator.of(context).push<void>(MaterialPageRoute(
-                    settings: RouteSettings(name: '/HomeDetailScreen'),
-                    builder: (context) => HomeDetailScreen(
-                          posts: e.socialPosts,
-                          source: "home_page",
-                          title: category,
-                          index: index,
-                          titleName: title,
-                          records: e.records ?? 0,
-                        )));
-              },
-              galleries: e,
-            ),
-          );
-        }).toList();
         return Stack(
           children: [
             _.loading
@@ -206,48 +173,14 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                 : _.data == null
                     ? FutureBuilder(
                         future: getConnectionStatus(),
-                        builder: (context, snapshot1) {
-                          return Center(
-                            child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? S.of(context).empty_msg : S.of(context).no_internet_msg,
-                                ColorConstant.BtnTextColor, FontWeight.w400, 12.sp),
-                          ).intoGestureDetector(onTap: () {
-                            _.loadData();
-                            userManager.refreshUser();
-                          });
-                        })
-                    : CustomScrollView(
-                        physics: ClampingScrollPhysics(),
-                        controller: scrollController,
-                        slivers: [
-                          SliverPadding(padding: EdgeInsets.only(top: ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight())),
-                          SliverToBoxAdapter(
-                            child: PaiSwiper(
-                              entity: _.data?.homepage?.banners,
-                              onClickItem: (index, data) {
-                                HomeCardTypeUtils.jump(context: context, source: 'home_page_banner_${data.category.value()}', data: data);
-                              },
-                            ),
-                          ),
-                          SliverToBoxAdapter(
-                            child: PaiSliverView(
-                              list: _.data?.homepage?.tools,
-                              onClickItem: (data) {
-                                HomeCardTypeUtils.jump(context: context, source: 'home_page_tools_${data.category.value()}', homeData: data);
-                              },
-                            ),
-                          ),
-                          SliverToBoxAdapter(
-                            child: PaiRecommendView(
-                              list: _.data?.homepage?.features,
-                              onClickItem: (data) {
-                                HomeCardTypeUtils.jump(context: context, source: 'home_page_recommend_${data.category.value()}', homeData: data);
-                              },
-                            ),
-                          ),
-                          ...?contents,
-                          SliverPadding(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context)))
-                        ],
-                      ),
+                        builder: (context, snapshot1) => Center(
+                              child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? S.of(context).empty_msg : S.of(context).no_internet_msg,
+                                  ColorConstant.BtnTextColor, FontWeight.w400, 12.sp),
+                            ).intoGestureDetector(onTap: () {
+                              _.loadData();
+                              userManager.refreshUser();
+                            }))
+                    : buildList(_.data!.homepage, _.data!.locale),
             header(context),
             addWidget(context),
           ],
@@ -256,16 +189,104 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
     ).intoContainer(color: Colors.black);
   }
 
+  Widget buildList(List<HomeItemEntity> homepage, Map<String, dynamic> locale) {
+    return CustomScrollView(
+      physics: ClampingScrollPhysics(),
+      controller: scrollController,
+      slivers: [
+        SliverPadding(padding: EdgeInsets.only(top: kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight())),
+        ...homepage.map((data) {
+          switch (data.mHomeItem) {
+            case HomeItem.banners:
+              var banners = data.getDataList<DiscoveryListEntity>();
+              return SliverToBoxAdapter(
+                child: PaiSwiper(
+                  entity: banners,
+                  onClickItem: (index, data) {
+                    HomeCardTypeUtils.jump(context: context, source: 'home_page_banner_${data.category.value()}', data: data);
+                  },
+                ),
+              );
+            case HomeItem.tools:
+              var tools = data.getDataList<HomePageHomepageTools>();
+              for (var element in tools) {
+                element.title = element.categoryString?.localeValue(locale) ?? '';
+              }
+              return SliverToBoxAdapter(
+                child: PaiSliverView(
+                  list: tools,
+                  onClickItem: (data) {
+                    HomeCardTypeUtils.jump(context: context, source: 'home_page_tools_${data.category.value()}', homeData: data);
+                  },
+                ),
+              );
+            case HomeItem.features:
+              var features = data.getDataList<HomePageHomepageTools>();
+              for (var element in features) {
+                element.title = element.categoryString?.localeValue(locale) ?? '';
+              }
+              return SliverToBoxAdapter(
+                child: PaiRecommendView(
+                  list: features,
+                  onClickItem: (data) {
+                    HomeCardTypeUtils.jump(context: context, source: 'home_page_recommend_${data.category.value()}', homeData: data);
+                  },
+                ),
+              );
+            case HomeItem.galleries:
+              var galleries = data.getDataList<HomePageHomepageGalleries>();
+              return SliverList(
+                  delegate: SliverChildListDelegate(galleries.map((e) {
+                e.title = e.categoryString?.localeValue(locale) ?? '';
+                String title = locale["app_home"][e.title] ?? e.title;
+                return PaiContentView(
+                  height: e.title == 'facetoon' ? 96.dp : 172.dp,
+                  title: title,
+                  onTap: (String category, List<DiscoveryListEntity>? posts, String title) {
+                    Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: '/HomeDetailsScreen'),
+                        builder: (context) => HomeDetailsScreen(
+                          posts: posts,
+                          category: category,
+                          source: "home_page",
+                          title: title,
+                          records: e.records ?? 0,
+                        ),
+                      ),
+                    );
+                  },
+                  onTapItem: (int index, String category, List<DiscoveryListEntity>? posts, String title) {
+                    Navigator.of(context).push<void>(MaterialPageRoute(
+                        settings: RouteSettings(name: '/HomeDetailScreen'),
+                        builder: (context) => HomeDetailScreen(
+                              posts: e.socialPosts,
+                              source: "home_page",
+                              title: category,
+                              index: index,
+                              titleName: title,
+                              records: e.records ?? 0,
+                            )));
+                  },
+                  galleries: e,
+                );
+              }).toList()));
+            case HomeItem.UNDEFINED:
+              return SliverToBoxAdapter(child: SizedBox.shrink());
+          }
+        }).toList(),
+        SliverPadding(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
+      ],
+    );
+  }
+
   Widget header(BuildContext context) => ClipRect(
           child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: navbar(context).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(
-              onTap: () {},
-            ),
+        child: navbar(context).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(onTap: () {}),
       ));
 
   Widget navbar(BuildContext context) => Container(
-        // margin: EdgeInsets.only(top: $(10)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -277,14 +298,14 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                 children: [
                   Text(
                     S.of(context).pro,
-                    style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
+                    style: TextStyle(fontSize: 14.sp, color: Color(0xffffffff), fontWeight: FontWeight.w700),
                   )
                       .intoContainer(
-                          width: $(45),
-                          padding: EdgeInsets.symmetric(vertical: $(4)),
+                          width: 45.dp,
+                          padding: EdgeInsets.symmetric(vertical: 4.dp),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular($(6)),
+                            borderRadius: BorderRadius.circular(6.dp),
                             gradient: LinearGradient(
                               colors: [Color(0xffE31ECD), Color(0xff243CFF)],
                               begin: Alignment.topLeft,
@@ -297,14 +318,14 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                     });
                   }),
                 ],
-              ).intoContainer(margin: EdgeInsets.only(left: $(10))).offstage(offstage: !proVisible),
-              middle: TitleTextWidget(S.of(context).home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+              ).intoContainer(margin: EdgeInsets.only(left: 10.dp)).offstage(offstage: !proVisible),
+              middle: TitleTextWidget(S.of(context).home, ColorConstant.BtnTextColor, FontWeight.w600, 18.sp),
               trailing: Obx(() => BadgeView(
                     type: BadgeType.fill,
                     count: AppDelegate.instance.getManager<MsgManager>().unreadCount.value,
                     child: Image.asset(
                       Images.ic_msg_icon,
-                      width: $(26),
+                      width: 26.sp,
                       color: Colors.white,
                     ),
                   )).intoContainer(padding: EdgeInsets.all(4)).intoGestureDetector(onTap: () {
@@ -317,42 +338,37 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
         ),
       );
 
-  Widget addWidget(BuildContext context) {
-    return Align(
-      child: AnimatedBuilder(
-          animation: animationController!,
-          builder: (context, child) {
-            return Transform.translate(
-              offset: Offset(0, ($(58) + ScreenUtil.getBottomPadding(context) + AppTabBarHeight) * (animationController?.value ?? 0) + 1),
-              child: Stack(
-                fit: StackFit.loose,
-                children: [
-                  Image.asset(
-                    Images.ic_home_add,
-                    color: Color.fromARGB(250, 14, 16, 17),
-                    width: $(60),
-                    height: $(58),
-                  ),
-                  Positioned(
-                    child: Image.asset(
-                      Images.ic_home_add_child,
-                      width: $(44),
+  Widget addWidget(BuildContext context) => Align(
+        child: AnimatedBuilder(
+            animation: animationController!,
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(0, (58.dp + ScreenUtil.getBottomPadding(context) + AppTabBarHeight) * (animationController?.value ?? 0) + 1),
+                child: Stack(
+                  fit: StackFit.loose,
+                  children: [
+                    Image.asset(
+                      Images.ic_home_add,
+                      color: Color.fromARGB(250, 14, 16, 17),
+                      width: 60.dp,
+                      height: 58.dp,
                     ),
-                    left: $(8),
-                    right: $(8),
-                    top: $(8),
-                  ),
-                ],
-              )
-                  .intoContainer(
-                margin: EdgeInsets.only(bottom: AppTabBarHeight + ScreenUtil.getBottomPadding(context)),
-              )
-                  .intoGestureDetector(onTap: () {
-                ImageEdition.open(context, source: 'home_add_btn', style: EffectStyle.All, function: ImageEditionFunction.effect, cardType: HomeCardType.imageEdition);
-              }),
-            );
-          }),
-      alignment: Alignment.bottomCenter,
-    );
-  }
+                    Positioned(
+                      child: Image.asset(Images.ic_home_add_child, width: 44.dp),
+                      left: 8.dp,
+                      right: 8.dp,
+                      top: 8.dp,
+                    ),
+                  ],
+                )
+                    .intoContainer(
+                  margin: EdgeInsets.only(bottom: AppTabBarHeight + ScreenUtil.getBottomPadding(context)),
+                )
+                    .intoGestureDetector(onTap: () {
+                  ImageEdition.open(context, source: 'home_add_btn', style: EffectStyle.All, function: ImageEditionFunction.effect, cardType: HomeCardType.imageEdition);
+                }),
+              );
+            }),
+        alignment: Alignment.bottomCenter,
+      );
 }

@@ -64,7 +64,7 @@ class _DiscoveryMetagramPageState extends State<DiscoveryMetagramPage> with Auto
           enableControlFinishRefresh: true,
           enableControlFinishLoad: false,
           cacheExtent: 1000,
-          emptyWidget: controller.dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
+          emptyWidget: controller.dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, 16.sp).intoCenter() : null,
           onRefresh: () async {
             controller.onLoadFirstPage().then((value) {
               easyRefreshController.finishRefresh();
@@ -80,19 +80,19 @@ class _DiscoveryMetagramPageState extends State<DiscoveryMetagramPage> with Auto
             SliverWaterfallFlow(
                 gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: $(15),
+                  crossAxisSpacing: 15.dp,
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     var data = controller.dataList[index];
                     if (data.data is SocialPostPageEntity) {
                       return DiscoveryMgListCard(
-                        width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                        width: (ScreenUtil.screenSize.width - 45.dp) / 2,
                         data: data.data! as SocialPostPageEntity,
                         onTap: () {
                           Metagram.open(context, source: 'discovery_page', socialPostPage: data.data!);
                         },
-                      ).marginOnly(top: $(15));
+                      ).marginOnly(top: 15.dp);
                     } else {
                       return SizedBox.shrink();
                     }

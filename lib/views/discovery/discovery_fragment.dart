@@ -27,7 +27,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late AppTabId tabId;
 
-  double headerHeight = ScreenUtil.getStatusBarHeight() + 46.dp;
+  double headerHeight = ScreenUtil.getStatusBarHeight() + 50.dp;
 
   late TabController tabController;
   late PageController pageController;
@@ -76,16 +76,17 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                   indicator: LineTabIndicator(
                     borderSide: BorderSide(width: 4.0, color: ColorConstant.DiscoveryBtn),
                     strokeCap: StrokeCap.round,
-                    width: $(90),
+                    width: 90.dp,
                   ),
+                  padding: EdgeInsets.only(bottom: 4.dp),
                   labelColor: Colors.white,
                   labelStyle: TextStyle(fontWeight: FontWeight.normal),
                   unselectedLabelColor: Colors.grey.shade400,
                   unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
                   tabs: tabs
-                      .map((e) => Text(e, style: TextStyle(fontSize: $(18))).intoContainer(
+                      .map((e) => Text(e, style: TextStyle(fontSize: 18.dp)).intoContainer(
                             color: Colors.transparent,
-                            padding: EdgeInsets.only(left: $(0), top: $(8), right: $(0), bottom: $(8)),
+                            padding: EdgeInsets.only(left: 0, top: 8.dp, right: 0, bottom: 8.dp),
                           ))
                       .toList(),
                   controller: tabController,

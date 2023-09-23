@@ -85,6 +85,7 @@ class JsonConvert {
 		(HomePageEntity).toString(): HomePageEntity.fromJson,
 		(HomePageHomepageTools).toString(): HomePageHomepageTools.fromJson,
 		(HomePageHomepageGalleries).toString(): HomePageHomepageGalleries.fromJson,
+		(HomeItemEntity).toString(): HomeItemEntity.fromJson,
 		(HomePostEntity).toString(): HomePostEntity.fromJson,
 		(HomePostData).toString(): HomePostData.fromJson,
 		(MetagramPageEntity).toString(): MetagramPageEntity.fromJson,
@@ -409,6 +410,9 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<HomePageHomepageGalleries>[] is M){
 			return data.map<HomePageHomepageGalleries>((Map<String, dynamic> e) => HomePageHomepageGalleries.fromJson(e)).toList() as M;
+		}
+		if(<HomeItemEntity>[] is M){
+			return data.map<HomeItemEntity>((Map<String, dynamic> e) => HomeItemEntity.fromJson(e)).toList() as M;
 		}
 		if(<HomePostEntity>[] is M){
 			return data.map<HomePostEntity>((Map<String, dynamic> e) => HomePostEntity.fromJson(e)).toList() as M;

@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/home_page_entity.g.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
+import 'package:cartoonizer/models/enums/home_item.dart';
 
 @JsonSerializable()
 class HomePageEntity {
@@ -121,6 +123,52 @@ class HomePageHomepageGalleries {
   factory HomePageHomepageGalleries.fromJson(Map<String, dynamic> json) => $HomePageHomepageGalleriesFromJson(json);
 
   Map<String, dynamic> toJson() => $HomePageHomepageGalleriesToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
+class HomeItemEntity {
+  @JSONField(name: 'key')
+  String? mHomeItemString;
+
+  @JSONField(serialize: false, deserialize: false)
+  HomeItem? _mHomeItem;
+
+  HomeItem get mHomeItem {
+    if (_mHomeItem == null) {
+      _mHomeItem = HomeItemUtils.build(mHomeItemString);
+    }
+    return _mHomeItem!;
+  }
+
+  set mHomeItem(HomeItem type) {
+    _mHomeItem = type;
+    mHomeItemString = _mHomeItem!.value();
+  }
+
+  dynamic value;
+
+  List<T> getDataList<T>() {
+    if (value is List) {
+      List<T> result = [];
+      for (var e in value) {
+        result.add(jsonConvert.convert<T>(e)!);
+      }
+      return result;
+    } else {
+      return <T>[];
+    }
+  }
+
+  HomeItemEntity();
+
+  factory HomeItemEntity.fromJson(Map<String, dynamic> json) => $HomeItemEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => $HomeItemEntityToJson(this);
 
   @override
   String toString() {

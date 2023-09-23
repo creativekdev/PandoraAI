@@ -10,7 +10,8 @@ import 'package:cartoonizer/utils/map_util.dart';
 
 class ApiConfigEntity {
   List<EffectData> data = [];
-  HomePageEntity? homepage;
+
+  List<HomeItemEntity> homepage = [];
   Map<String, dynamic> locale = {};
   CampaignTab? campaignTab;
   List<String> tags = [];
@@ -75,19 +76,7 @@ class ApiConfigEntity {
       entity.aiConfig = (json['ai_config'] as List).map((e) => AiServerEntity.fromJson(e)).toList();
     }
     if (json['homepage'] != null) {
-      entity.homepage = HomePageEntity.fromJson(json['homepage']);
-      entity.homepage?.galleries.forEach((element) {
-        element.title = element.categoryString?.localeValue(entity.locale) ?? '';
-      });
-      // entity.homepage.banners.forEach((element) {
-      //   element.title = element.category.localeValue(entity.locale);
-      // });
-      entity.homepage?.tools.forEach((element) {
-        element.title = element.categoryString?.localeValue(entity.locale) ?? '';
-      });
-      entity.homepage?.features.forEach((element) {
-        element.title = element.categoryString?.localeValue(entity.locale) ?? '';
-      });
+      entity.homepage = (json['homepage'] as List).map((e) => HomeItemEntity.fromJson(e)).toList();
     }
     return entity;
   }
@@ -107,6 +96,7 @@ class ApiConfigEntity {
     result['promotion_resources'] = promotionResources.map((e) => e.toJson()).toList();
     result['shipping_methods'] = shippingMethods.map((e) => e.toJson()).toList();
     result['ai_config'] = aiConfig.map((e) => e.toJson()).toList();
+    result['homepage'] = homepage.map((e) => e.toJson()).toList();
     result['image_maxl'] = imageMaxl;
     result['matting_maxl'] = mattingMaxl;
     result['matting_3rd_party'] = matting3rdParty;
@@ -335,7 +325,7 @@ extension ApiConfigEntityEx on ApiConfigEntity {
   }
 }
 
-extension _TitleLocaleEx on String {
+extension TitleLocaleEx on String {
   String localeValue(Map<String, dynamic> locale, {String? defaultKey}) {
     var result = _localValue(locale, this);
     if (result != null) {

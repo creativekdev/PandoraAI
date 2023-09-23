@@ -86,7 +86,7 @@ class _DiscoveryListPageWidgetState extends State<DiscoveryListPageWidget> with 
             scrollDirection: Axis.horizontal,
             physics: ClampingScrollPhysics(),
             controller: controller.tagController,
-            padding: EdgeInsets.only(left: $(15), right: $(30)),
+            padding: EdgeInsets.only(left: 15.dp, right: 30.dp),
             child: Row(
               children: controller.tags.transfer((e, index) {
                 bool checked = controller.currentTag == e;
@@ -94,14 +94,14 @@ class _DiscoveryListPageWidgetState extends State<DiscoveryListPageWidget> with 
                   e.tagTitle(),
                   style: TextStyle(
                     color: checked ? Color(0xff3e60ff) : Colors.white.withOpacity(0.8),
-                    fontSize: $(13),
+                    fontSize: 13.sp,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.normal,
                   ),
                 )
                     .intoContainer(
-                  margin: EdgeInsets.only(left: index == 0 ? 0 : $(4)),
-                  padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(7)),
+                  margin: EdgeInsets.only(left: index == 0 ? 0 : 4.dp),
+                  padding: EdgeInsets.symmetric(horizontal: 8.dp, vertical: 7.dp),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(32),
                     color: checked ? Colors.transparent : Color(0xFF37373B),
@@ -136,11 +136,11 @@ class _DiscoveryListPageWidgetState extends State<DiscoveryListPageWidget> with 
           alignment: Alignment.centerRight,
           child: Image.asset(
             Images.ic_discovery_tag_more,
-            width: $(16),
+            width: 16.dp,
           )
               .intoContainer(
-            padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(6)),
-            margin: EdgeInsets.only(top: 8),
+            padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 6.dp),
+            margin: EdgeInsets.only(top: 8.dp),
             color: ColorConstant.BackgroundColor,
           )
               .intoGestureDetector(onTap: () {
@@ -149,7 +149,12 @@ class _DiscoveryListPageWidgetState extends State<DiscoveryListPageWidget> with 
         ),
       ],
     )
-        .intoContainer(width: ScreenUtil.screenSize.width, height: $(52), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8)))
+        .intoContainer(
+          width: ScreenUtil.screenSize.width,
+          height: 52.dp,
+          alignment: Alignment.center,
+          padding: EdgeInsets.only(bottom: 8.dp),
+        )
         .blur()
         .ignore(ignoring: controller.listLoading);
   }
@@ -161,7 +166,7 @@ class _DiscoveryListPageWidgetState extends State<DiscoveryListPageWidget> with 
       enableControlFinishRefresh: true,
       enableControlFinishLoad: false,
       cacheExtent: 1000,
-      emptyWidget: controller.dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
+      emptyWidget: controller.dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, 16.sp).intoCenter() : null,
       onRefresh: () async {
         controller.onLoadFirstPage().then((value) {
           easyRefreshController.finishRefresh();
