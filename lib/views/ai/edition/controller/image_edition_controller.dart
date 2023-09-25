@@ -85,6 +85,51 @@ class ImageEditionController extends GetxController {
     }
   }
 
+  late TimerUtil timer;
+
+  double menuWidth = 38.dp;
+  bool isExpanded = false;
+  double maxMenuWidth = 0;
+
+  void toggleExpansion() {
+    timer.cancel();
+    isExpanded = true;
+    if (isExpanded) {
+      menuWidth = maxMenuWidth + 64.dp;
+      timer.startTimer();
+    } else {
+      isExpanded = false;
+      menuWidth = 38.dp;
+      update();
+    }
+    update();
+  }
+
+  static double getMaxWidth(List<EditionItem> items) {
+    double width = 0;
+    for (var value in items) {
+      var textPainter = TextPainter(
+        text: TextSpan(
+            text: value.function.title(),
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+              fontSize: $(14),
+            )),
+        ellipsis: '...',
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.justify,
+        textWidthBasis: TextWidthBasis.longestLine,
+        maxLines: 2,
+      )..layout(maxWidth: ScreenUtil.screenSize.width - $(30));
+      if (textPainter.width > width) {
+        width = textPainter.width;
+      }
+    }
+    return width;
+  }
+
   ImageEditionController({
     required String originPath,
     required this.effectStyle,
@@ -144,6 +189,16 @@ class ImageEditionController extends GetxController {
     if (initFunction == ImageEditionFunction.removeBg) {
       removeBgHolder.setOriginFilePath(_originPath);
     }
+    timer = TimerUtil(mInterval: 1000)
+      ..setOnTimerTickCallback((millisUntilFinished) {
+        if (millisUntilFinished > 1) {
+          isExpanded = false;
+          menuWidth = 38.dp;
+          timer.cancel();
+          update();
+        }
+      });
+    maxMenuWidth = getMaxWidth(items);
     super.onInit();
   }
 
@@ -229,6 +284,7 @@ class ImageEditionController extends GetxController {
     var bool = await preSwitch(context, e, currentItem);
     _lastItem = currentItem;
     if (bool) {
+      toggleExpansion();
       currentItem = e;
       delay(() {
         if (e.function == ImageEditionFunction.filter) {
@@ -366,12 +422,10 @@ class ImageEditionController extends GetxController {
 
   Future<bool> needRemoveBg(BuildContext context, RemoveBgHolder holder) async {
     var needRemove = true;
-    // if (holder.removedImage != null) {
     var bool = await showEnsureToSwitchRemoveBg(context);
     if (bool == null || bool == false) {
       needRemove = false;
     }
-    // }
     return needRemove;
   }
 

@@ -533,5 +533,6 @@
   "limit_pro_btn": "Become a member for only ",
   "limit_inv_desc": "Share the invitation code for extra credit",
   "password_length_tips": "Length needs to be 6-16.",
-  "password_strong_detected": "Avoid pure numbers/letters/special characters"
+  "password_strong_detected": "Avoid pure numbers/letters/special characters",
+  "do_not_close_app": "Please don't close the app"
 }

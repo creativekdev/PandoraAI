@@ -211,6 +211,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("提出"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("キャンセル"),
         "display_text": MessageLookupByLibrary.simpleMessage("テキストを表示する"),
+        "do_not_close_app":
+            MessageLookupByLibrary.simpleMessage("アプリを閉じないでください"),
         "dog": MessageLookupByLibrary.simpleMessage("犬"),
         "done": MessageLookupByLibrary.simpleMessage("完了"),
         "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),

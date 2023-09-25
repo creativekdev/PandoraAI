@@ -106,6 +106,7 @@ class Images {
    static const String ic_limit_guest_icon = 'assets/images/ic_limit_guest_icon.png';
    static const String ic_limit_icon = 'assets/images/ic_limit_icon.png';
    static const String ic_limit_normal_icon = 'assets/images/ic_limit_normal_icon.png';
+   static const String ic_loading = 'assets/images/ic_loading.gif';
    static const String ic_loading_filled = 'assets/images/ic_loading_filled.png';
    static const String ic_mark1 = 'assets/images/ic_mark1.png';
    static const String ic_mark2 = 'assets/images/ic_mark2.png';

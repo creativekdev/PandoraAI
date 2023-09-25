@@ -5399,6 +5399,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Please don't close the app`
+  String get do_not_close_app {
+    return Intl.message(
+      'Please don\'t close the app',
+      name: 'do_not_close_app',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
