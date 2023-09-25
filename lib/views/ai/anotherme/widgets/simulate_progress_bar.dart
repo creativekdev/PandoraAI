@@ -1,9 +1,9 @@
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/widgets/progress/circle_progress_bar.dart';
-import 'package:cartoonizer/widgets/router/routers.dart';
-import 'dart:math' as math;
-
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
+import 'package:cartoonizer/widgets/router/routers.dart';
+
+import '../../../../images-res.dart';
 
 class SimulateProgressBarConfig {
   late SimulateProgressBarConfigItem upload;
@@ -14,48 +14,44 @@ class SimulateProgressBarConfig {
 
   factory SimulateProgressBarConfig.anotherMe(BuildContext context) {
     return SimulateProgressBarConfig()
-      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.2, text: S.of(context).trans_uploading)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.75, text: S.of(context).trans_painting)
-      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05, text: S.of(context).trans_success);
+      ..upload = SimulateProgressBarConfigItem(text: S.of(context).trans_uploading)
+      ..processing = SimulateProgressBarConfigItem(text: S.of(context).trans_painting)
+      ..complete = SimulateProgressBarConfigItem(text: S.of(context).trans_success);
   }
 
   factory SimulateProgressBarConfig.anotherMeVideo(BuildContext context) {
     return SimulateProgressBarConfig()
-      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.2, text: S.of(context).trans_uploading)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 4), rate: 0.75, text: S.of(context).trans_saving)
-      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05, text: S.of(context).trans_success);
+      ..upload = SimulateProgressBarConfigItem(text: S.of(context).trans_uploading)
+      ..processing = SimulateProgressBarConfigItem(text: S.of(context).trans_saving)
+      ..complete = SimulateProgressBarConfigItem(text: S.of(context).trans_success);
   }
 
   factory SimulateProgressBarConfig.cartoonize(BuildContext context) {
     return SimulateProgressBarConfig()
-      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.2, text: S.of(context).trans_uploading)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.75, text: S.of(context).trans_painting)
-      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05, text: S.of(context).trans_success);
+      ..upload = SimulateProgressBarConfigItem(text: S.of(context).trans_uploading)
+      ..processing = SimulateProgressBarConfigItem(text: S.of(context).trans_painting)
+      ..complete = SimulateProgressBarConfigItem(text: S.of(context).trans_success);
   }
 
   factory SimulateProgressBarConfig.txt2img(BuildContext context) {
     return SimulateProgressBarConfig()
-      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0, text: S.of(context).trans_uploading)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 2), rate: 0.95, text: S.of(context).trans_painting)
-      ..complete = SimulateProgressBarConfigItem(duration: Duration(milliseconds: 500), rate: 0.05, text: S.of(context).trans_success);
+      ..upload = SimulateProgressBarConfigItem(text: S.of(context).trans_uploading)
+      ..processing = SimulateProgressBarConfigItem(text: S.of(context).trans_painting)
+      ..complete = SimulateProgressBarConfigItem(text: S.of(context).trans_success);
   }
 
   factory SimulateProgressBarConfig.aiDraw(BuildContext context) {
     return SimulateProgressBarConfig()
-      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.2, text: S.of(context).trans_uploading)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 10), rate: 0.75, text: S.of(context).trans_painting)
-      ..complete = SimulateProgressBarConfigItem(duration: Duration(milliseconds: 300), rate: 0.05, text: S.of(context).trans_success);
+      ..upload = SimulateProgressBarConfigItem(text: S.of(context).trans_uploading)
+      ..processing = SimulateProgressBarConfigItem(text: S.of(context).trans_painting)
+      ..complete = SimulateProgressBarConfigItem(text: S.of(context).trans_success);
   }
 }
 
 class SimulateProgressBarConfigItem {
-  Duration duration;
-  double rate;
   String text;
 
   SimulateProgressBarConfigItem({
-    required this.duration,
-    required this.rate,
     required this.text,
   });
 }
@@ -75,6 +71,7 @@ class SimulateProgressBar {
           needUploadProgress: needUploadProgress,
           onUpdate: onUpdate,
           config: config,
+          canCloseApp: false,
         ),
         settings: RouteSettings(name: '/_SimulateProgressBar'),
       ),
@@ -87,6 +84,7 @@ class _SimulateProgressBar extends StatefulWidget {
   bool needUploadProgress;
   Function(double progress)? onUpdate;
   SimulateProgressBarConfig config;
+  bool canCloseApp;
 
   _SimulateProgressBar({
     Key? key,
@@ -94,6 +92,7 @@ class _SimulateProgressBar extends StatefulWidget {
     required this.controller,
     required this.onUpdate,
     required this.config,
+    this.canCloseApp = false,
   }) : super(key: key);
 
   @override
@@ -102,47 +101,23 @@ class _SimulateProgressBar extends StatefulWidget {
 
 class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerProviderStateMixin {
   late SimulateProgressBarController controller;
-  late AnimationController uploadAnimController;
-  late AnimationController animationController;
-  late CurvedAnimation animationControllerCurved;
-  late AnimationController completeController;
-  late bool needUploadProgress;
   late SimulateProgressBarConfig config;
-  Function(double progress)? onUpdate;
   bool completed = false;
   bool uploaded = false;
-  List<Curve> curves = [
-    Curves.linear,
-    Curves.decelerate,
-    Curves.ease,
-    Curves.easeOut,
-    Curves.easeIn,
-    Curves.easeInQuart,
-    Curves.easeInOut,
-    Curves.easeInOutQuint,
-    Curves.easeOutCubic,
-  ];
 
   @override
   void initState() {
     super.initState();
     config = widget.config;
-    needUploadProgress = widget.needUploadProgress;
-    onUpdate = widget.onUpdate;
     controller = widget.controller;
     controller._completeCall = () {
-      if (!animationController.isCompleted) {
-        completed = true;
-      } else {
-        completeController.forward();
+      if (mounted) {
+        Navigator.of(context).pop(SimulateProgressResult<AccountLimitType>()..result = true);
       }
     };
     controller._uploadCompleteCall = () {
-      if (!uploadAnimController.isCompleted) {
-        uploaded = true;
-      } else {
-        animationController.forward();
-      }
+      uploaded = true;
+      setState(() {});
     };
     controller._onErrorCall = (error) {
       if (mounted) {
@@ -153,41 +128,6 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
         );
       }
     };
-    uploadAnimController = AnimationController(vsync: this, duration: config.upload.duration);
-    uploadAnimController.addStatusListener((status) {
-      if (!needUploadProgress) {
-        return;
-      }
-      if (status == AnimationStatus.completed) {
-        if (uploaded) {
-          animationController.forward();
-        }
-        setState(() {});
-      }
-    });
-    uploadAnimController.addListener(() => onUpdate?.call(calculateProgress()));
-    animationController = AnimationController(vsync: this, duration: config.processing.duration);
-    animationControllerCurved = CurvedAnimation(parent: animationController, curve: curves[math.Random().nextInt(curves.length)]);
-    completeController = AnimationController(vsync: this, duration: config.complete.duration);
-    animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed && completed) {
-        completeController.forward();
-      }
-    });
-    animationController.addListener(() => onUpdate?.call(calculateProgress()));
-    completeController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        if (mounted) {
-          Navigator.of(context).pop(SimulateProgressResult<AccountLimitType>()..result = true);
-        }
-      }
-    });
-    completeController.addListener(() => onUpdate?.call(calculateProgress()));
-    if (!needUploadProgress) {
-      animationController.forward();
-    } else {
-      uploadAnimController.forward();
-    }
     delay(() {
       if (mounted) {
         Navigator.of(context).pop(
@@ -201,83 +141,75 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
 
   @override
   void dispose() {
-    completeController.dispose();
-    animationController.dispose();
-    uploadAnimController.dispose();
     super.dispose();
   }
 
   double calculateProgress() {
     var progress;
-    if (needUploadProgress) {
-      progress = uploadAnimController.value * config.upload.rate + animationControllerCurved.value * config.processing.rate + completeController.value * config.complete.rate;
-    } else {
-      progress = animationControllerCurved.value * (config.upload.rate + config.processing.rate) + completeController.value * config.complete.rate;
-    }
     return progress;
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        child: AnimatedBuilder(
-            animation: animationControllerCurved,
-            builder: (context, child) {
-              return AnimatedBuilder(
-                  animation: uploadAnimController,
-                  builder: (context, child) {
-                    return AnimatedBuilder(
-                        animation: completeController,
-                        builder: (context, child) {
-                          var progress = calculateProgress();
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Stack(
-                                children: [
-                                  AppCircleProgressBar(
-                                    size: $(60),
-                                    ringWidth: $(6),
-                                    backgroundColor: Color.fromRGBO(255, 255, 255, 0.3),
-                                    progress: progress,
-                                    loadingColors: ColorConstant.progressBarColors,
-                                  ),
-                                  Text('${(progress * 100).toStringAsFixed(0)}%',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: $(13),
-                                            fontFamily: 'Poppins',
-                                          )).intoCenter().intoContainer(
-                                        width: $(60),
-                                        height: $(60),
-                                      ),
-                                ],
-                              ).intoContainer(
-                                height: $(60),
-                                width: $(60),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                needUploadProgress && !uploadAnimController.isCompleted
-                                    ? config.upload.text
-                                    : !completeController.isCompleted
-                                        ? config.processing.text
-                                        : config.complete.text,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: $(13),
-                                  fontFamily: 'Poppins',
-                                ),
-                              ),
-                            ],
-                          );
-                        });
-                  });
-            }).intoCenter(),
+        child: Scaffold(
+            backgroundColor: Color(0xFF010101),
+            appBar: AppNavigationBar(
+              showBackItem: widget.canCloseApp,
+            ),
+            body: Column(
+              children: [
+                Visibility(
+                  visible: false,
+                  child: Text(uploaded ? config.processing.text : config.upload.text,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                        fontFamily: 'Poppins',
+                      )).intoPadding(padding: EdgeInsets.only(top: 80.dp)),
+                ),
+                Expanded(child: Container()),
+                Visibility(
+                  visible: false,
+                  child: Text(
+                    S.of(context).do_not_close_app,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ),
+                Image.asset(
+                  Images.ic_loading,
+                  width: 200.dp,
+                  height: 200.dp,
+                ),
+                Text(uploaded ? config.processing.text : config.upload.text,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontFamily: 'Poppins',
+                    )),
+                Expanded(child: Container()),
+                Text(
+                  S.of(context).do_not_close_app,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.sp,
+                    fontFamily: 'Poppins',
+                  ),
+                ).intoPadding(padding: EdgeInsets.only(bottom: 80.dp)),
+              ],
+            )),
         onWillPop: () async {
           return false;
         }).intoMaterial(
-      color: Color(0x44000000),
+      color: Color(0xFF010101),
     );
   }
 }

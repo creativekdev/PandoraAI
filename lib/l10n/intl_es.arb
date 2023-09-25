@@ -533,5 +533,6 @@
   "limit_pro_btn": "Hazte socio por sólo ",
   "limit_inv_desc": "Comparte el código de invitación para obtener crédito adicional",
   "password_length_tips": "La longitud debe ser de 6 a 16.",
-  "password_strong_detected": "Evite números/letras/caracteres especiales puros"
+  "password_strong_detected": "Evite números/letras/caracteres especiales puros",
+  "do_not_close_app": "No cierre la aplicación"
 }

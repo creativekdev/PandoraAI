@@ -16,8 +16,6 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -52,15 +50,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
     name: 'cartoonizer',
   );
-  if (kReleaseMode) {
-    FlutterError.onError = (FlutterErrorDetails details) {
-      if (details.library == 'image resource service') {
-        LogUtil.e(details.toString());
-      } else {
-        FirebaseCrashlytics.instance.recordFlutterFatalError(details);
-      }
-    };
-  }
+  // if (kReleaseMode) {
+  //   FlutterError.onError = (FlutterErrorDetails details) {
+  //     if (details.library == 'image resource service') {
+  //       LogUtil.e(details.toString());
+  //     } else {
+  //       FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+  //     }
+  //   };
+  // }
 
   // init firebase analytics
   FirebaseAnalytics.instance.setDefaultEventParameters({"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber});

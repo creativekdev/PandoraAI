@@ -1,17 +1,19 @@
 import 'dart:io';
-import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:camera/camera.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/widgets/state/app_state.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/utils/utils.dart';
-import 'package:crop_your_image/crop_your_image.dart';
+import 'package:cartoonizer/croppy/src/model/crop_image_result.dart';
+import 'package:cartoonizer/croppy/src/model/croppable_image_data.dart';
+import 'package:cartoonizer/croppy/src/widgets/common/animated_croppable_image_viewport.dart';
+import 'package:cartoonizer/croppy/src/widgets/common/croppable_image_page_animator.dart';
+import 'package:cartoonizer/croppy/src/widgets/cupertino/default_cupertino_croppable_image_controller.dart';
+import 'package:cartoonizer/croppy/src/widgets/material/handles/material_image_cropper_handles.dart';
 
-class CropScreen extends StatefulWidget {
+import '../../app/app.dart';
+import '../../app/cache/cache_manager.dart';
+
+class CropScreen extends StatelessWidget {
   static Future<XFile?> crop(
     BuildContext context, {
     required XFile image,
@@ -20,93 +22,87 @@ class CropScreen extends StatefulWidget {
     return Navigator.of(context).push<XFile>(MaterialPageRoute(
         settings: RouteSettings(name: '/CropScreen'),
         builder: (_) => CropScreen(
-              image: image,
-              brightness: brightness,
+              imageProvider: FileImage(File(image.path)),
+              initialData: null,
             )));
   }
 
-  XFile image;
-  Brightness brightness;
-
   CropScreen({
-    Key? key,
-    required this.image,
-    required this.brightness,
-  }) : super(key: key);
+    super.key,
+    required this.imageProvider,
+    required this.initialData,
+    this.heroTag,
+    // this.onCropped,
+  });
 
-  @override
-  State<CropScreen> createState() => _CropScreenState();
-}
-
-class _CropScreenState extends AppState<CropScreen> {
-  late XFile image;
-  late Brightness brightness;
-  Uint8List? imageList;
-  Size? imageSize;
-
+  final ImageProvider imageProvider;
+  final CroppableImageData? initialData;
+  final Object? heroTag;
   CacheManager cacheManager = AppDelegate.instance.getManager();
-  CropController cropController = CropController();
 
   @override
-  void initState() {
-    super.initState();
-    this.canCancelOnLoading = false;
-    image = widget.image;
-    brightness = widget.brightness;
-    delay(() {
-      showLoading().whenComplete(() {
-        SyncFileImage(file: File(image.path)).getImage().then((value) async {
-          imageSize = Size(value.image.width.toDouble(), value.image.height.toDouble());
-          imageList = await cropFile(value.image, ui.Rect.fromLTWH(0, 0, value.image.width.toDouble(), value.image.height.toDouble()));
-          setState(() {});
-        });
-      });
-    });
-  }
+  Widget build(BuildContext context) {
+    return DefaultCupertinoCroppableImageController(
+      imageProvider: imageProvider,
+      initialData: initialData,
+      builder: (context, controller) {
+        return CroppableImagePageAnimator(
+          controller: controller,
+          heroTag: heroTag,
+          builder: (context, overlayOpacityAnimation) {
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: ColorConstant.BackgroundColor,
+                actions: [
+                  Builder(
+                    builder: (context) => TextButton(
+                      child: Text(
+                        S.of(context).ok1,
+                        style: TextStyle(
+                          color: ColorConstant.White,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                      onPressed: () async {
+                        // Enable the Hero animations
+                        CroppableImagePageAnimator.of(context)?.setHeroesEnabled(true);
 
-  @override
-  Widget buildWidget(BuildContext context) {
-    return Scaffold(
-      backgroundColor: brightness == Brightness.dark ? ColorConstant.BackgroundColor : Colors.white,
-      appBar: AppNavigationBar(
-        backgroundColor: brightness == Brightness.dark ? ColorConstant.BackgroundColor : Colors.white,
-        brightness: brightness,
-        trailing: TitleTextWidget(S.of(context).ok1, brightness == Brightness.dark ? ColorConstant.White : Colors.black, FontWeight.w500, $(16)).intoGestureDetector(onTap: () {
-          showLoading().whenComplete(() {
-            cropController.crop();
-          });
-        }),
-      ),
-      body: imageList == null
-          ? Container()
-          : Crop(
-              image: imageList!,
-              initialArea: Rect.fromLTWH(0, 0, imageSize!.width, imageSize!.height),
-              controller: cropController,
-              onCropped: (bytes) {
-                onCroped(bytes);
-              },
-              onStatusChanged: (CropStatus status) {
-                if (status == CropStatus.ready) {
-                  hideLoading().whenComplete(() {});
-                }
-              },
-            ),
+                        // Crop the image
+                        CropImageResult result = await controller.crop();
+                        String filePath = cacheManager.storageOperator.tempDir.path + 'crop-screen${DateTime.now().millisecondsSinceEpoch}.png';
+                        var file = File(filePath);
+                        if (file.existsSync()) {
+                          file.deleteSync();
+                        }
+                        var bytes = await result.uiImage.toByteData(format: ImageByteFormat.png);
+                        await file.writeAsBytes(bytes!.buffer.asUint8List());
+                        if (context.mounted) {
+                          Navigator.of(context).pop(XFile(filePath));
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: AnimatedCroppableImageViewport(
+                    controller: controller,
+                    cropHandlesBuilder: (context) => MaterialImageCropperHandles(
+                      controller: controller,
+                      gesturePadding: 16.0,
+                    ),
+                    overlayOpacityAnimation: overlayOpacityAnimation,
+                    gesturePadding: 16.0,
+                    heroTag: heroTag,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
-  }
-
-  onCroped(Uint8List bytes) {
-    hideLoading().whenComplete(() async {
-      String filePath = cacheManager.storageOperator.tempDir.path + 'crop-screen${DateTime.now().millisecondsSinceEpoch}.png';
-      var file = File(filePath);
-      if (file.existsSync()) {
-        file.deleteSync();
-      }
-      await file.writeAsBytes(bytes);
-      hideLoading().whenComplete(() {
-        Navigator.of(context).pop(XFile(filePath));
-        this.canCancelOnLoading = true;
-      });
-    });
   }
 }

@@ -533,5 +533,6 @@
   "limit_pro_btn": "现在成为会员仅需 ",
   "limit_inv_desc": "分享邀请码以获得额外次数",
   "password_length_tips": "密码长度需6-16位",
-  "password_strong_detected": "避免纯数字/字母/特殊字符"
+  "password_strong_detected": "避免纯数字/字母/特殊字符",
+  "do_not_close_app": "请不要关闭应用"
 }

@@ -201,6 +201,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("提交"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("取消"),
         "display_text": MessageLookupByLibrary.simpleMessage("显示文案"),
+        "do_not_close_app": MessageLookupByLibrary.simpleMessage("请不要关闭应用"),
         "dog": MessageLookupByLibrary.simpleMessage("狗"),
         "done": MessageLookupByLibrary.simpleMessage("完成"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),

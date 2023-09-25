@@ -251,6 +251,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("Enviar"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("Cancelar"),
         "display_text": MessageLookupByLibrary.simpleMessage("Mostrar copia"),
+        "do_not_close_app":
+            MessageLookupByLibrary.simpleMessage("No cierre la aplicación"),
         "dog": MessageLookupByLibrary.simpleMessage("perro"),
         "done": MessageLookupByLibrary.simpleMessage("terminar"),
         "download": MessageLookupByLibrary.simpleMessage("Descargar"),
