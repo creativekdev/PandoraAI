@@ -111,7 +111,19 @@ Map<String, dynamic> $HomePageHomepageGalleriesToJson(HomePageHomepageGalleries 
 
 HomeItemEntity $HomeItemEntityFromJson(Map<String, dynamic> json) {
 	final HomeItemEntity homeItemEntity = HomeItemEntity();
-	final String? mHomeItemString = jsonConvert.convert<String>(json['key']);
+	final String? key = jsonConvert.convert<String>(json['key']);
+	if (key != null) {
+		homeItemEntity.key = key;
+	}
+	final int? records = jsonConvert.convert<int>(json['records']);
+	if (records != null) {
+		homeItemEntity.records = records;
+	}
+	final bool? hasBackground = jsonConvert.convert<bool>(json['has_background']);
+	if (hasBackground != null) {
+		homeItemEntity.hasBackground = hasBackground;
+	}
+	final String? mHomeItemString = jsonConvert.convert<String>(json['type']);
 	if (mHomeItemString != null) {
 		homeItemEntity.mHomeItemString = mHomeItemString;
 	}
@@ -124,7 +136,10 @@ HomeItemEntity $HomeItemEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $HomeItemEntityToJson(HomeItemEntity entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['key'] = entity.mHomeItemString;
+	data['key'] = entity.key;
+	data['records'] = entity.records;
+	data['has_background'] = entity.hasBackground;
+	data['type'] = entity.mHomeItemString;
 	data['value'] = entity.value;
 	return data;
 }

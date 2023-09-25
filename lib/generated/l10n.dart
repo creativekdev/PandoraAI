@@ -3350,10 +3350,10 @@ class S {
     );
   }
 
-  /// `Try it now`
+  /// `Try it out`
   String get try_it_now {
     return Intl.message(
-      'Try it now',
+      'Try it out',
       name: 'try_it_now',
       desc: '',
       args: [],

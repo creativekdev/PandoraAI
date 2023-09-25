@@ -15,21 +15,21 @@ class PaiContentView extends StatefulWidget {
     required this.height,
     required this.onTap,
     required this.onTapItem,
-    required this.galleries,
+    required this.data,
     required this.title,
   }) : super(key: key);
   final double height;
   final OnClickAll onTap;
   final OnClickItem onTapItem;
   final String title;
-  final HomePageHomepageGalleries? galleries;
+  final HomeItemEntity data;
 
   @override
-  State<PaiContentView> createState() => _PaiContentViewState(socialPost: galleries?.socialPosts);
+  State<PaiContentView> createState() => _PaiContentViewState();
 }
 
 class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAliveClientMixin {
-  _PaiContentViewState({required this.socialPost});
+  late HomeItemEntity data;
 
   ScrollController _scrollController = ScrollController(keepScrollOffset: true);
   List<DiscoveryListEntity>? socialPost;
@@ -41,8 +41,10 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
   @override
   void initState() {
     super.initState();
+    data = widget.data;
+    socialPost = data.getDataList<DiscoveryListEntity>();
     appApi = AppApi();
-    postsLength = widget.galleries?.records ?? 0;
+    postsLength = data.records;
     _scrollController.addListener(() {
       if (_scrollController.position.pixels + $(80) >= _scrollController.position.maxScrollExtent) {
         _loadNextPage();
@@ -64,7 +66,8 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
       setState(() {
         postsLength = homePostEntity?.data.records ?? 0;
         socialPost = homePostEntity?.data.rows ?? [];
-        widget.galleries?.socialPosts = socialPost!;
+        widget.data.value = socialPost?.map((e) => e.toJson()).toList();
+        data = widget.data;
         isLoading = false;
       });
     } else {
@@ -76,7 +79,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
   }
 
   Future<HomePostEntity?> loadData(int from, int size) async {
-    return await appApi.socialHomePost(from: from, size: size, category: widget.galleries?.categoryString ?? '');
+    return await appApi.socialHomePost(from: from, size: size, category: data.key ?? '');
   }
 
   @override
@@ -119,7 +122,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               )
                   .intoGestureDetector(
                 onTap: () {
-                  widget.onTap(widget.galleries?.categoryString ?? '', socialPost, widget.title);
+                  widget.onTap(data.key ?? '', socialPost, widget.title);
                 },
               )
             ],
@@ -137,7 +140,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               itemCount: this.socialPost?.length ?? 0,
               itemBuilder: (context, index) => _Item(widget.height, this.socialPost![index]).intoGestureDetector(
                 onTap: () {
-                  widget.onTapItem(index, widget.galleries?.categoryString ?? '', socialPost, widget.title);
+                  widget.onTapItem(index, data.key ?? '', socialPost, widget.title);
                 },
               ),
             ),

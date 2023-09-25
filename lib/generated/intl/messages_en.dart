@@ -757,7 +757,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "trans_success": MessageLookupByLibrary.simpleMessage("Completed"),
         "trans_uploading": MessageLookupByLibrary.simpleMessage("Uploading..."),
         "try_again": MessageLookupByLibrary.simpleMessage("Try again"),
-        "try_it_now": MessageLookupByLibrary.simpleMessage("Try it now"),
+        "try_it_now": MessageLookupByLibrary.simpleMessage("Try it out"),
         "tuesday": MessageLookupByLibrary.simpleMessage("Tuesday"),
         "txtContinue": MessageLookupByLibrary.simpleMessage("Continue"),
         "unique_avatars":

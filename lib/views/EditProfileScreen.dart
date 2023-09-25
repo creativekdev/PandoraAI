@@ -204,7 +204,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               onTap: () {
                                 submitUpdate(context);
                               },
-                              child: ButtonWidget(S.of(context).update_profile),
+                              child: ButtonWidget(S.of(context).confirm),
                             ),
                             SizedBox(
                               height: 4.h,

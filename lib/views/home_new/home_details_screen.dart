@@ -1,3 +1,4 @@
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/views/home_new/home_detail_screen.dart';
 
@@ -15,12 +16,14 @@ class HomeDetailsScreen extends StatefulWidget {
     this.posts,
     required this.title,
     required this.records,
+    this.skipDetail = false,
   }) : super(key: key);
   final String source;
   final String category;
   final List<DiscoveryListEntity>? posts;
   final String title;
   final int records;
+  final bool skipDetail;
 
   @override
   State<HomeDetailsScreen> createState() => _HomeDetailScreenState();
@@ -70,16 +73,20 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
                 var data = controller.posts![index];
                 return HomeDetailItem(data, widget.category).intoGestureDetector(onTap: () {
                   // Events.printGoodsSelectClick(source: widget.source, goodsId: data.id.toString());
-                  Navigator.of(context).push<void>(MaterialPageRoute(
-                      settings: RouteSettings(name: '/HomeDetailScreen'),
-                      builder: (context) => HomeDetailScreen(
-                            posts: controller.posts!,
-                            title: widget.category,
-                            source: widget.source,
-                            index: index,
-                            records: widget.records,
-                            titleName: widget.title,
-                          )));
+                  if (widget.skipDetail) {
+                    HomeCardTypeUtils.jump(context: context, source: "${widget.source}_${widget.category}", data: controller.posts![index]);
+                  } else {
+                    Navigator.of(context).push<void>(MaterialPageRoute(
+                        settings: RouteSettings(name: '/HomeDetailScreen'),
+                        builder: (context) => HomeDetailScreen(
+                              posts: controller.posts!,
+                              title: widget.category,
+                              source: widget.source,
+                              index: index,
+                              records: widget.records,
+                              titleName: widget.title,
+                            )));
+                  }
                 });
               },
             );

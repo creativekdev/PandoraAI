@@ -15,6 +15,8 @@ import 'package:cartoonizer/models/enums/home_item.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition.dart';
+import 'package:cartoonizer/views/home_new/pai_content_facetoon_view.dart';
+import 'package:cartoonizer/views/home_new/pai_home_ads_view.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment/payment.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
@@ -195,7 +197,51 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
         SliverPadding(padding: EdgeInsets.only(top: kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight())),
         ...homepage.map((data) {
           switch (data.mHomeItem) {
-            case HomeItem.banners:
+            case HomeItem.ad:
+              return SliverToBoxAdapter(
+                child: PaiHomeAdsView(
+                    data: data,
+                    width: ScreenUtil.screenSize.width - 30.dp,
+                    onTap: (data) {
+                      HomeCardTypeUtils.jump(context: context, source: 'home_page_ads_${data.category.value()}', data: data);
+                    }).intoContainer(padding: EdgeInsets.symmetric(horizontal: 15.dp)),
+              );
+            case HomeItem.list:
+              String title = locale["app_home"][data.key] ?? data.key?.localeValue(locale) ?? '';
+              return SliverToBoxAdapter(
+                child: PaiContentView(
+                  height: 172.dp,
+                  title: title,
+                  onTap: (String category, List<DiscoveryListEntity>? posts, String title) {
+                    Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: '/HomeDetailsScreen'),
+                        builder: (context) => HomeDetailsScreen(
+                          posts: posts,
+                          category: category,
+                          source: "home_page",
+                          title: title,
+                          records: data.records,
+                        ),
+                      ),
+                    );
+                  },
+                  onTapItem: (int index, String category, List<DiscoveryListEntity>? posts, String title) {
+                    Navigator.of(context).push<void>(MaterialPageRoute(
+                        settings: RouteSettings(name: '/HomeDetailScreen'),
+                        builder: (context) => HomeDetailScreen(
+                              posts: posts!,
+                              source: "home_page",
+                              title: category,
+                              index: index,
+                              titleName: title,
+                              records: data.records,
+                            )));
+                  },
+                  data: data,
+                ),
+              );
+            case HomeItem.banner:
               var banners = data.getDataList<DiscoveryListEntity>();
               return SliverToBoxAdapter(
                 child: PaiSwiper(
@@ -205,7 +251,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                   },
                 ),
               );
-            case HomeItem.tools:
+            case HomeItem.tool:
               var tools = data.getDataList<HomePageHomepageTools>();
               for (var element in tools) {
                 element.title = element.categoryString?.localeValue(locale) ?? '';
@@ -218,57 +264,43 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                   },
                 ),
               );
-            case HomeItem.features:
-              var features = data.getDataList<HomePageHomepageTools>();
-              for (var element in features) {
-                element.title = element.categoryString?.localeValue(locale) ?? '';
-              }
+            case HomeItem.feature:
               return SliverToBoxAdapter(
                 child: PaiRecommendView(
-                  list: features,
+                  data: data,
+                  locale: locale,
                   onClickItem: (data) {
                     HomeCardTypeUtils.jump(context: context, source: 'home_page_recommend_${data.category.value()}', homeData: data);
                   },
                 ),
               );
-            case HomeItem.galleries:
-              var galleries = data.getDataList<HomePageHomepageGalleries>();
-              return SliverList(
-                  delegate: SliverChildListDelegate(galleries.map((e) {
-                e.title = e.categoryString?.localeValue(locale) ?? '';
-                String title = locale["app_home"][e.title] ?? e.title;
-                return PaiContentView(
-                  height: e.title == 'facetoon' ? 96.dp : 172.dp,
-                  title: title,
-                  onTap: (String category, List<DiscoveryListEntity>? posts, String title) {
-                    Navigator.of(context).push<bool>(
-                      MaterialPageRoute(
-                        settings: RouteSettings(name: '/HomeDetailsScreen'),
-                        builder: (context) => HomeDetailsScreen(
-                          posts: posts,
-                          category: category,
-                          source: "home_page",
-                          title: title,
-                          records: e.records ?? 0,
-                        ),
+            case HomeItem.gallery:
+              String title = locale["app_home"][data.key] ?? data.key?.localeValue(locale) ?? '';
+              return SliverToBoxAdapter(
+                  child: PaiContentFacetoonView(
+                height: ScreenUtil.screenSize.width,
+                width: ScreenUtil.screenSize.width,
+                title: title,
+                data: data,
+                onAllTap: (String category, List<DiscoveryListEntity>? posts, String title) {
+                  Navigator.of(context).push<bool>(
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: '/HomeDetailsScreen'),
+                      builder: (context) => HomeDetailsScreen(
+                        posts: posts,
+                        category: category,
+                        source: "home_page",
+                        title: title,
+                        records: data.records,
+                        skipDetail: true,
                       ),
-                    );
-                  },
-                  onTapItem: (int index, String category, List<DiscoveryListEntity>? posts, String title) {
-                    Navigator.of(context).push<void>(MaterialPageRoute(
-                        settings: RouteSettings(name: '/HomeDetailScreen'),
-                        builder: (context) => HomeDetailScreen(
-                              posts: e.socialPosts,
-                              source: "home_page",
-                              title: category,
-                              index: index,
-                              titleName: title,
-                              records: e.records ?? 0,
-                            )));
-                  },
-                  galleries: e,
-                );
-              }).toList()));
+                    ),
+                  );
+                },
+                onTapItem: (int index, String category, List<DiscoveryListEntity>? posts, String title) {
+                  HomeCardTypeUtils.jump(context: context, source: "home_page_$category", data: posts![index]);
+                },
+              ));
             case HomeItem.UNDEFINED:
               return SliverToBoxAdapter(child: SizedBox.shrink());
           }
@@ -284,41 +316,14 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
         child: navbar(context).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(onTap: () {}),
       ));
 
-  Widget navbar(BuildContext context) => Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppNavigationBar(
-              backgroundColor: Colors.transparent,
-              showBackItem: false,
-              leading: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    S.of(context).pro,
-                    style: TextStyle(fontSize: 14.sp, color: Color(0xffffffff), fontWeight: FontWeight.w700),
-                  )
-                      .intoContainer(
-                          width: 45.dp,
-                          padding: EdgeInsets.symmetric(vertical: 4.dp),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6.dp),
-                            gradient: LinearGradient(
-                              colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                          ))
-                      .intoGestureDetector(onTap: () {
-                    userManager.doOnLogin(context, logPreLoginAction: 'purchase_pro_click', callback: () {
-                      PaymentUtils.pay(context, 'home_page');
-                    });
-                  }),
-                ],
-              ).intoContainer(margin: EdgeInsets.only(left: 10.dp)).offstage(offstage: !proVisible),
-              middle: TitleTextWidget(S.of(context).home, ColorConstant.BtnTextColor, FontWeight.w600, 18.sp),
-              trailing: Obx(() => BadgeView(
+  Widget navbar(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              TitleTextWidget(S.of(context).home, ColorConstant.BtnTextColor, FontWeight.bold, 20.sp),
+              Expanded(child: Container()),
+              Obx(() => BadgeView(
                     type: BadgeType.fill,
                     count: AppDelegate.instance.getManager<MsgManager>().unreadCount.value,
                     child: Image.asset(
@@ -326,14 +331,36 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                       width: 26.sp,
                       color: Colors.white,
                     ),
-                  )).intoContainer(padding: EdgeInsets.all(4)).intoGestureDetector(onTap: () {
+                  )).intoContainer(padding: EdgeInsets.all(2), margin: EdgeInsets.only(right: 12.dp)).intoGestureDetector(onTap: () {
                 userManager.doOnLogin(context, logPreLoginAction: 'msg_list_click', callback: () {
                   MsgListScreen.push(context);
                 }, autoExec: true);
               }),
-            ),
-          ],
-        ),
+              Text(
+                S.of(context).pro,
+                style: TextStyle(fontSize: 14.sp, color: Colors.white, fontWeight: FontWeight.w600),
+              )
+                  .intoContainer(
+                      width: 55.dp,
+                      padding: EdgeInsets.symmetric(vertical: 4.dp),
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.only(right: 15.dp),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(32.dp),
+                        gradient: LinearGradient(
+                          colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ))
+                  .intoGestureDetector(onTap: () {
+                userManager.doOnLogin(context, logPreLoginAction: 'purchase_pro_click', callback: () {
+                  PaymentUtils.pay(context, 'home_page');
+                });
+              }),
+            ],
+          ).intoContainer(padding: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: 15.dp, bottom: 4.dp))
+        ],
       );
 
   Widget addWidget(BuildContext context) => Align(

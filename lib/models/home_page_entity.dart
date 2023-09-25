@@ -132,7 +132,11 @@ class HomePageHomepageGalleries {
 
 @JsonSerializable()
 class HomeItemEntity {
-  @JSONField(name: 'key')
+  String? key;
+  int records = 0;
+  @JSONField(name: 'has_background')
+  bool hasBackground = false;
+  @JSONField(name: 'type')
   String? mHomeItemString;
 
   @JSONField(serialize: false, deserialize: false)

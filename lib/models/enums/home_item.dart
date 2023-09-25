@@ -19,24 +19,30 @@
 ///   }
 
 enum HomeItem {
-  banners,
-  tools,
-  features,
-  galleries,
+  banner,
+  tool,
+  feature,
+  list,
+  ad,
+  gallery,
   UNDEFINED,
 }
 
 class HomeItemUtils {
   static HomeItem build(String? value) {
     switch (value) {
-      case 'banners':
-        return HomeItem.banners;
-      case 'tools':
-        return HomeItem.tools;
-      case 'features':
-        return HomeItem.features;
-      case 'galleries':
-        return HomeItem.galleries;
+      case 'banner':
+        return HomeItem.banner;
+      case 'tool':
+        return HomeItem.tool;
+      case 'feature':
+        return HomeItem.feature;
+      case 'list':
+        return HomeItem.list;
+      case 'ad':
+        return HomeItem.ad;
+      case 'gallery':
+        return HomeItem.gallery;
       default:
         return HomeItem.UNDEFINED;
     }
@@ -46,17 +52,20 @@ class HomeItemUtils {
 extension HomeItemEx on HomeItem {
   value() {
     switch (this) {
-      case HomeItem.banners:
-        return 'banners';
-      case HomeItem.tools:
-        return 'tools';
-      case HomeItem.features:
-        return 'features';
-      case HomeItem.galleries:
-        return 'galleries';
+      case HomeItem.banner:
+        return 'banner';
+      case HomeItem.tool:
+        return 'tool';
+      case HomeItem.feature:
+        return 'feature';
+      case HomeItem.list:
+        return 'list';
+      case HomeItem.ad:
+        return 'ad';
+      case HomeItem.gallery:
+        return 'gallery';
       case HomeItem.UNDEFINED:
         return null;
     }
   }
 }
-
