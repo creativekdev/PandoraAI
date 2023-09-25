@@ -1,7 +1,6 @@
 import 'package:cartoonizer/widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 
-
 import '../../common/importFile.dart';
 import '../../models/home_page_entity.dart';
 
@@ -17,6 +16,7 @@ class PaiSliverView extends StatelessWidget {
     final finalList = list?.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList() ?? [];
     return Container(
         padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
+        alignment: Alignment.center,
         child: Wrap(
             spacing: $(12),
             runSpacing: $(12),
@@ -39,7 +39,7 @@ class SliverItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = (ScreenUtil.screenSize.width - $(69)) / 4 - 1;
+    double width = (ScreenUtil.screenSize.width - 66.dp) / 4 - 1;
     var title = entity.category.title();
     return Column(
       children: [
