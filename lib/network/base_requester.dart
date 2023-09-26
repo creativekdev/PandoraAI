@@ -102,7 +102,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     params["app_build"] = packageInfo.buildNumber;
     params['from_app'] = "1";
     params['language'] = MyApp.currentLocales;
-    params['timezone_offset'] = DateTime.now().timeZoneOffset.inMinutes;
+    params['timezone_offset'] = -DateTime.now().timeZoneOffset.inMinutes;
     // add ts and signature
     params["ts"] = DateTime.now().millisecondsSinceEpoch.toString();
     params["s"] = sToken(params);

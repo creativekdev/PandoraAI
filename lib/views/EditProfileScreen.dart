@@ -308,6 +308,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       controller.changeIsLoading(false);
     }
+    setState(() {});
   }
 
   showCameraDialog(BuildContext context) {
@@ -428,5 +429,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       controller.changeIsLoading(false);
       throw ('Error while uploading image');
     }
+    setState(() {});
   }
 }
