@@ -192,9 +192,9 @@
   "watchAdToShareText": "分享高清\n无水印图片",
   "welcome": "欢迎回来！",
   "welcome1": "欢迎",
-  "welcome_title1": "用AI创造魔法头像",
+  "welcome_title1": "用AI创造卡通头像",
   "welcome_title2": "独一无二的专属画风",
-  "welcome_title3": "自拍转动漫 一键生成",
+  "welcome_title3": "为自己制作卡通贴纸",
   "welcomeBack": "欢迎\n回来",
   "what_to_expect": "使用声明",
   "why_its_paid": "为什么需要付款",
@@ -534,5 +534,6 @@
   "limit_inv_desc": "分享邀请码以获得额外次数",
   "password_length_tips": "密码长度需6-16位",
   "password_strong_detected": "避免纯数字/字母/特殊字符",
-  "do_not_close_app": "请不要关闭应用"
+  "do_not_close_app": "请不要关闭应用",
+  "profile_pic_maker": "ProfilePicMaker"
 }

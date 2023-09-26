@@ -31,17 +31,17 @@ class IntroductionScreenState extends State<IntroductionScreen> {
         pages = [
           {
             'image': Images.introduction_bg1,
-            'title': S.of(context).app_name,
+            'title': S.of(context).profile_pic_maker,
             'subTitle': S.of(context).welcome_title1,
           },
           {
             'image': Images.introduction_bg2,
-            'title': S.of(context).app_name,
+            'title': S.of(context).profile_pic_maker,
             'subTitle': S.of(context).welcome_title2,
           },
           {
             'image': Images.introduction_bg3,
-            'title': S.of(context).app_name,
+            'title': S.of(context).profile_pic_maker,
             'subTitle': S.of(context).welcome_title3,
           }
         ];

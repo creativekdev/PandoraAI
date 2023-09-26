@@ -509,6 +509,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "privacy_policy": MessageLookupByLibrary.simpleMessage("プライバシーポリシー"),
         "privacy_policy1": MessageLookupByLibrary.simpleMessage("プライバシーポリシー"),
         "pro": MessageLookupByLibrary.simpleMessage("プロ"),
+        "profile_pic_maker":
+            MessageLookupByLibrary.simpleMessage("ProfilePicMaker"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("数量"),
         "quatity": MessageLookupByLibrary.simpleMessage("数量"),
@@ -716,11 +718,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome1": MessageLookupByLibrary.simpleMessage("ようこそ"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("お帰りなさい"),
         "welcome_title1":
-            MessageLookupByLibrary.simpleMessage("AIによる魔法のアバターの作成"),
+            MessageLookupByLibrary.simpleMessage("漫画のプロフィール写真を作成する"),
         "welcome_title2":
-            MessageLookupByLibrary.simpleMessage("他では見られない唯一無二な画風"),
+            MessageLookupByLibrary.simpleMessage("写真に芸術的なタッチを加える"),
         "welcome_title3":
-            MessageLookupByLibrary.simpleMessage("自撮りをアニメ化して、ワンクリックで生成する"),
+            MessageLookupByLibrary.simpleMessage("自分用の漫画ステッカーを作成する"),
         "what_to_expect": MessageLookupByLibrary.simpleMessage("使用声明"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("なぜ支払いが必要ですか？"),
         "woman": MessageLookupByLibrary.simpleMessage("女性"),

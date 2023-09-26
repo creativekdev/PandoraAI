@@ -600,6 +600,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "privacy_policy1":
             MessageLookupByLibrary.simpleMessage("Política de privacidad"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
+        "profile_pic_maker":
+            MessageLookupByLibrary.simpleMessage("ProfilePicMaker"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("Cantidad"),
         "quatity": MessageLookupByLibrary.simpleMessage("Cantidad"),
@@ -839,11 +841,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome1": MessageLookupByLibrary.simpleMessage("Bienvenido"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("欢迎\n回来"),
         "welcome_title1": MessageLookupByLibrary.simpleMessage(
-            "Crea avatares mágicos con IA"),
+            "Hacer una foto de perfil de dibujos animados"),
         "welcome_title2": MessageLookupByLibrary.simpleMessage(
-            "Estilo artístico único y exclusivo"),
+            "Añade un toque artístico a tu foto"),
         "welcome_title3": MessageLookupByLibrary.simpleMessage(
-            "Selfie a Anime Un clic para generar"),
+            "Crea pegatinas de dibujos animados para ti"),
         "what_to_expect":
             MessageLookupByLibrary.simpleMessage("Reclamaciones de uso"),
         "why_its_paid":

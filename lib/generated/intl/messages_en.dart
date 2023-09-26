@@ -576,6 +576,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "privacy_policy1":
             MessageLookupByLibrary.simpleMessage("Privacy policy"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
+        "profile_pic_maker":
+            MessageLookupByLibrary.simpleMessage("ProfilePicMaker"),
         "q1": MessageLookupByLibrary.simpleMessage("?"),
         "quantity": MessageLookupByLibrary.simpleMessage("Quantity"),
         "quatity": MessageLookupByLibrary.simpleMessage("Quantity"),
@@ -804,11 +806,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome1": MessageLookupByLibrary.simpleMessage("Welcome"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome\nBack"),
         "welcome_title1": MessageLookupByLibrary.simpleMessage(
-            "Generate magic avatars using AI"),
+            "Make a cartoon profile picture"),
         "welcome_title2": MessageLookupByLibrary.simpleMessage(
-            "Make your personal AI avatars"),
-        "welcome_title3":
-            MessageLookupByLibrary.simpleMessage("One-click selfies to anime"),
+            "Add artistic touch to your photo"),
+        "welcome_title3": MessageLookupByLibrary.simpleMessage(
+            "Create cartoon stickers for yourself"),
         "what_to_expect":
             MessageLookupByLibrary.simpleMessage("What to Expect"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("Why it\'s paid"),
