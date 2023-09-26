@@ -5,7 +5,6 @@ import 'package:cartoonizer/app/user/rate_notice_operator.dart';
 import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
-import 'package:cartoonizer/models/home_page_entity.dart';
 import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -30,8 +29,6 @@ class EffectDataController extends GetxController {
   List<String> tagList = [];
   late StreamSubscription onAppStateListener;
   late StreamSubscription networkListener;
-
-  late HomePageEntity homeEntity;
 
   IO.Socket? socket;
 
@@ -69,8 +66,8 @@ class EffectDataController extends GetxController {
             .setExtraHeaders({'origin': Config.instance.host}) // optional
             .enableForceNewConnection()
             .setQuery({
-              'influencer_id': 'ppm_config',
-            })
+          'influencer_id': 'ppm_config',
+        })
             .build());
     socket?.on('update_config', (data) {
       LogUtil.d(data, tag: 'socket-notification');
