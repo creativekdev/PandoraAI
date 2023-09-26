@@ -16,6 +16,7 @@ import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/views/account/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/LoginScreen.dart';
+import 'package:cartoonizer/views/payment/payment.dart';
 import 'package:cartoonizer/widgets/auth/connector_platform.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -100,6 +101,7 @@ class UserManager extends BaseManager {
   RateNoticeOperator get rateNoticeOperator => _rateNoticeOperator;
   late StreamSubscription _userStataListen;
   late StreamSubscription _networkListen;
+  late StreamSubscription _paymentListen;
 
   @override
   Future<void> onCreate() async {
@@ -120,6 +122,15 @@ class UserManager extends BaseManager {
         refreshUser();
       }
     });
+    _paymentListen = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
+      refreshUser().whenComplete(() {
+        var id = user?.userSubscription['apple_store_plan_id'] ?? user?.userSubscription['plan_id'];
+        if (!TextUtil.isEmpty(id)) {
+          double price = PaymentPrice[id] ?? 0;
+          api.conversion(accountId: user?.id.toString() ?? '', conversion: price);
+        }
+      });
+    });
   }
 
   @override
@@ -127,6 +138,7 @@ class UserManager extends BaseManager {
     _userStataListen.cancel();
     api.unbind();
     _networkListen.cancel();
+    _paymentListen.cancel();
     super.onDestroy();
   }
 
@@ -183,7 +195,11 @@ class UserManager extends BaseManager {
                 builder: (BuildContext context) => EmailVerificationScreen(user!.getShownEmail()),
                 settings: RouteSettings(name: "/EmailVerificationScreen"),
               ),
-            );
+            ).then((value) {
+              AppApi().onSignUp(email: user?.getShownEmail() ?? '').whenComplete(() {
+                AppApi().identify(accountId: user?.id.toString() ?? '');
+              });
+            });
           }
         }
         result = value;

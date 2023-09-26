@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -40,6 +41,7 @@ import 'package:cartoonizer/network/retry_able_requester.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:device_uuid/device_uuid.dart';
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -65,6 +67,34 @@ class AppApi extends RetryAbleRequester {
     Map<String, String> headers = {};
     headers['cookie'] = "sb.connect.sid=${userManager.sid}";
     return ApiOptions(baseUrl: Config.instance.apiHost, headers: headers);
+  }
+
+  Future<BaseEntity?> onFirstEntry() async {
+    return await post('/track/app/install/${APP_HASH_VALUE}', params: {
+      'device_id': await DeviceUuid().getUUID(),
+    });
+  }
+
+  Future<BaseEntity?> onSignUp({required String email}) async {
+    return await post('/track/app/signup/${APP_HASH_VALUE}', params: {
+      'device_id': await DeviceUuid().getUUID(),
+      'email': email,
+    });
+  }
+
+  Future<BaseEntity?> identify({required String accountId}) async {
+    return await post('/track/app/identify/${APP_HASH_VALUE}', params: {
+      'device_id': await DeviceUuid().getUUID(),
+      'account_id': accountId,
+    });
+  }
+
+  Future<BaseEntity?> conversion({required String accountId, required double conversion}) async {
+    return await post('/track/app/conversion/${APP_HASH_VALUE}', params: {
+      'device_id': await DeviceUuid().getUUID(),
+      'account_id': accountId,
+      'conversion': conversion,
+    });
   }
 
   /// login normal

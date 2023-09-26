@@ -178,7 +178,6 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   void _handlePaymentSuccess() async {
     GetStorage().write('payment_result', true);
     EventBusHelper().eventBus.fire(OnPaySuccessEvent());
-    await userManager.refreshUser();
     Navigator.pop(context, true);
   }
 

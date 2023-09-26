@@ -1,3 +1,4 @@
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -25,6 +26,7 @@ class IntroductionScreenState extends State<IntroductionScreen> {
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'introduction_screen');
+    AppApi().onFirstEntry();
     pageController = PageController(initialPage: 0);
     delay(() {
       setState(() {

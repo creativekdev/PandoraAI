@@ -725,11 +725,17 @@ class _SignupScreenState extends AppState<SignupScreen> {
         if (value ?? false) {
           var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preSignupAction);
           var prePage = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
+          AppApi().onSignUp(email: onlineModel.user?.getShownEmail() ?? '').whenComplete(() {
+            AppApi().identify(accountId: onlineModel.user?.id.toString() ?? '');
+          });
           Events.signupOkShow(source: action, prePage: prePage);
           await loginBack(context);
         }
       });
     } else {
+      AppApi().onSignUp(email: onlineModel.user?.getShownEmail() ?? '').whenComplete(() {
+        AppApi().identify(accountId: onlineModel.user?.id.toString() ?? '');
+      });
       var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preSignupAction);
       var prePage = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
       Events.signupOkShow(source: action, prePage: prePage);
