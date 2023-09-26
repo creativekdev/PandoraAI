@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:device_uuid/device_uuid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -49,6 +50,9 @@ class ThirdpartManager extends BaseManager {
       EventBusHelper().eventBus.fire(OnNetworkStateChangeEvent(data: event));
     });
     Executor().warmUp(isolatesCount: 2);
+    DeviceUuid().getUUID().then((value) {
+      LogUtil.d(value, tag: 'DeviceUuid');
+    });
   }
 
   @override
