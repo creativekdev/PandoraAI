@@ -24,6 +24,7 @@ import 'package:cartoonizer/widgets/state/app_state.dart';
 import 'package:cartoonizer/widgets/tabbar/app_tab_bar.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../print/print_order_screen.dart';
 import 'widget/user_base_info_widget.dart';
@@ -105,7 +106,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 if (userManager.isNeedLogin) {
                   userManager.doOnLogin(context, logPreLoginAction: 'loginNormal', currentPageRoute: '/HomeScreen', callback: () {
                     EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
-                    setState(() {});
+                    safeSetState(() {});
                   }, autoExec: true);
                 } else {
                   Navigator.push(
