@@ -482,7 +482,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                         }
                       });
                     }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
-                    SizedBox(height: $(80) + ScreenUtil.getBottomPadding(context)),
+                    SizedBox(height: $(80) + ScreenUtil.getBottomPadding()),
                   ],
                 ),
               ),
@@ -518,7 +518,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                     })
                     .intoContainer(
                       color: Color(0xaa111111),
-                      padding: EdgeInsets.only(top: $(15), bottom: $(15) + ScreenUtil.getBottomPadding(context)),
+                      padding: EdgeInsets.only(top: $(15), bottom: $(15) + ScreenUtil.getBottomPadding()),
                     )
                     .blur(),
                 bottom: 0,

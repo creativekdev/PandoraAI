@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
+import 'package:cartoonizer/widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/widgets/visibility_holder.dart';
+import 'package:common_utils/common_utils.dart';
 
 import '../../api/app_api.dart';
 import '../../common/importFile.dart';
@@ -86,7 +89,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
-      padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
+      padding: EdgeInsets.only(left: 15.dp, right: 15.dp, top: 12.dp),
       child: Column(
         children: [
           Row(
@@ -150,6 +153,13 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
           ),
         ],
       ),
+      decoration: BoxDecoration(
+          image: TextUtil.isEmpty(data.backgroundImage)
+              ? null
+              : DecorationImage(
+                  image: CachedNetworkImageProvider(data.backgroundImage, maxWidth: (ScreenUtil.screenSize.width * 2).toInt(), cacheManager: CachedImageCacheManager()),
+                  fit: BoxFit.cover,
+                )),
     );
   }
 

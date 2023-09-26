@@ -205,7 +205,7 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
           });
         };
         createAction.call();
-      }).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
+      }).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding())),
     );
   }
 

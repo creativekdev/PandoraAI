@@ -229,7 +229,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
                     color: Color(0x99000000),
                     padding: EdgeInsets.only(
                       top: $(18),
-                      bottom: ScreenUtil.getBottomPadding(context) + $(10),
+                      bottom: ScreenUtil.getBottomPadding() + $(10),
                       left: $(25),
                       right: $(25),
                     ))
@@ -474,7 +474,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
     }
     return item.intoContainer(
       padding: EdgeInsets.only(
-        bottom: index == shownList.length - 1 ? ScreenUtil.getBottomPadding(context) + $(90) : 0,
+        bottom: index == shownList.length - 1 ? ScreenUtil.getBottomPadding() + $(90) : 0,
       ),
     );
   }

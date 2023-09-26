@@ -183,7 +183,7 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
                       margin: EdgeInsets.only(
                     left: $(12),
                     right: $(12),
-                    bottom: ScreenUtil.getBottomPadding(context) + $(30),
+                    bottom: ScreenUtil.getBottomPadding() + $(30),
                   )),
                   SingleChildScrollView(
                     padding: EdgeInsets.symmetric(horizontal: $(12)),
@@ -192,7 +192,7 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
                       children: buildItems(controller),
                     ),
                     scrollDirection: Axis.horizontal,
-                  ).intoContainer(margin: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(15))).offstage(offstage: true),
+                  ).intoContainer(margin: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding() + $(15))).offstage(offstage: true),
                 ],
               ),
             );

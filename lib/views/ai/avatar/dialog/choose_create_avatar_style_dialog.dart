@@ -50,7 +50,7 @@ class _ChooseCreateAvatarStyleDialogState extends State<_ChooseCreateAvatarStyle
             children.add(buildItem(context, key, configEntity.examples(key)));
           });
           return SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context)),
+            padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding()),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: children,

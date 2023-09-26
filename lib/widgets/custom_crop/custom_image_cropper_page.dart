@@ -75,7 +75,7 @@ class MyImageCropperPage extends StatelessWidget {
                   builder: (context, _) => Opacity(
                     opacity: overlayOpacityAnimation.value,
                     child: Container(
-                      height: $(140) + ScreenUtil.getBottomPadding(context),
+                      height: $(140) + ScreenUtil.getBottomPadding(),
                       padding: EdgeInsets.only(top: $(7)),
                       alignment: Alignment.topCenter,
                       width: ScreenUtil.screenSize.width,

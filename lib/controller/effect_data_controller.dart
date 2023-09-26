@@ -26,8 +26,6 @@ class EffectDataController extends GetxController {
   late StreamSubscription onAppStateListener;
   late StreamSubscription networkListener;
 
-  late HomePageEntity homeEntity;
-
   @override
   void onInit() {
     super.onInit();

@@ -8,35 +8,6 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/enums/home_item.dart';
 
 @JsonSerializable()
-class HomePageEntity {
-  late List<DiscoveryListEntity> banners;
-  late List<HomePageHomepageTools> tools;
-  late List<HomePageHomepageTools> features;
-  late List<HomePageHomepageGalleries> galleries;
-
-  HomePageEntity({
-    List<DiscoveryListEntity>? banners,
-    List<HomePageHomepageTools>? tools,
-    List<HomePageHomepageTools>? features,
-    List<HomePageHomepageGalleries>? galleries,
-  }) {
-    this.banners = banners ?? [];
-    this.tools = tools ?? [];
-    this.features = features ?? [];
-    this.galleries = galleries ?? [];
-  }
-
-  factory HomePageEntity.fromJson(Map<String, dynamic> json) => $HomePageEntityFromJson(json);
-
-  Map<String, dynamic> toJson() => $HomePageEntityToJson(this);
-
-  @override
-  String toString() {
-    return jsonEncode(this);
-  }
-}
-
-@JsonSerializable()
 class HomePageHomepageTools {
   @JSONField(name: 'category')
   String? categoryString;
@@ -94,48 +65,17 @@ class HomePageHomepageTools {
 }
 
 @JsonSerializable()
-class HomePageHomepageGalleries {
-  @JSONField(name: 'category')
-  String? categoryString;
-  int? records;
-
-  @JSONField(serialize: false, deserialize: false)
-  HomeCardType? _category;
-
-  HomeCardType get category {
-    if (_category == null) {
-      _category = HomeCardTypeUtils.build(categoryString);
-    }
-    return _category!;
-  }
-
-  set category(HomeCardType type) {
-    _category = type;
-    categoryString = _category!.value();
-  }
-
-  @JSONField(name: "social_posts")
-  late List<DiscoveryListEntity> socialPosts;
-  String? title;
-
-  HomePageHomepageGalleries();
-
-  factory HomePageHomepageGalleries.fromJson(Map<String, dynamic> json) => $HomePageHomepageGalleriesFromJson(json);
-
-  Map<String, dynamic> toJson() => $HomePageHomepageGalleriesToJson(this);
-
-  @override
-  String toString() {
-    return jsonEncode(this);
-  }
-}
-
-@JsonSerializable()
 class HomeItemEntity {
   String? key;
   int records = 0;
+  @JSONField(name: 'background_image')
+  String backgroundImage = '';
   @JSONField(name: 'has_background')
   bool hasBackground = false;
+  @JSONField(name: 'enable_countries')
+  String enableCountries = '';
+  @JSONField(name: 'enable_languages')
+  String enableLanguages = '';
   @JSONField(name: 'type')
   String? mHomeItemString;
 

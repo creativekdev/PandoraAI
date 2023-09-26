@@ -379,7 +379,7 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
                       },
                       scrollDirection: Axis.horizontal,
                     ).intoContainer(height: itemWidth),
-              SizedBox(height: ScreenUtil.getBottomPadding(context)),
+              SizedBox(height: ScreenUtil.getBottomPadding()),
             ],
           ),
         );

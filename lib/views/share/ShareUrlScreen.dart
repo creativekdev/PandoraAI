@@ -173,7 +173,7 @@ class _ShareScreenState extends State<ShareUrlScreen> {
             })
       ],
     ).intoContainer(
-        padding: EdgeInsets.only(top: $(15), bottom: ScreenUtil.getBottomPadding(context) + $(10)),
+        padding: EdgeInsets.only(top: $(15), bottom: ScreenUtil.getBottomPadding() + $(10)),
         decoration: BoxDecoration(
             color: ColorConstant.EffectFunctionGrey,
             borderRadius: BorderRadius.only(

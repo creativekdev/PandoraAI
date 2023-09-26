@@ -140,7 +140,7 @@ class _BackTemplatePickerState extends State<BackTemplatePicker> with AutomaticK
                     controller: scrollController,
                     itemCount: dataList.length,
                     physics: ClampingScrollPhysics(),
-                    padding: EdgeInsets.only(left: $(15), top: 0, right: $(15), bottom: ScreenUtil.getBottomPadding(context)),
+                    padding: EdgeInsets.only(left: $(15), top: 0, right: $(15), bottom: ScreenUtil.getBottomPadding()),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: imageRatio,

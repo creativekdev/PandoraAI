@@ -23,10 +23,10 @@ class PaiRecommendView extends StatelessWidget {
   Widget build(BuildContext context) {
     final finalList = list.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList();
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 12.dp),
+      padding: EdgeInsets.only(left: 15.dp, right: 15.dp, top: 12.dp),
       child: Wrap(
-        spacing: $(14),
-        runSpacing: $(14),
+        spacing: 14.dp,
+        runSpacing: 14.dp,
         children: finalList
             .map(
               (e) => RecommendItem(e, data.hasBackground).intoGestureDetector(
@@ -49,7 +49,7 @@ class RecommendItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = (ScreenUtil.screenSize.width - 44.dp) / 2;
+    double width = (ScreenUtil.screenSize.width - 46.dp) / 2;
     var title = data.category.title();
     return Column(
       mainAxisSize: MainAxisSize.min,

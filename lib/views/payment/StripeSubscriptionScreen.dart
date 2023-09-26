@@ -329,7 +329,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
               ],
             )),
             _buildPurchaseButton(),
-            SizedBox(height: ScreenUtil.getBottomPadding(context) + $(15))
+            SizedBox(height: ScreenUtil.getBottomPadding() + $(15))
           ],
         ),
       ).intoContainer(

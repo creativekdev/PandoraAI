@@ -204,7 +204,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                     width: ScreenUtil.screenSize.width - 30.dp,
                     onTap: (data) {
                       HomeCardTypeUtils.jump(context: context, source: 'home_page_ads_${data.category.value()}', data: data);
-                    }).intoContainer(padding: EdgeInsets.symmetric(horizontal: 15.dp)),
+                    }).intoContainer(padding: EdgeInsets.symmetric(horizontal: 15.dp), margin: EdgeInsets.only(top: 12.dp)),
               );
             case HomeItem.list:
               String title = locale["app_home"][data.key] ?? data.key?.localeValue(locale) ?? '';
@@ -239,7 +239,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                             )));
                   },
                   data: data,
-                ),
+                ).intoContainer(margin: EdgeInsets.only(top: 12.dp)),
               );
             case HomeItem.banner:
               var banners = data.getDataList<DiscoveryListEntity>();
@@ -249,7 +249,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                   onClickItem: (index, data) {
                     HomeCardTypeUtils.jump(context: context, source: 'home_page_banner_${data.category.value()}', data: data);
                   },
-                ),
+                ).intoContainer(margin: EdgeInsets.only(top: 12.dp)),
               );
             case HomeItem.tool:
               var tools = data.getDataList<HomePageHomepageTools>();
@@ -262,7 +262,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                   onClickItem: (data) {
                     HomeCardTypeUtils.jump(context: context, source: 'home_page_tools_${data.category.value()}', homeData: data);
                   },
-                ),
+                ).intoContainer(margin: EdgeInsets.only(top: 12.dp)),
               );
             case HomeItem.feature:
               return SliverToBoxAdapter(
@@ -272,40 +272,41 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                   onClickItem: (data) {
                     HomeCardTypeUtils.jump(context: context, source: 'home_page_recommend_${data.category.value()}', homeData: data);
                   },
-                ),
+                ).intoContainer(margin: EdgeInsets.only(top: 12.dp)),
               );
             case HomeItem.gallery:
               String title = locale["app_home"][data.key] ?? data.key?.localeValue(locale) ?? '';
               return SliverToBoxAdapter(
-                  child: PaiContentFacetoonView(
-                height: ScreenUtil.screenSize.width,
-                width: ScreenUtil.screenSize.width,
-                title: title,
-                data: data,
-                onAllTap: (String category, List<DiscoveryListEntity>? posts, String title) {
-                  Navigator.of(context).push<bool>(
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: '/HomeDetailsScreen'),
-                      builder: (context) => HomeDetailsScreen(
-                        posts: posts,
-                        category: category,
-                        source: "home_page",
-                        title: title,
-                        records: data.records,
-                        skipDetail: true,
+                child: PaiContentFacetoonView(
+                  height: ScreenUtil.screenSize.width,
+                  width: ScreenUtil.screenSize.width,
+                  title: title,
+                  data: data,
+                  onAllTap: (String category, List<DiscoveryListEntity>? posts, String title) {
+                    Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: '/HomeDetailsScreen'),
+                        builder: (context) => HomeDetailsScreen(
+                          posts: posts,
+                          category: category,
+                          source: "home_page",
+                          title: title,
+                          records: data.records,
+                          skipDetail: true,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                onTapItem: (int index, String category, List<DiscoveryListEntity>? posts, String title) {
-                  HomeCardTypeUtils.jump(context: context, source: "home_page_$category", data: posts![index]);
-                },
-              ));
+                    );
+                  },
+                  onTapItem: (int index, String category, List<DiscoveryListEntity>? posts, String title) {
+                    HomeCardTypeUtils.jump(context: context, source: "home_page_$category", data: posts![index]);
+                  },
+                ).intoContainer(margin: EdgeInsets.only(top: 12.dp)),
+              );
             case HomeItem.UNDEFINED:
               return SliverToBoxAdapter(child: SizedBox.shrink());
           }
         }).toList(),
-        SliverPadding(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
+        SliverPadding(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding() + 15.dp)),
       ],
     );
   }
@@ -368,7 +369,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
             animation: animationController!,
             builder: (context, child) {
               return Transform.translate(
-                offset: Offset(0, (58.dp + ScreenUtil.getBottomPadding(context) + AppTabBarHeight) * (animationController?.value ?? 0) + 1),
+                offset: Offset(0, (58.dp + ScreenUtil.getBottomPadding() + AppTabBarHeight) * (animationController?.value ?? 0) + 1),
                 child: Stack(
                   fit: StackFit.loose,
                   children: [
@@ -387,7 +388,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                   ],
                 )
                     .intoContainer(
-                  margin: EdgeInsets.only(bottom: AppTabBarHeight + ScreenUtil.getBottomPadding(context)),
+                  margin: EdgeInsets.only(bottom: AppTabBarHeight + ScreenUtil.getBottomPadding()),
                 )
                     .intoGestureDetector(onTap: () {
                   ImageEdition.open(context, source: 'home_add_btn', style: EffectStyle.All, function: ImageEditionFunction.effect, cardType: HomeCardType.imageEdition);

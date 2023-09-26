@@ -82,9 +82,7 @@ class JsonConvert {
 		(GetAddressData).toString(): GetAddressData.fromJson,
 		(GetAddressDataCustomer).toString(): GetAddressDataCustomer.fromJson,
 		(HomeCardEntity).toString(): HomeCardEntity.fromJson,
-		(HomePageEntity).toString(): HomePageEntity.fromJson,
 		(HomePageHomepageTools).toString(): HomePageHomepageTools.fromJson,
-		(HomePageHomepageGalleries).toString(): HomePageHomepageGalleries.fromJson,
 		(HomeItemEntity).toString(): HomeItemEntity.fromJson,
 		(HomePostEntity).toString(): HomePostEntity.fromJson,
 		(HomePostData).toString(): HomePostData.fromJson,
@@ -402,14 +400,8 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		if(<HomeCardEntity>[] is M){
 			return data.map<HomeCardEntity>((Map<String, dynamic> e) => HomeCardEntity.fromJson(e)).toList() as M;
 		}
-		if(<HomePageEntity>[] is M){
-			return data.map<HomePageEntity>((Map<String, dynamic> e) => HomePageEntity.fromJson(e)).toList() as M;
-		}
 		if(<HomePageHomepageTools>[] is M){
 			return data.map<HomePageHomepageTools>((Map<String, dynamic> e) => HomePageHomepageTools.fromJson(e)).toList() as M;
-		}
-		if(<HomePageHomepageGalleries>[] is M){
-			return data.map<HomePageHomepageGalleries>((Map<String, dynamic> e) => HomePageHomepageGalleries.fromJson(e)).toList() as M;
 		}
 		if(<HomeItemEntity>[] is M){
 			return data.map<HomeItemEntity>((Map<String, dynamic> e) => HomeItemEntity.fromJson(e)).toList() as M;

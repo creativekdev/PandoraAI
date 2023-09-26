@@ -328,7 +328,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
                       },
                       scrollDirection: Axis.horizontal,
                     ).intoContainer(height: itemWidth),
-              SizedBox(height: ScreenUtil.getBottomPadding(context)),
+              SizedBox(height: ScreenUtil.getBottomPadding()),
             ],
           ),
         );

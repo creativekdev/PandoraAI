@@ -195,7 +195,7 @@ class _MetagramScreenState extends AppState<MetagramScreen> {
             .intoContainer(
                 width: double.maxFinite,
                 padding: EdgeInsets.symmetric(vertical: $(8)),
-                margin: EdgeInsets.only(left: $(15), right: $(15), bottom: ScreenUtil.getBottomPadding(context)),
+                margin: EdgeInsets.only(left: $(15), right: $(15), bottom: ScreenUtil.getBottomPadding()),
                 decoration: BoxDecoration(
                   color: ColorConstant.DiscoveryBtn,
                   borderRadius: BorderRadius.circular($(10)),

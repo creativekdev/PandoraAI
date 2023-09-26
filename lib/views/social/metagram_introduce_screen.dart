@@ -146,7 +146,7 @@ class _MetagramIntroduceScreenState extends State<MetagramIntroduceScreen> {
                 Container(
                   color: Colors.black,
                   width: ScreenUtil.screenSize.width,
-                  height: ScreenUtil.getBottomPadding(context),
+                  height: ScreenUtil.getBottomPadding(),
                 ),
               ],
             ),

@@ -236,7 +236,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
       },
       init: controller,
     ).intoContainer(
-      padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context)),
+      padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding()),
     );
   }
 

@@ -192,7 +192,7 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
         ],
       ).intoContainer(
           padding: EdgeInsets.only(
-        bottom: ScreenUtil.getBottomPadding(context),
+        bottom: ScreenUtil.getBottomPadding(),
         left: marginHorizontalSpace,
         right: marginHorizontalSpace,
       )),
@@ -270,7 +270,7 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
                             }),
                           ],
                           mainAxisSize: MainAxisSize.min,
-                        ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))).intoMaterial();
+                        ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding())).intoMaterial();
                       }).then((value) {
                     if (value != null) {
                       if (value) {

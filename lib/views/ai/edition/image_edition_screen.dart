@@ -103,7 +103,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       imageContainerSize: imageSize,
       autoGenerate: widget.autoGenerate,
     )..state = this);
-    controller.bottomHeight = $(140) + ScreenUtil.getBottomPadding(Get.context!);
+    controller.bottomHeight = $(140) + ScreenUtil.getBottomPadding();
     timer = TimerUtil()
       ..setInterval(2000)
       ..setOnTimerTickCallback(
@@ -325,12 +325,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
                     fit: StackFit.expand,
                     children: [
                       buildContent(context, controller).intoContainer(
-                        margin: EdgeInsets.only(bottom: $(140) + ScreenUtil.getBottomPadding(context)),
+                        margin: EdgeInsets.only(bottom: $(140) + ScreenUtil.getBottomPadding()),
                       ),
                       Align(
                         child: buildOptions(context, controller).intoContainer(
                           padding: EdgeInsets.only(top: $(15)),
-                          height: $(140) + ScreenUtil.getBottomPadding(context),
+                          height: $(140) + ScreenUtil.getBottomPadding(),
                           decoration: BoxDecoration(
                               gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
                             ColorConstant.BackgroundColor.withOpacity(0),
@@ -618,7 +618,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         ),
       ],
     ).intoContainer(margin: EdgeInsets.only(right: $(8), left: $(8))).listenSizeChanged(onSizeChanged: (size) {
-      var bottomPadding = ScreenUtil.getBottomPadding(context);
+      var bottomPadding = ScreenUtil.getBottomPadding();
       var paddingB = (ScreenUtil.screenSize.height - ScreenUtil.getStatusBarHeight() - controller.bottomHeight - bottomPadding - kNavBarPersistentHeight - size.height) / 2;
       controller.switchButtonBottomToScreen = controller.bottomHeight + paddingB + bottomPadding;
     });
@@ -643,7 +643,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         return RemoveBgOptions(
           parentState: this,
           controller: controller.currentItem.holder,
-          bottomPadding: controller.bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
+          bottomPadding: controller.bottomHeight + ScreenUtil.getBottomPadding(),
           switchButtonPadding: controller.switchButtonBottomToScreen,
         );
       case ImageEditionFunction.UNDEFINED:

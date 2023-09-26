@@ -15,16 +15,14 @@ class PaiSliverView extends StatelessWidget {
   Widget build(BuildContext context) {
     final finalList = list?.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList() ?? [];
     return Container(
-        padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
+        padding: EdgeInsets.only(left: 15.dp, right: 15.dp, top: 12.dp),
         alignment: Alignment.center,
         child: Wrap(
             spacing: $(12),
             runSpacing: $(12),
-            children: finalList!
+            children: finalList
                 .map(
-                  (e) => SliverItem(
-                    entity: e,
-                  ).intoGestureDetector(onTap: () {
+                  (e) => SliverItem(entity: e).intoGestureDetector(onTap: () {
                     onClickItem(e);
                   }),
                 )
@@ -59,7 +57,7 @@ class SliverItem extends StatelessWidget {
           maxLines: 1,
         ).intoContainer(
           // width: width,
-          padding: EdgeInsets.only(top: $(8), bottom: $(8)),
+          padding: EdgeInsets.only(top: 8.dp, bottom: 0.dp),
         )
       ],
     );

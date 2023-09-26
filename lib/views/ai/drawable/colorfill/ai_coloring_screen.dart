@@ -181,7 +181,7 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
                     .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(8)))
                     .visibility(visible: !TextUtil.isEmpty(controller.resultPath)),
                 SizedBox(
-                  height: ScreenUtil.getBottomPadding(context),
+                  height: ScreenUtil.getBottomPadding(),
                 )
               ],
             )));
