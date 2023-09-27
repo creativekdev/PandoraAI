@@ -472,7 +472,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
       // 使用RX变量监听showImageSize的变化
       return controller.showOrigin
-          ? Image.file(controller.originFile)
+          ? Image.file(controller.originFile, fit: BoxFit.cover, width: imageSize.width)
           : removeBgHolder.buildShownImage(imageSize, controller.showImageSize, (needGenerateAgain) {
               generateAgainVisible.value = needGenerateAgain;
             });
@@ -483,7 +483,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
         });
       }
-      return controller.showOrigin ? Image.file(controller.originFile) : controller.buildShownImage(imageSize);
+      return controller.showOrigin ? Image.file(controller.originFile, fit: BoxFit.cover, width: imageSize.width) : controller.buildShownImage(imageSize);
     }
   }
 
@@ -541,7 +541,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           children: [
             Container(
               width: 48.dp,
-              height: 202.dp,
+              height: controller.items.length == 5 ? 202.dp : 162.dp,
               padding: EdgeInsets.symmetric(horizontal: $(4), vertical: $(4)),
               decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0xff555555).withOpacity(0.4)),
             ),
