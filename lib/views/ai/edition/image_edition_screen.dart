@@ -541,7 +541,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           children: [
             Container(
               width: 48.dp,
-              height: 202.dp,
+              height: controller.items.length == 5 ? 202.dp : 162.dp,
               padding: EdgeInsets.symmetric(horizontal: $(4), vertical: $(4)),
               decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0xff555555).withOpacity(0.4)),
             ),
