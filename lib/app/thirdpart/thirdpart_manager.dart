@@ -36,7 +36,7 @@ class ThirdpartManager extends BaseManager {
     adsHolder = SplashAdsHolder(maxCacheDuration: Duration(minutes: 5), shownDuration: Duration(minutes: 10));
     AppStateEventNotifier.startListening();
     AppStateEventNotifier.appStateStream.forEach((state) => _onAppStateChanged(state));
-    LogUtil.init(tag: 'Cartoonizer', isDebug: !kReleaseMode, maxLen: 256);
+    LogUtil.init(tag: 'Cartoonizer', isDebug: kDebugMode, maxLen: 256);
     EasyRefresh.defaultHeader = AppClassicalHeader(infoColor: ColorConstant.White);
     EasyRefresh.defaultFooter = ClassicalFooter(textColor: ColorConstant.White, infoColor: ColorConstant.White, enableHapticFeedback: false);
     onPayStatusListen = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {

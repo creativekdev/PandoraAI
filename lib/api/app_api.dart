@@ -69,34 +69,6 @@ class AppApi extends RetryAbleRequester {
     return ApiOptions(baseUrl: Config.instance.apiHost, headers: headers);
   }
 
-  Future<BaseEntity?> onFirstEntry() async {
-    return await post('/track/app/install/${APP_HASH_VALUE}', params: {
-      'device_id': await DeviceUuid().getUUID(),
-    });
-  }
-
-  Future<BaseEntity?> onSignUp({required String email}) async {
-    return await post('/track/app/signup/${APP_HASH_VALUE}', params: {
-      'device_id': await DeviceUuid().getUUID(),
-      'email': email,
-    });
-  }
-
-  Future<BaseEntity?> identify({required String accountId}) async {
-    return await post('/track/app/identify/${APP_HASH_VALUE}', params: {
-      'device_id': await DeviceUuid().getUUID(),
-      'account_id': accountId,
-    });
-  }
-
-  Future<BaseEntity?> conversion({required String accountId, required double conversion}) async {
-    return await post('/track/app/conversion/${APP_HASH_VALUE}', params: {
-      'device_id': await DeviceUuid().getUUID(),
-      'account_id': accountId,
-      'conversion': conversion,
-    });
-  }
-
   /// login normal
   Future<BaseEntity?> login(Map<String, dynamic> params) async => await post('/user/login', params: params);
 

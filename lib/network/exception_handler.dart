@@ -40,7 +40,7 @@ mixin ExceptionHandler {
     }
   }
 
-  onDioError(DioError e, {bool toastOnFailed = true, bool needRetry = true}) {
+  onDioError(DioError e, {bool toastOnFailed = true, bool needRetry = true, required bool needLogError}) {
     var statusCode = e.response?.statusCode ?? -1;
     if (e.response == null) {
       // onError(e);
@@ -57,7 +57,7 @@ mixin ExceptionHandler {
           CommonExtension().showToast(data.toString());
         }
       }
-      if (e.response != null) {
+      if (e.response != null && needLogError) {
         AppApi(client: DioNode.instance.build()).logError(
             reqMethod: e.requestOptions.method,
             api: '${e.requestOptions.baseUrl}${e.requestOptions.path}${e.requestOptions.generateParams()}',

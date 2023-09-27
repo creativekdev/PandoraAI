@@ -54,6 +54,7 @@ class MsgListController extends GetxController {
   }
 
   readAll(MsgTab? tab) async {
+    delay(() {}, milliseconds: 500);
     if (tab == null) {
       var baseEntity = await msgManager.readAll([]);
       if (baseEntity != null) {

@@ -66,9 +66,11 @@ import 'response_handler.dart';
 ///
 abstract class BaseRequester with ExceptionHandler, ResponseHandler {
   late Dio _client;
+  bool needLogError;
 
   BaseRequester({
     Dio? client,
+    this.needLogError = true,
   }) {
     _client = client ?? DioNode.instance.client;
   }
@@ -158,7 +160,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry);
+      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry, needLogError: needLogError);
       onFailed?.call(e.response);
       return null;
     }
@@ -198,7 +200,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry);
+      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry, needLogError: needLogError);
       onFailed?.call(e.response);
       return null;
     }
@@ -229,7 +231,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: null);
     } on DioError catch (e) {
-      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry);
+      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry, needLogError: needLogError);
       onFailed?.call(e.response);
       return null;
     }
@@ -266,7 +268,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry);
+      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry, needLogError: needLogError);
       onFailed?.call(e.response);
       return null;
     }
@@ -293,7 +295,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       Response response = await _client.delete(path, data: data, queryParameters: params);
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry);
+      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry, needLogError: needLogError);
       onFailed?.call(e.response);
       return null;
     }

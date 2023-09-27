@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cartoonizer/api/allshare_api.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/widgets/app_navigation_bar.dart';
@@ -415,8 +416,8 @@ class _LoginScreenState extends AppState<LoginScreen> {
       ).then((value) async {
         if (value ?? false) {
           var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
-          AppApi().onSignUp(email: onlineModel.user?.getShownEmail() ?? '').whenComplete(() {
-            AppApi().identify(accountId: onlineModel.user?.id.toString() ?? '');
+          userManager.allShareApi.onSignUp(email: onlineModel.user?.getShownEmail() ?? '').whenComplete(() {
+            userManager.allShareApi.identify(accountId: onlineModel.user?.id.toString() ?? '');
           });
           Events.loginSuccessShow(source: action);
           await loginBack(context);

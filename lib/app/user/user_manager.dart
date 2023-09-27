@@ -1,3 +1,4 @@
+import 'package:cartoonizer/api/allshare_api.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -33,6 +34,7 @@ class UserManager extends BaseManager {
   late CacheManager cacheManager;
   bool lastLauncherLoginStatus = false; //true login, false unLogin
   late AppApi api;
+  late AllShareApi allShareApi;
 
   Map? appVersionData;
 
@@ -107,6 +109,7 @@ class UserManager extends BaseManager {
   Future<void> onCreate() async {
     super.onCreate();
     api = AppApi().bindManager(this);
+    allShareApi = AllShareApi().bindManager(this);
     _userStataListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? false) {
         _rateNoticeOperator.init();
@@ -127,7 +130,7 @@ class UserManager extends BaseManager {
         var id = user?.userSubscription['apple_store_plan_id'] ?? user?.userSubscription['plan_id'];
         if (!TextUtil.isEmpty(id)) {
           double price = PaymentPrice[id] ?? 0;
-          api.conversion(accountId: user?.id.toString() ?? '', conversion: price);
+          allShareApi.conversion(accountId: user?.id.toString() ?? '', conversion: price);
         }
       });
     });
@@ -137,6 +140,7 @@ class UserManager extends BaseManager {
   Future<void> onDestroy() async {
     _userStataListen.cancel();
     api.unbind();
+    allShareApi.unbind();
     _networkListen.cancel();
     _paymentListen.cancel();
     super.onDestroy();
@@ -196,8 +200,8 @@ class UserManager extends BaseManager {
                 settings: RouteSettings(name: "/EmailVerificationScreen"),
               ),
             ).then((value) {
-              AppApi().onSignUp(email: user?.getShownEmail() ?? '').whenComplete(() {
-                AppApi().identify(accountId: user?.id.toString() ?? '');
+              allShareApi.onSignUp(email: user?.getShownEmail() ?? '').whenComplete(() {
+                allShareApi.identify(accountId: user?.id.toString() ?? '');
               });
             });
           }
