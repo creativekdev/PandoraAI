@@ -600,8 +600,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "privacy_policy1":
             MessageLookupByLibrary.simpleMessage("Política de privacidad"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
-        "profile_pic_maker":
-            MessageLookupByLibrary.simpleMessage("ProfilePicMaker"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("Cantidad"),
         "quatity": MessageLookupByLibrary.simpleMessage("Cantidad"),
@@ -840,12 +838,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome": MessageLookupByLibrary.simpleMessage("Bienvenido！"),
         "welcome1": MessageLookupByLibrary.simpleMessage("Bienvenido"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("欢迎\n回来"),
-        "welcome_title1": MessageLookupByLibrary.simpleMessage(
-            "Hacer una foto de perfil de dibujos animados"),
-        "welcome_title2": MessageLookupByLibrary.simpleMessage(
-            "Añade un toque artístico a tu foto"),
-        "welcome_title3": MessageLookupByLibrary.simpleMessage(
-            "Crea pegatinas de dibujos animados para ti"),
+        "welcome_content1": MessageLookupByLibrary.simpleMessage("Pandora AI"),
+        "welcome_content2": MessageLookupByLibrary.simpleMessage("Edits"),
+        "welcome_content3": MessageLookupByLibrary.simpleMessage("Anime"),
+        "welcome_title1":
+            MessageLookupByLibrary.simpleMessage("Generate magic avatars with"),
+        "welcome_title2":
+            MessageLookupByLibrary.simpleMessage("Create awesome"),
+        "welcome_title3":
+            MessageLookupByLibrary.simpleMessage("One-click selfie to"),
         "what_to_expect":
             MessageLookupByLibrary.simpleMessage("Reclamaciones de uso"),
         "why_its_paid":

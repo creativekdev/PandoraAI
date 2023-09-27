@@ -509,8 +509,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "privacy_policy": MessageLookupByLibrary.simpleMessage("プライバシーポリシー"),
         "privacy_policy1": MessageLookupByLibrary.simpleMessage("プライバシーポリシー"),
         "pro": MessageLookupByLibrary.simpleMessage("プロ"),
-        "profile_pic_maker":
-            MessageLookupByLibrary.simpleMessage("ProfilePicMaker"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "quantity": MessageLookupByLibrary.simpleMessage("数量"),
         "quatity": MessageLookupByLibrary.simpleMessage("数量"),
@@ -717,12 +715,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome": MessageLookupByLibrary.simpleMessage("ようこそ！"),
         "welcome1": MessageLookupByLibrary.simpleMessage("ようこそ"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("お帰りなさい"),
+        "welcome_content1": MessageLookupByLibrary.simpleMessage("Pandora AI"),
+        "welcome_content2": MessageLookupByLibrary.simpleMessage("Edits"),
+        "welcome_content3": MessageLookupByLibrary.simpleMessage("Anime"),
         "welcome_title1":
-            MessageLookupByLibrary.simpleMessage("漫画のプロフィール写真を作成する"),
+            MessageLookupByLibrary.simpleMessage("Generate magic avatars with"),
         "welcome_title2":
-            MessageLookupByLibrary.simpleMessage("写真に芸術的なタッチを加える"),
+            MessageLookupByLibrary.simpleMessage("Create awesome"),
         "welcome_title3":
-            MessageLookupByLibrary.simpleMessage("自分用の漫画ステッカーを作成する"),
+            MessageLookupByLibrary.simpleMessage("One-click selfie to"),
         "what_to_expect": MessageLookupByLibrary.simpleMessage("使用声明"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("なぜ支払いが必要ですか？"),
         "woman": MessageLookupByLibrary.simpleMessage("女性"),

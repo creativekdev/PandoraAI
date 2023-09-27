@@ -1980,31 +1980,61 @@ class S {
     );
   }
 
-  /// `Make a cartoon profile picture`
+  /// `Generate magic avatars with`
   String get welcome_title1 {
     return Intl.message(
-      'Make a cartoon profile picture',
+      'Generate magic avatars with',
       name: 'welcome_title1',
       desc: '',
       args: [],
     );
   }
 
-  /// `Add artistic touch to your photo`
+  /// `Create awesome`
   String get welcome_title2 {
     return Intl.message(
-      'Add artistic touch to your photo',
+      'Create awesome',
       name: 'welcome_title2',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create cartoon stickers for yourself`
+  /// `One-click selfie to`
   String get welcome_title3 {
     return Intl.message(
-      'Create cartoon stickers for yourself',
+      'One-click selfie to',
       name: 'welcome_title3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pandora AI`
+  String get welcome_content1 {
+    return Intl.message(
+      'Pandora AI',
+      name: 'welcome_content1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edits`
+  String get welcome_content2 {
+    return Intl.message(
+      'Edits',
+      name: 'welcome_content2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Anime`
+  String get welcome_content3 {
+    return Intl.message(
+      'Anime',
+      name: 'welcome_content3',
       desc: '',
       args: [],
     );
@@ -5405,16 +5435,6 @@ class S {
     return Intl.message(
       'Please don\'t close the app',
       name: 'do_not_close_app',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `ProfilePicMaker`
-  String get profile_pic_maker {
-    return Intl.message(
-      'ProfilePicMaker',
-      name: 'profile_pic_maker',
       desc: '',
       args: [],
     );
