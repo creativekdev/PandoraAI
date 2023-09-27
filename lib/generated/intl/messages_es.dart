@@ -251,6 +251,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("Enviar"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("Cancelar"),
         "display_text": MessageLookupByLibrary.simpleMessage("Mostrar copia"),
+        "do_not_close_app":
+            MessageLookupByLibrary.simpleMessage("No cierre la aplicación"),
         "dog": MessageLookupByLibrary.simpleMessage("perro"),
         "done": MessageLookupByLibrary.simpleMessage("terminar"),
         "download": MessageLookupByLibrary.simpleMessage("Descargar"),
@@ -836,12 +838,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome": MessageLookupByLibrary.simpleMessage("Bienvenido！"),
         "welcome1": MessageLookupByLibrary.simpleMessage("Bienvenido"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("欢迎\n回来"),
-        "welcome_title1": MessageLookupByLibrary.simpleMessage(
-            "Crea avatares mágicos con IA"),
-        "welcome_title2": MessageLookupByLibrary.simpleMessage(
-            "Estilo artístico único y exclusivo"),
-        "welcome_title3": MessageLookupByLibrary.simpleMessage(
-            "Selfie a Anime Un clic para generar"),
+        "welcome_content1": MessageLookupByLibrary.simpleMessage("Pandora AI"),
+        "welcome_content2": MessageLookupByLibrary.simpleMessage("Edits"),
+        "welcome_content3": MessageLookupByLibrary.simpleMessage("Anime"),
+        "welcome_title1":
+            MessageLookupByLibrary.simpleMessage("Generate magic avatars with"),
+        "welcome_title2":
+            MessageLookupByLibrary.simpleMessage("Create awesome"),
+        "welcome_title3":
+            MessageLookupByLibrary.simpleMessage("One-click selfie to"),
         "what_to_expect":
             MessageLookupByLibrary.simpleMessage("Reclamaciones de uso"),
         "why_its_paid":

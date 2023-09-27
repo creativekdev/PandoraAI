@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/api/api.dart';
@@ -362,6 +363,9 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
         if (value ?? false) {
           var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preSignupAction);
           var prePage = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
+          userManager.allShareApi.onSignUp(email: onlineModel.user?.getShownEmail() ?? '').whenComplete(() {
+            userManager.allShareApi.identify(accountId: onlineModel.user?.id.toString() ?? '');
+          });
           Events.signupOkShow(source: action, prePage: prePage);
           await loginBack(context);
         }
@@ -369,6 +373,9 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
     } else {
       var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preSignupAction);
       var prePage = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
+      userManager.allShareApi.onSignUp(email: onlineModel.user?.getShownEmail() ?? '').whenComplete(() {
+        userManager.allShareApi.identify(accountId: onlineModel.user?.id.toString() ?? '');
+      });
       Events.signupOkShow(source: action, prePage: prePage);
       await loginBack(context);
     }

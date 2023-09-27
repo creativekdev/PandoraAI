@@ -1980,31 +1980,61 @@ class S {
     );
   }
 
-  /// `Generate magic avatars using AI`
+  /// `Generate magic avatars with`
   String get welcome_title1 {
     return Intl.message(
-      'Generate magic avatars using AI',
+      'Generate magic avatars with',
       name: 'welcome_title1',
       desc: '',
       args: [],
     );
   }
 
-  /// `Make your personal AI avatars`
+  /// `Create awesome`
   String get welcome_title2 {
     return Intl.message(
-      'Make your personal AI avatars',
+      'Create awesome',
       name: 'welcome_title2',
       desc: '',
       args: [],
     );
   }
 
-  /// `One-click selfies to anime`
+  /// `One-click selfie to`
   String get welcome_title3 {
     return Intl.message(
-      'One-click selfies to anime',
+      'One-click selfie to',
       name: 'welcome_title3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pandora AI`
+  String get welcome_content1 {
+    return Intl.message(
+      'Pandora AI',
+      name: 'welcome_content1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edits`
+  String get welcome_content2 {
+    return Intl.message(
+      'Edits',
+      name: 'welcome_content2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Anime`
+  String get welcome_content3 {
+    return Intl.message(
+      'Anime',
+      name: 'welcome_content3',
       desc: '',
       args: [],
     );
@@ -3350,10 +3380,10 @@ class S {
     );
   }
 
-  /// `Try it now`
+  /// `Try it out`
   String get try_it_now {
     return Intl.message(
-      'Try it now',
+      'Try it out',
       name: 'try_it_now',
       desc: '',
       args: [],
@@ -5395,6 +5425,16 @@ class S {
     return Intl.message(
       'Avoid pure numbers/letters/special characters',
       name: 'password_strong_detected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please don't close the app`
+  String get do_not_close_app {
+    return Intl.message(
+      'Please don\'t close the app',
+      name: 'do_not_close_app',
       desc: '',
       args: [],
     );

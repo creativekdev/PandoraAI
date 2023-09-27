@@ -46,7 +46,7 @@ class _SaveAvatarsScreenState extends AppState<SaveAvatarsScreen> {
           children: [
             GridView.builder(
               padding: EdgeInsets.only(
-                bottom: $(82) + ScreenUtil.getBottomPadding(context),
+                bottom: $(82) + ScreenUtil.getBottomPadding(),
                 top: $(46) + ScreenUtil.getStatusBarHeight(),
               ),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisSpacing: $(3), crossAxisSpacing: $(3)),
@@ -221,7 +221,7 @@ class _SaveAvatarsScreenState extends AppState<SaveAvatarsScreen> {
                   ).intoContainer(
                     color: ColorConstant.BackgroundColorBlur,
                     padding: EdgeInsets.only(
-                      bottom: ScreenUtil.getBottomPadding(context),
+                      bottom: ScreenUtil.getBottomPadding(),
                     ),
                   ),
                 ),

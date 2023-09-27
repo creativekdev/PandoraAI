@@ -192,9 +192,12 @@
   "watchAdToShareText": "高品質で透かしのない画像をシェアする",
   "welcome": "ようこそ！",
   "welcome1": "ようこそ",
-  "welcome_title1": "AIによる魔法のアバターの作成",
-  "welcome_title2": "他では見られない唯一無二な画風",
-  "welcome_title3": "自撮りをアニメ化して、ワンクリックで生成する",
+  "welcome_title1": "Generate magic avatars with",
+  "welcome_title2": "Create awesome",
+  "welcome_title3": "One-click selfie to",
+  "welcome_content1": "Pandora AI",
+  "welcome_content2": "Edits",
+  "welcome_content3": "Anime",
   "welcomeBack": "お帰りなさい",
   "what_to_expect": "使用声明",
   "why_its_paid": "なぜ支払いが必要ですか？",
@@ -533,5 +536,6 @@
   "limit_pro_btn": "会員になるには ",
   "limit_inv_desc": "招待コードを共有して追加クレジットを獲得する",
   "password_length_tips": "パスワードの長さ: 6 ～ 16",
-  "password_strong_detected": "純粋な数字/文字/特殊文字は避けてください"
+  "password_strong_detected": "純粋な数字/文字/特殊文字は避けてください",
+  "do_not_close_app": "アプリを閉じないでください"
 }

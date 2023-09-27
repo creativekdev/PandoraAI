@@ -64,7 +64,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
       optKey.currentState?.dismiss();
     };
     delay(() {
-      descriptionHeight = $(96) + ScreenUtil.getBottomPadding(context);
+      descriptionHeight = $(96) + ScreenUtil.getBottomPadding();
       width = ScreenUtil.screenSize.width - $(30);
       height = ScreenUtil.screenSize.height - kNavBarPersistentHeight - ScreenUtil.getStatusBarHeight() - descriptionHeight;
       setState(() {});

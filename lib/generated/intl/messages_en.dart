@@ -242,6 +242,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("Submit"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("Unlike"),
         "display_text": MessageLookupByLibrary.simpleMessage("Display Text"),
+        "do_not_close_app":
+            MessageLookupByLibrary.simpleMessage("Please don\'t close the app"),
         "dog": MessageLookupByLibrary.simpleMessage("dog"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
@@ -757,7 +759,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "trans_success": MessageLookupByLibrary.simpleMessage("Completed"),
         "trans_uploading": MessageLookupByLibrary.simpleMessage("Uploading..."),
         "try_again": MessageLookupByLibrary.simpleMessage("Try again"),
-        "try_it_now": MessageLookupByLibrary.simpleMessage("Try it now"),
+        "try_it_now": MessageLookupByLibrary.simpleMessage("Try it out"),
         "tuesday": MessageLookupByLibrary.simpleMessage("Tuesday"),
         "txtContinue": MessageLookupByLibrary.simpleMessage("Continue"),
         "unique_avatars":
@@ -801,12 +803,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome": MessageLookupByLibrary.simpleMessage("Welcome Back!"),
         "welcome1": MessageLookupByLibrary.simpleMessage("Welcome"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome\nBack"),
-        "welcome_title1": MessageLookupByLibrary.simpleMessage(
-            "Generate magic avatars using AI"),
-        "welcome_title2": MessageLookupByLibrary.simpleMessage(
-            "Make your personal AI avatars"),
+        "welcome_content1": MessageLookupByLibrary.simpleMessage("Pandora AI"),
+        "welcome_content2": MessageLookupByLibrary.simpleMessage("Edits"),
+        "welcome_content3": MessageLookupByLibrary.simpleMessage("Anime"),
+        "welcome_title1":
+            MessageLookupByLibrary.simpleMessage("Generate magic avatars with"),
+        "welcome_title2":
+            MessageLookupByLibrary.simpleMessage("Create awesome"),
         "welcome_title3":
-            MessageLookupByLibrary.simpleMessage("One-click selfies to anime"),
+            MessageLookupByLibrary.simpleMessage("One-click selfie to"),
         "what_to_expect":
             MessageLookupByLibrary.simpleMessage("What to Expect"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("Why it\'s paid"),

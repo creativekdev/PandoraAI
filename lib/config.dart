@@ -20,6 +20,7 @@ const String ALIPAY_SCHEML_IOS = 'alipay://';
 const String USER_PRIVACY = "https://socialbook.io/privacy/cartoonizer";
 const String TERM_AND_USE = "https://socialbook.io/terms";
 const String HELP_URL = "https://socialbook.io/help/";
+const String APP_HASH_VALUE = "qCO0coA8g8D";
 
 class AdMobConfig {
   static bool _debug = false;

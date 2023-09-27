@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:flutter/material.dart';
 
 ///
@@ -83,10 +84,11 @@ class ScreenUtil {
     return MediaQuery.of(context).viewInsets.bottom;
   }
 
-  static double getBottomPadding(BuildContext context) {
-    return MediaQuery.of(context).padding.bottom;
+  static double getBottomPadding() {
+    return MediaQuery.of(Get.context!).padding.bottom;
   }
 }
 
 double $(double value) => ScreenUtil.dp(value);
+
 double $sp(double value) => ScreenUtil.sp(value);

@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:device_uuid/device_uuid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -35,7 +36,7 @@ class ThirdpartManager extends BaseManager {
     adsHolder = SplashAdsHolder(maxCacheDuration: Duration(minutes: 5), shownDuration: Duration(minutes: 10));
     AppStateEventNotifier.startListening();
     AppStateEventNotifier.appStateStream.forEach((state) => _onAppStateChanged(state));
-    LogUtil.init(tag: 'Cartoonizer', isDebug: !kReleaseMode, maxLen: 256);
+    LogUtil.init(tag: 'Cartoonizer', isDebug: kDebugMode, maxLen: 256);
     EasyRefresh.defaultHeader = AppClassicalHeader(infoColor: ColorConstant.White);
     EasyRefresh.defaultFooter = ClassicalFooter(textColor: ColorConstant.White, infoColor: ColorConstant.White, enableHapticFeedback: false);
     onPayStatusListen = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
@@ -49,6 +50,9 @@ class ThirdpartManager extends BaseManager {
       EventBusHelper().eventBus.fire(OnNetworkStateChangeEvent(data: event));
     });
     Executor().warmUp(isolatesCount: 2);
+    DeviceUuid().getUUID().then((value) {
+      LogUtil.d(value, tag: 'DeviceUuid');
+    });
   }
 
   @override

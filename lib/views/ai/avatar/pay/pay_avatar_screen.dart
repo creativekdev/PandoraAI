@@ -155,7 +155,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
             }
           }).visibility(visible: selected != null),
         ],
-      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
+      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding())),
     );
   }
 

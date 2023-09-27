@@ -129,7 +129,7 @@ class _AnyGalleryPhotoViewWrapperState extends AppState<AnyGalleryPhotoViewWrapp
                           width: double.maxFinite,
                           color: Colors.transparent,
                           padding: EdgeInsets.only(
-                            bottom: ScreenUtil.getBottomPadding(context) == 0 ? $(15) : ScreenUtil.getBottomPadding(context),
+                            bottom: ScreenUtil.getBottomPadding() == 0 ? $(15) : ScreenUtil.getBottomPadding(),
                             top: $(10),
                             left: $(10),
                             right: $(15),

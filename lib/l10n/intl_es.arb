@@ -192,9 +192,12 @@
   "watchAdToShareText": "分享高清\n无水印图片",
   "welcome": "Bienvenido！",
   "welcome1": "Bienvenido",
-  "welcome_title1": "Crea avatares mágicos con IA",
-  "welcome_title2": "Estilo artístico único y exclusivo",
-  "welcome_title3": "Selfie a Anime Un clic para generar",
+  "welcome_title1": "Generate magic avatars with",
+  "welcome_title2": "Create awesome",
+  "welcome_title3": "One-click selfie to",
+  "welcome_content1": "Pandora AI",
+  "welcome_content2": "Edits",
+  "welcome_content3": "Anime",
   "welcomeBack": "欢迎\n回来",
   "what_to_expect": "Reclamaciones de uso",
   "why_its_paid": "Por qué se requiere el pago",
@@ -533,5 +536,6 @@
   "limit_pro_btn": "Hazte socio por sólo ",
   "limit_inv_desc": "Comparte el código de invitación para obtener crédito adicional",
   "password_length_tips": "La longitud debe ser de 6 a 16.",
-  "password_strong_detected": "Evite números/letras/caracteres especiales puros"
+  "password_strong_detected": "Evite números/letras/caracteres especiales puros",
+  "do_not_close_app": "No cierre la aplicación"
 }

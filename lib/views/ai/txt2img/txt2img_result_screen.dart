@@ -188,7 +188,7 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
                     autoExec: true,
                   );
                 },
-              ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(25))),
+              ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding() + $(25))),
             ],
           );
         },

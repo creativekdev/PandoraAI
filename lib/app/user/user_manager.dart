@@ -1,3 +1,4 @@
+import 'package:cartoonizer/api/allshare_api.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -16,6 +17,7 @@ import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/views/account/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/LoginScreen.dart';
+import 'package:cartoonizer/views/payment/payment.dart';
 import 'package:cartoonizer/widgets/auth/connector_platform.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -32,6 +34,7 @@ class UserManager extends BaseManager {
   late CacheManager cacheManager;
   bool lastLauncherLoginStatus = false; //true login, false unLogin
   late AppApi api;
+  late AllShareApi allShareApi;
 
   Map? appVersionData;
 
@@ -100,11 +103,13 @@ class UserManager extends BaseManager {
   RateNoticeOperator get rateNoticeOperator => _rateNoticeOperator;
   late StreamSubscription _userStataListen;
   late StreamSubscription _networkListen;
+  late StreamSubscription _paymentListen;
 
   @override
   Future<void> onCreate() async {
     super.onCreate();
     api = AppApi().bindManager(this);
+    allShareApi = AllShareApi().bindManager(this);
     _userStataListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? false) {
         _rateNoticeOperator.init();
@@ -120,13 +125,24 @@ class UserManager extends BaseManager {
         refreshUser();
       }
     });
+    _paymentListen = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
+      refreshUser().whenComplete(() {
+        var id = user?.userSubscription['apple_store_plan_id'] ?? user?.userSubscription['plan_id'];
+        if (!TextUtil.isEmpty(id)) {
+          double price = PaymentPrice[id] ?? 0;
+          allShareApi.conversion(accountId: user?.id.toString() ?? '', conversion: price);
+        }
+      });
+    });
   }
 
   @override
   Future<void> onDestroy() async {
     _userStataListen.cancel();
     api.unbind();
+    allShareApi.unbind();
     _networkListen.cancel();
+    _paymentListen.cancel();
     super.onDestroy();
   }
 
@@ -183,7 +199,11 @@ class UserManager extends BaseManager {
                 builder: (BuildContext context) => EmailVerificationScreen(user!.getShownEmail()),
                 settings: RouteSettings(name: "/EmailVerificationScreen"),
               ),
-            );
+            ).then((value) {
+              allShareApi.onSignUp(email: user?.getShownEmail() ?? '').whenComplete(() {
+                allShareApi.identify(accountId: user?.id.toString() ?? '');
+              });
+            });
           }
         }
         result = value;

@@ -211,6 +211,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("提出"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("キャンセル"),
         "display_text": MessageLookupByLibrary.simpleMessage("テキストを表示する"),
+        "do_not_close_app":
+            MessageLookupByLibrary.simpleMessage("アプリを閉じないでください"),
         "dog": MessageLookupByLibrary.simpleMessage("犬"),
         "done": MessageLookupByLibrary.simpleMessage("完了"),
         "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
@@ -713,12 +715,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome": MessageLookupByLibrary.simpleMessage("ようこそ！"),
         "welcome1": MessageLookupByLibrary.simpleMessage("ようこそ"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("お帰りなさい"),
+        "welcome_content1": MessageLookupByLibrary.simpleMessage("Pandora AI"),
+        "welcome_content2": MessageLookupByLibrary.simpleMessage("Edits"),
+        "welcome_content3": MessageLookupByLibrary.simpleMessage("Anime"),
         "welcome_title1":
-            MessageLookupByLibrary.simpleMessage("AIによる魔法のアバターの作成"),
+            MessageLookupByLibrary.simpleMessage("Generate magic avatars with"),
         "welcome_title2":
-            MessageLookupByLibrary.simpleMessage("他では見られない唯一無二な画風"),
+            MessageLookupByLibrary.simpleMessage("Create awesome"),
         "welcome_title3":
-            MessageLookupByLibrary.simpleMessage("自撮りをアニメ化して、ワンクリックで生成する"),
+            MessageLookupByLibrary.simpleMessage("One-click selfie to"),
         "what_to_expect": MessageLookupByLibrary.simpleMessage("使用声明"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("なぜ支払いが必要ですか？"),
         "woman": MessageLookupByLibrary.simpleMessage("女性"),

@@ -148,14 +148,16 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
   }
 
   Future<void> showAnim(BuildContext context) async {
-    return Navigator.of(context).push<void>(NoAnimRouter(
+    return Navigator.of(context)
+        .push<void>(NoAnimRouter(
       TransResultAnimScreen(
         origin: file,
         result: transResult!,
         ratio: ratio,
       ),
       settings: RouteSettings(name: '/TransResultAnimScreen'),
-    )).whenComplete(() {
+    ))
+        .whenComplete(() {
       // 增加次数判断，看是否显示rate_us
       UserManager userManager = AppDelegate.instance.getManager();
       userManager.rateNoticeOperator.onSwitch(Get.context!, true);
@@ -192,7 +194,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                   }),
                   controller.error()
                       ? Positioned(
-                          bottom: ScreenUtil.getBottomPadding(context) == 0 ? $(32) : ScreenUtil.getBottomPadding(context),
+                          bottom: ScreenUtil.getBottomPadding() == 0 ? $(32) : ScreenUtil.getBottomPadding(),
                           child: OutlineWidget(
                             radius: $(12),
                             strokeWidth: $(2),
@@ -314,7 +316,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
               ],
             ),
           ).intoContainer(
-              padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(15)),
+              padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding() + $(15)),
               decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_another_me_trans_bg), fit: BoxFit.fill)));
         },
       ),
@@ -351,7 +353,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
               }),
             ],
           ).intoContainer(
-              padding: EdgeInsets.only(top: $(15), bottom: $(10) + ScreenUtil.getBottomPadding(context)),
+              padding: EdgeInsets.only(top: $(15), bottom: $(10) + ScreenUtil.getBottomPadding()),
               decoration: BoxDecoration(
                   color: ColorConstant.EffectFunctionGrey,
                   borderRadius: BorderRadius.only(

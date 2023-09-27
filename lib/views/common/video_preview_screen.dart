@@ -119,7 +119,7 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
                     Navigator.of(context).pop(true);
                   }
                 }).intoContainer(color: Colors.black, padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(15))),
-                SizedBox(height: ScreenUtil.getBottomPadding(context)),
+                SizedBox(height: ScreenUtil.getBottomPadding()),
               ],
             ),
             left: $(0),

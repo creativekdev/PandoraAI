@@ -126,7 +126,7 @@ class _BackImagePickerState extends State<BackImagePicker> with AutomaticKeepAli
             controller: scrollController,
             itemCount: dataList.length + 1,
             physics: ClampingScrollPhysics(),
-            padding: EdgeInsets.only(left: $(15), top: 0, right: $(15), bottom: ScreenUtil.getBottomPadding(context)),
+            padding: EdgeInsets.only(left: $(15), top: 0, right: $(15), bottom: ScreenUtil.getBottomPadding()),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
               childAspectRatio: 1,

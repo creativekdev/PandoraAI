@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/src/adapters/io_adapter.dart';
 import 'package:flutter/foundation.dart';
 
 const _receiveTimeout = 60000;

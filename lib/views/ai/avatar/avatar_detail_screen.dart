@@ -221,7 +221,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
             padding: EdgeInsets.only(
               left: $(15),
               right: $(15),
-              bottom: $(82) + ScreenUtil.getBottomPadding(context),
+              bottom: $(82) + ScreenUtil.getBottomPadding(),
             ),
           ),
           Align(
@@ -252,7 +252,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                   },
                 ).intoContainer(
                   color: ColorConstant.BackgroundColorBlur,
-                  padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context), left: $(15), right: $(15)),
+                  padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(), left: $(15), right: $(15)),
                 ),
               ),
             ),

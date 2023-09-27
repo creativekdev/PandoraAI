@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/common/event_bus_helper.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -40,6 +41,7 @@ import 'package:cartoonizer/network/retry_able_requester.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:device_uuid/device_uuid.dart';
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -596,6 +598,7 @@ class AppApi extends RetryAbleRequester {
       canClickRetry: true,
       params: {
         'separate_sticker': 1,
+        'list_format': 1,
       },
     );
     if (baseEntity == null) return null;
@@ -774,7 +777,6 @@ class AppApi extends RetryAbleRequester {
       } else {
         result["force"] = false;
       }
-      result['url'] = 'https://socialbook.oss-cn-beijing.aliyuncs.com/apk/pandoraai.apk';
       return result;
     } else {
       return {"need_update": false, 'force': false};

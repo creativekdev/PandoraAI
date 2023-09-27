@@ -348,7 +348,7 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
                     }
                     return SizedBox();
                   }),
-              SizedBox(height: widget.bottomPadding - ScreenUtil.getBottomPadding(context)),
+              SizedBox(height: widget.bottomPadding - ScreenUtil.getBottomPadding()),
             ],
           ),
           Column(
@@ -378,7 +378,7 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
                   ),
                 ),
               ),
-              SizedBox(height: widget.bottomPadding - ScreenUtil.getBottomPadding(context)),
+              SizedBox(height: widget.bottomPadding - ScreenUtil.getBottomPadding()),
             ],
           ),
         ],

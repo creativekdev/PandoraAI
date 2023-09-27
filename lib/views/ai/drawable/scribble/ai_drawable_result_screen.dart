@@ -260,7 +260,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
         ],
       ),
     ).intoContainer(
-        padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(15)),
+        padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding() + $(15)),
         height: ScreenUtil.screenSize.height,
         width: ScreenUtil.screenSize.width,
         decoration: BoxDecoration(

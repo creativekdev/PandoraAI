@@ -143,7 +143,7 @@ class _AppFeaturePageState extends State<AppFeaturePage> {
           }),
           left: $(35),
           right: $(35),
-          bottom: ScreenUtil.getBottomPadding(context) + $(40),
+          bottom: ScreenUtil.getBottomPadding() + $(40),
         ),
       ],
     ).intoMaterial(

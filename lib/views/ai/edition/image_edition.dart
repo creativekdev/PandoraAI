@@ -147,6 +147,6 @@ class ImageEdition {
 
   static Size getShownImageSize() {
     return Size(ScreenUtil.screenSize.width,
-        ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140) + ScreenUtil.getBottomPadding(Get.context!)));
+        ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140) + ScreenUtil.getBottomPadding()));
   }
 }

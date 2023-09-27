@@ -395,7 +395,7 @@ Future<PAICameraEntity?> showPhotoTakeDialog(BuildContext context, bool showRece
                 }).toList()),
           )
         ],
-      ).intoContainer(color: ColorConstant.BackgroundColor, height: $(135) + ScreenUtil.getBottomPadding(context)),
+      ).intoContainer(color: ColorConstant.BackgroundColor, height: $(135) + ScreenUtil.getBottomPadding()),
       borderRadius: BorderRadius.only(topRight: Radius.circular($(28)), topLeft: Radius.circular($(28))),
     ).intoMaterial(color: Colors.transparent),
   );

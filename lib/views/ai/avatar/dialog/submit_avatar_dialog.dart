@@ -157,7 +157,7 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
             });
           }),
         ],
-      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
+      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding())),
     );
   }
 

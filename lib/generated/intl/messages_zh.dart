@@ -201,6 +201,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("提交"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("取消"),
         "display_text": MessageLookupByLibrary.simpleMessage("显示文案"),
+        "do_not_close_app": MessageLookupByLibrary.simpleMessage("请不要关闭应用"),
         "dog": MessageLookupByLibrary.simpleMessage("狗"),
         "done": MessageLookupByLibrary.simpleMessage("完成"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
@@ -657,9 +658,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome": MessageLookupByLibrary.simpleMessage("欢迎回来！"),
         "welcome1": MessageLookupByLibrary.simpleMessage("欢迎"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("欢迎\n回来"),
-        "welcome_title1": MessageLookupByLibrary.simpleMessage("用AI创造魔法头像"),
-        "welcome_title2": MessageLookupByLibrary.simpleMessage("独一无二的专属画风"),
-        "welcome_title3": MessageLookupByLibrary.simpleMessage("自拍转动漫 一键生成"),
+        "welcome_content1": MessageLookupByLibrary.simpleMessage("Pandora AI"),
+        "welcome_content2": MessageLookupByLibrary.simpleMessage("Edits"),
+        "welcome_content3": MessageLookupByLibrary.simpleMessage("Anime"),
+        "welcome_title1":
+            MessageLookupByLibrary.simpleMessage("Generate magic avatars with"),
+        "welcome_title2":
+            MessageLookupByLibrary.simpleMessage("Create awesome"),
+        "welcome_title3":
+            MessageLookupByLibrary.simpleMessage("One-click selfie to"),
         "what_to_expect": MessageLookupByLibrary.simpleMessage("使用声明"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("为什么需要付款"),
         "woman": MessageLookupByLibrary.simpleMessage("女性"),

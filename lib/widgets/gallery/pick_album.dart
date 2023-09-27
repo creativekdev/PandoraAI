@@ -420,7 +420,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                   .intoContainer(
                       padding: EdgeInsets.only(
                     top: $(10),
-                    bottom: maxCount > 1 ? $(15) : ScreenUtil.getBottomPadding(context) + $(15),
+                    bottom: maxCount > 1 ? $(15) : ScreenUtil.getBottomPadding() + $(15),
                   ))
                   .offstage(offstage: !Platform.isIOS),
               Row(
@@ -471,7 +471,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                   .intoContainer(
                       padding: EdgeInsets.only(
                     top: $(10),
-                    bottom: ScreenUtil.getBottomPadding(context) + $(15),
+                    bottom: ScreenUtil.getBottomPadding() + $(15),
                   ))
                   .visibility(visible: maxCount > 1),
             ],
