@@ -24,12 +24,13 @@ class _DiscoveryMetagramPageState extends State<DiscoveryMetagramPage> with Auto
 
   late StreamSubscription onTabDoubleClickListener;
   late StreamSubscription onSwitchTabListener;
-  DiscoveryMetagramController controller = Get.put(DiscoveryMetagramController());
+  late DiscoveryMetagramController controller;
 
   @override
   void initState() {
     super.initState();
     tabId = widget.tabId;
+    controller = DiscoveryMetagramController()..onInit();
     onSwitchTabListener = EventBusHelper().eventBus.on<OnTabSwitchEvent>().listen((event) {
       if ((event.data?.length ?? 0) == 2) {
         if (event.data!.first == tabId.id()) {
@@ -49,7 +50,6 @@ class _DiscoveryMetagramPageState extends State<DiscoveryMetagramPage> with Auto
   void dispose() {
     onSwitchTabListener.cancel();
     onTabDoubleClickListener.cancel();
-    Get.delete<DiscoveryMetagramController>();
     super.dispose();
   }
 
@@ -126,7 +126,7 @@ class DiscoveryMetagramController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    socialMediaConnectorApi = SocialMediaConnectorApi().bindController(this);
+    socialMediaConnectorApi = SocialMediaConnectorApi();
     scrollController = ScrollController();
     scrollController.addListener(() {
       if (scrollController.positions.isEmpty) {

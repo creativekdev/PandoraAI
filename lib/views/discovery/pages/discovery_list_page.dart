@@ -20,36 +20,37 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class DiscoveryListPageWidget extends StatefulWidget {
   AppTabId tabId;
+  DiscoveriesController controller;
 
-  DiscoveryListPageWidget({super.key, required this.tabId});
+  DiscoveryListPageWidget({super.key, required this.tabId, required this.controller});
 
   @override
   State<DiscoveryListPageWidget> createState() => _DiscoveryListPageWidgetState();
 }
 
 class _DiscoveryListPageWidgetState extends State<DiscoveryListPageWidget> with AutomaticKeepAliveClientMixin {
-  EasyRefreshController easyRefreshController = EasyRefreshController();
   UserManager userManager = AppDelegate().getManager();
   late AppTabId tabId;
 
   late StreamSubscription onTabDoubleClickListener;
   late StreamSubscription onSwitchTabListener;
-  DiscoveriesController controller = Get.put(DiscoveriesController());
+  late DiscoveriesController controller;
 
   @override
   void initState() {
     super.initState();
     tabId = widget.tabId;
+    controller = widget.controller;
     onSwitchTabListener = EventBusHelper().eventBus.on<OnTabSwitchEvent>().listen((event) {
       if ((event.data?.length ?? 0) == 2) {
         if (event.data!.first == tabId.id()) {
-          easyRefreshController.callRefresh();
+          controller.easyRefreshController.callRefresh();
         }
       }
     });
     onTabDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
       if (tabId.id() == event.data) {
-        easyRefreshController.callRefresh();
+        controller.easyRefreshController.callRefresh();
       }
     });
   }
@@ -58,7 +59,6 @@ class _DiscoveryListPageWidgetState extends State<DiscoveryListPageWidget> with 
   void dispose() {
     onSwitchTabListener.cancel();
     onTabDoubleClickListener.cancel();
-    Get.delete<DiscoveriesController>();
     super.dispose();
   }
 
@@ -67,101 +67,18 @@ class _DiscoveryListPageWidgetState extends State<DiscoveryListPageWidget> with 
     super.build(context);
     return GetBuilder<DiscoveriesController>(
       builder: (controller) {
-        return Column(
-          children: [
-            buildHeader(controller),
-            Expanded(child: buildList(controller)),
-          ],
-        );
+        return buildList(controller).intoContainer(
+            margin: EdgeInsets.only(
+          top: 52.dp,
+        ));
       },
       init: controller,
     );
   }
 
-  Widget buildHeader(DiscoveriesController controller) {
-    return Stack(
-      children: [
-        Listener(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: ClampingScrollPhysics(),
-            controller: controller.tagController,
-            padding: EdgeInsets.only(left: 15.dp, right: 30.dp),
-            child: Row(
-              children: controller.tags.transfer((e, index) {
-                bool checked = controller.currentTag == e;
-                return Text(
-                  e.tagTitle(),
-                  style: TextStyle(
-                    color: checked ? Color(0xff3e60ff) : Colors.white.withOpacity(0.8),
-                    fontSize: 13.sp,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.normal,
-                  ),
-                )
-                    .intoContainer(
-                  margin: EdgeInsets.only(left: index == 0 ? 0 : 4.dp),
-                  padding: EdgeInsets.symmetric(horizontal: 8.dp, vertical: 7.dp),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(32),
-                    color: checked ? Colors.transparent : Color(0xFF37373B),
-                    border: Border.all(color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent, width: 1),
-                  ),
-                )
-                    .intoGestureDetector(onTap: () {
-                  if (controller.listLoading) {
-                    return;
-                  }
-                  if (controller.currentTag == e) {
-                    controller.currentTag = null;
-                  } else {
-                    controller.currentTag = e;
-                  }
-                  easyRefreshController.callRefresh();
-                });
-              }),
-            ),
-          ).intoContainer(padding: EdgeInsets.only(top: 8)),
-          onPointerDown: (details) {
-            controller.isTagScrolling = true;
-          },
-          onPointerCancel: (details) {
-            controller.isTagScrolling = false;
-          },
-          onPointerUp: (details) {
-            controller.isTagScrolling = false;
-          },
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Image.asset(
-            Images.ic_discovery_tag_more,
-            width: 16.dp,
-          )
-              .intoContainer(
-            padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 6.dp),
-            margin: EdgeInsets.only(top: 8.dp),
-            color: ColorConstant.BackgroundColor,
-          )
-              .intoGestureDetector(onTap: () {
-            controller.tagController.animateTo(controller.tagController.offset + ScreenUtil.screenSize.width, duration: Duration(milliseconds: 300), curve: Curves.linear);
-          }).visibility(visible: !controller.isTagScrolling && !controller.isScrollEnd),
-        ),
-      ],
-    )
-        .intoContainer(
-          width: ScreenUtil.screenSize.width,
-          height: 52.dp,
-          alignment: Alignment.center,
-          padding: EdgeInsets.only(bottom: 8.dp),
-        )
-        .blur()
-        .ignore(ignoring: controller.listLoading);
-  }
-
   Widget buildList(DiscoveriesController controller) {
     return EasyRefresh.custom(
-      controller: easyRefreshController,
+      controller: controller.easyRefreshController,
       scrollController: controller.scrollController,
       enableControlFinishRefresh: true,
       enableControlFinishLoad: false,
@@ -169,13 +86,13 @@ class _DiscoveryListPageWidgetState extends State<DiscoveryListPageWidget> with 
       emptyWidget: controller.dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, 16.sp).intoCenter() : null,
       onRefresh: () async {
         controller.onLoadFirstPage().then((value) {
-          easyRefreshController.finishRefresh();
-          easyRefreshController.finishLoad(noMore: value);
+          controller.easyRefreshController.finishRefresh();
+          controller.easyRefreshController.finishLoad(noMore: value);
         });
       },
       onLoad: () async {
         controller.onLoadMorePage().then((value) {
-          easyRefreshController.finishLoad(noMore: value);
+          controller.easyRefreshController.finishLoad(noMore: value);
         });
       },
       slivers: [
@@ -339,12 +256,13 @@ class DiscoveriesController extends GetxController {
 
   double lastScrollPos = 0;
   bool lastScrollDown = false;
+  EasyRefreshController easyRefreshController = EasyRefreshController();
 
   @override
   void onInit() {
     super.onInit();
-    api = AppApi().bindController(this);
-    tagController = ScrollController();
+    api = AppApi();
+    tagController = ScrollController(keepScrollOffset: true);
     tagController.addListener(() {
       isScrollEnd = tagController.offset == tagController.position.maxScrollExtent;
     });

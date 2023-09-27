@@ -2,7 +2,9 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
 import 'package:cartoonizer/views/discovery/pages/discovery_list_page.dart';
 import 'package:cartoonizer/views/discovery/pages/discovery_metagram_page.dart';
@@ -34,6 +36,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   final List<String> tabs = ['Discovery', 'Metagram'];
 
   late List<Widget> children;
+  late DiscoveriesController discoveryListController = DiscoveriesController();
+  Rx<bool> discoveryVisible = true.obs;
 
   @override
   void initState() {
@@ -42,11 +46,18 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     tabController = TabController(length: tabs.length, vsync: this);
     pageController = PageController(keepPage: true);
     tabId = widget.tabId;
+    discoveryListController = DiscoveriesController()..onInit();
     children = [
-      DiscoveryListPageWidget(tabId: tabId),
+      DiscoveryListPageWidget(
+        tabId: tabId,
+        controller: discoveryListController,
+      ),
       DiscoveryMetagramPage(tabId: tabId),
     ];
+    refreshDVisible(tabController.index);
   }
+
+  refreshDVisible(int index) => discoveryVisible.value = index == 0;
 
   @override
   void onAttached() {
@@ -64,7 +75,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff161719),
-      body: Column(
+      body: Stack(
         children: [
           Theme(
             data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
@@ -102,12 +113,25 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           PageView(
             controller: pageController,
             onPageChanged: (index) {
+              refreshDVisible(index);
               tabController.animateTo(index, duration: Duration(milliseconds: 300));
             },
             children: children,
           ).intoContainer(
             height: ScreenUtil.screenSize.height - headerHeight,
             width: ScreenUtil.screenSize.width,
+            margin: EdgeInsets.only(top: headerHeight),
+          ),
+          GetBuilder(
+            builder: <DiscoveriesController>(controller) {
+              return Obx(() => Container(
+                    height: 52.dp,
+                    width: ScreenUtil.screenSize.width,
+                    child: discoveryListTag(controller),
+                    margin: EdgeInsets.only(top: headerHeight),
+                  ).offstage(offstage: !discoveryVisible.value));
+            },
+            init: discoveryListController,
           ),
         ],
       ).intoContainer(
@@ -115,6 +139,85 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         width: ScreenUtil.screenSize.width,
       ),
     );
+  }
+
+  Widget discoveryListTag(DiscoveriesController controller) {
+    return Stack(
+      children: [
+        Listener(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: ClampingScrollPhysics(),
+            controller: controller.tagController,
+            padding: EdgeInsets.only(left: 15.dp, right: 30.dp),
+            child: Row(
+              children: controller.tags.transfer((e, index) {
+                bool checked = controller.currentTag == e;
+                return Text(
+                  e.tagTitle(),
+                  style: TextStyle(
+                    color: checked ? Color(0xff3e60ff) : Colors.white.withOpacity(0.8),
+                    fontSize: 13.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.normal,
+                  ),
+                )
+                    .intoContainer(
+                  margin: EdgeInsets.only(left: index == 0 ? 0 : 4.dp),
+                  padding: EdgeInsets.symmetric(horizontal: 8.dp, vertical: 7.dp),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(32),
+                    color: checked ? Colors.transparent : Color(0xFF37373B),
+                    border: Border.all(color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent, width: 1),
+                  ),
+                )
+                    .intoGestureDetector(onTap: () {
+                  if (controller.listLoading) {
+                    return;
+                  }
+                  if (controller.currentTag == e) {
+                    controller.currentTag = null;
+                  } else {
+                    controller.currentTag = e;
+                  }
+                  controller.easyRefreshController.callRefresh();
+                });
+              }),
+            ),
+          ).intoContainer(padding: EdgeInsets.only(top: 8)),
+          onPointerDown: (details) {
+            controller.isTagScrolling = true;
+          },
+          onPointerCancel: (details) {
+            controller.isTagScrolling = false;
+          },
+          onPointerUp: (details) {
+            controller.isTagScrolling = false;
+          },
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Image.asset(
+            Images.ic_discovery_tag_more,
+            width: 16.dp,
+          )
+              .intoContainer(
+            padding: EdgeInsets.symmetric(vertical: 10.dp, horizontal: 6.dp),
+            margin: EdgeInsets.only(top: 8.dp),
+            color: ColorConstant.BackgroundColor,
+          )
+              .intoGestureDetector(onTap: () {
+            controller.tagController.animateTo(controller.tagController.offset + ScreenUtil.screenSize.width, duration: Duration(milliseconds: 300), curve: Curves.linear);
+          }).visibility(visible: !controller.isTagScrolling && !controller.isScrollEnd),
+        ),
+      ],
+    )
+        .intoContainer(
+          alignment: Alignment.center,
+          padding: EdgeInsets.only(bottom: 8.dp),
+        )
+        // .blur()
+        .ignore(ignoring: controller.listLoading);
   }
 
   @override
