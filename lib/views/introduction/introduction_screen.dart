@@ -34,17 +34,17 @@ class IntroductionScreenState extends State<IntroductionScreen> {
         pages = [
           {
             'image': Images.introduction_bg1,
-            'title': S.of(context).profile_pic_maker,
+            'title': S.of(context).welcome_content1,
             'subTitle': S.of(context).welcome_title1,
           },
           {
             'image': Images.introduction_bg2,
-            'title': S.of(context).profile_pic_maker,
+            'title': S.of(context).welcome_content2,
             'subTitle': S.of(context).welcome_title2,
           },
           {
             'image': Images.introduction_bg3,
-            'title': S.of(context).profile_pic_maker,
+            'title': S.of(context).welcome_content3,
             'subTitle': S.of(context).welcome_title3,
           }
         ];
@@ -111,7 +111,7 @@ class IntroductionScreenState extends State<IntroductionScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           gradient: LinearGradient(
-                            colors: [Color.fromRGBO(36, 60, 255, 1), Color.fromRGBO(227, 30, 205, 1)],
+                            colors: [Color.fromRGBO(227, 30, 205, 1), Color.fromRGBO(36, 60, 255, 1)],
                           ),
                         ),
                         child: Center(

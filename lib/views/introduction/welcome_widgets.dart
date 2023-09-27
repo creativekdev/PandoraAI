@@ -17,24 +17,25 @@ class WelcomeWidgets extends StatelessWidget {
           Stack(
             children: [
               Container(
+                alignment: Alignment.topCenter,
                 width: 100.w,
                 height: 100.h,
-                child: Image.asset(image!, fit: BoxFit.fill),
+                child: Image.asset(image!, fit: BoxFit.contain),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    title!,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: color, fontSize: 30, fontWeight: FontWeight.bold, fontFamily: "Poppins"),
-                  ),
-                  SizedBox(height: $(20)),
-                  Text(
                     subTitle!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.normal, fontFamily: "Poppins"),
+                    style: TextStyle(color: color, fontSize: 20.sp, fontWeight: FontWeight.normal, fontFamily: "Poppins"),
+                  ),
+                  // SizedBox(height: $(20)),
+                  Text(
+                    title!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: color, fontSize: 20.sp, fontWeight: FontWeight.w600, fontFamily: "Poppins"),
                   ),
                 ],
               ).intoContainer(alignment: Alignment.bottomCenter, width: 100.w, height: 100.h, padding: EdgeInsets.only(bottom: $(160))),

@@ -192,9 +192,12 @@
   "watchAdToShareText": "Share HD image\nwithout watermark",
   "welcome": "Welcome Back!",
   "welcome1": "Welcome",
-  "welcome_title1": "Make a cartoon profile picture",
-  "welcome_title2": "Add artistic touch to your photo",
-  "welcome_title3": "Create cartoon stickers for yourself",
+  "welcome_title1": "Generate magic avatars with",
+  "welcome_title2": "Create awesome",
+  "welcome_title3": "One-click selfie to",
+  "welcome_content1": "Pandora AI",
+  "welcome_content2": "Edits",
+  "welcome_content3": "Anime",
   "welcomeBack": "Welcome\nBack",
   "what_to_expect": "What to Expect",
   "why_its_paid": "Why it's paid",
@@ -534,6 +537,5 @@
   "limit_inv_desc": "Share the invitation code for extra credit",
   "password_length_tips": "Length needs to be 6-16.",
   "password_strong_detected": "Avoid pure numbers/letters/special characters",
-  "do_not_close_app": "Please don't close the app",
-  "profile_pic_maker": "ProfilePicMaker"
+  "do_not_close_app": "Please don't close the app"
 }
