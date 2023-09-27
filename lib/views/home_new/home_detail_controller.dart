@@ -9,7 +9,7 @@ class HomeDetailController extends GetxController {
   HomeDetailController({required int index, required List<DiscoveryListEntity>? posts, required String? categoryVaule, required int records}) {
     _index = index;
     _posts = posts;
-    currentPost = _posts![_index!];
+    currentPost = _posts![(_index ?? 0) >= _posts!.length ? _posts!.length - 1 : _index!];
     category = categoryVaule;
     _records = records;
     pageController = PageController(initialPage: index);

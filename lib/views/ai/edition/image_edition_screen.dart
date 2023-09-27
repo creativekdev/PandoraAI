@@ -472,7 +472,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
       // 使用RX变量监听showImageSize的变化
       return controller.showOrigin
-          ? Image.file(controller.originFile)
+          ? Image.file(controller.originFile, fit: BoxFit.cover, width: imageSize.width)
           : removeBgHolder.buildShownImage(imageSize, controller.showImageSize, (needGenerateAgain) {
               generateAgainVisible.value = needGenerateAgain;
             });
@@ -483,7 +483,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           controller.showImageSize.value = ImageUtils.getTargetCoverRect(imageSize, Size(value.image.width.toDouble(), value.image.height.toDouble())).size;
         });
       }
-      return controller.showOrigin ? Image.file(controller.originFile) : controller.buildShownImage(imageSize);
+      return controller.showOrigin ? Image.file(controller.originFile, fit: BoxFit.cover, width: imageSize.width) : controller.buildShownImage(imageSize);
     }
   }
 
